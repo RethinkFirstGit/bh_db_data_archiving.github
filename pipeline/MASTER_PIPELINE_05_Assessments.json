@@ -1,0 +1,782 @@
+{
+	"name": "MASTER_PIPELINE_05_Assessments",
+	"properties": {
+		"activities": [
+			{
+				"name": "ABADosageAssessmentResponses",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_ABADosageAssessmentResponses",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ABADosageAssessmentAgreement",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ABADosageAssessmentResponses",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_ABADosageAssessmentAgreement",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ABADosageAssessment",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ABADosageAssessmentAgreement",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_ABADosageAssessment",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BehaviorPlanNotesAudit",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ABADosageAssessment",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_BehaviorPlanNotesAudit",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BehaviorPlanNotes",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BehaviorPlanNotesAudit",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_BehaviorPlanNotes",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BehaviorPlanMembersAudit",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BehaviorPlanNotes",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_BehaviorPlanMembersAudit",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BehaviorPlanMembers",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BehaviorPlanMembersAudit",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_BehaviorPlanMembers",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BehaviorPlanCustomCategory",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BehaviorPlanMembers",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_BehaviorPlanCustomCategory",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BehaviorPlanDataRecordingDetails",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BehaviorPlanCustomCategory",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_BehaviorPlanDataRecordingDetails",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BehaviorPlanDataRecording",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BehaviorPlanDataRecordingDetails",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_BehaviorPlanDataRecording",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BehaviorPlanFunctionAudit",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BehaviorPlanDataRecording",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_BehaviorPlanFunctionAudit",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BehaviorPlanFunction",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BehaviorPlanFunctionAudit",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_BehaviorPlanFunction",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BehaviorPlanHistoryAudit",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BehaviorPlanFunction",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_BehaviorPlanHistoryAudit",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BehaviorPlanHistory",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BehaviorPlanHistoryAudit",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_BehaviorPlanHistory",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BehaviorPlanReviews",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BehaviorPlanHistory",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_BehaviorPlanReviews",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BehaviorFormPlanFunction",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BehaviorPlanReviews",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_BehaviorFormPlanFunction",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BehaviorAssessmentAudit",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BehaviorFormPlanFunction",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_BehaviorAssessmentAudit",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BehaviorAssessment",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BehaviorAssessmentAudit",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_BehaviorAssessment",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BehaviorPlan",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BehaviorAssessment",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_BehaviorPlan",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcChildProfileAssessmentShare",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BehaviorPlan",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcChildProfileAssessmentShare",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcChildProfileAssessment",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcChildProfileAssessmentShare",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcChildProfileAssessment",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcChildProfileAuthorizationBillingCode",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcChildProfileAssessment",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcChildProfileAuthorizationBillingCode",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcChildProfileAuthorization",
+				"type": "ExecutePipeline",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [
+					{
+						"activity": "Delete_hcPropagatingChildProfileAuthorization",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcChildProfileAuthorization",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcChildProfileDiagnosis",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcChildProfileAuthorizationBillingCode",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcChildProfileDiagnosis",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcChildProfileFunderServiceLineMapping",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcChildProfileDiagnosis",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcChildProfileFunderServiceLineMapping",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcChildProfileFunderMapping",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcChildProfileFunderServiceLineMapping",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcChildProfileFunderMapping",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcChildProfileHealthConditionEncryption",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcChildProfileFunderMapping",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcChildProfileHealthConditionEncryption",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcChildProfileHealthCondition",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcChildProfileHealthConditionEncryption",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcChildProfileHealthCondition",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcChildProfileMedicationEncryption",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcChildProfileHealthCondition",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcChildProfileMedicationEncryption",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcChildProfileMedication",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcChildProfileMedicationEncryption",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcChildProfileMedication",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcChildProfilePreference",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcChildProfileMedication",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcChildProfilePreference",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcChildProfileReferringProvider",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcChildProfilePreference",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcChildProfileReferringProvider",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcChildProfileScheduleAssessment",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcChildProfileReferringProvider",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcChildProfileScheduleAssessment",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Delete_hcPropagatingChildProfileAuthorization",
+				"type": "ExecutePipeline",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcPropagatingChildProfileAuthorization",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2025-04-14T03:19:56Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,39 @@
+{
+	"name": "Delete_hcAddress",
+	"properties": {
+		"activities": [
+			{
+				"name": "Script1",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "DELETE t\nFROM hcAddress t\nWHERE EXISTS (\n    SELECT 1\n    FROM hcStaffMember s\n    JOIN tblMember m ON m.ID = s.tblMemberId\n    JOIN AccountInfo a ON a.ID = m.accountInfoId\n    JOIN Subscription sub ON sub.accountInfoID = a.ID\n    JOIN AccountsToDelete atd ON a.ID = atd.AccountId\n    WHERE s.AddressId = t.id\n)\nOR EXISTS (\n    SELECT 1\n    FROM hcFunder f\n    JOIN AccountInfo a ON a.ID = f.accountInfoId\n    JOIN Subscription sub ON sub.accountInfoID = a.ID\n    JOIN AccountsToDelete atd ON a.ID = atd.AccountId\n    WHERE f.AddressId = t.id\n)\nOR EXISTS (\n    SELECT 1\n    FROM hcChildProfileContacts cpc\n    JOIN ChildProfile cp ON cp.id = cpc.childProfileId\n    JOIN AccountInfo a ON a.ID = cp.accountInfoId\n    JOIN Subscription sub ON sub.accountInfoID = a.ID\n    JOIN AccountsToDelete atd ON a.ID = atd.AccountId\n    WHERE cpc.AddressId = t.id\n)\nOR EXISTS (\n    SELECT 1\n    FROM hcChildProfileScheduleAssessment cpsa\n    JOIN ChildProfile cp ON cp.id = cpsa.childProfileId\n    JOIN AccountInfo a ON a.ID = cp.accountInfoId\n    JOIN Subscription sub ON sub.accountInfoID = a.ID\n    JOIN AccountsToDelete atd ON a.ID = atd.AccountId\n    WHERE cpsa.AddressId = t.id\n)\nOR EXISTS (\n    SELECT 1\n    FROM hcProviderLocation pl\n    JOIN AccountInfo a ON pl.accountInfoId = a.ID\n    JOIN Subscription sub ON sub.accountInfoID = a.ID\n    JOIN AccountsToDelete atd ON a.ID = atd.AccountId\n    WHERE pl.AddressId = t.id\n);\n",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-04-30T15:36:18Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

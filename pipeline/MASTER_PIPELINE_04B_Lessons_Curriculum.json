@@ -1,0 +1,164 @@
+{
+	"name": "MASTER_PIPELINE_04B_Lessons_Curriculum",
+	"properties": {
+		"activities": [
+			{
+				"name": "LessonCustomCategory",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_LessonCustomCategory",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "LessonCustomCategory_copy1",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "LessonCustomCategory",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_LessonCustomCategory",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "LessonCustomCategory_copy2",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "LessonCustomCategory_copy1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_LessonCustomCategory",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "LessonCustomCategory_copy3",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "LessonCustomCategory_copy2",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_LessonCustomCategory",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "LessonCustomCategory_copy4",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "LessonCustomCategory_copy3",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_LessonCustomCategory",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "LessonCustomCategory_copy5",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "LessonCustomCategory_copy4",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_LessonCustomCategory",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "LessonCustomCategory_copy6",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "LessonCustomCategory_copy5",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_LessonCustomCategory",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2025-05-18T03:27:03Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

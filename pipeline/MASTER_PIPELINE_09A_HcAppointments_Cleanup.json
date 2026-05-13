@@ -1,0 +1,233 @@
+{
+	"name": "MASTER_PIPELINE_09A_HcAppointments_Cleanup",
+	"properties": {
+		"activities": [
+			{
+				"name": "hcAppointments",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete_hcAddress",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcAppointments",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Delete_hcAddress",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete_hcProviderLocation",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcAddress",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Delete_hcRolePermissions",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete_hcAppointmentReminderSettings",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcRolePermissions",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Delete_hcProviderBillingCodeCredentials",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete_hcRolePermissions",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcProviderBillingCodeCredentials",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Delete_hcProviderBillingCode",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete_hcProviderBillingCodeCredentials",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcProviderBillingCode",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Delete_hcProviderServiceLine",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete_hcProviderBillingCode",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcProviderServiceLine",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Delete_hcProviderServices",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete_hcProviderServiceLine",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcProviderServices",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Delete_hcReferringProvider",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete_hcProviderServices",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcReferringProvider",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Delete_hcProviderLocation",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete_hcReferringProvider",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcProviderLocation",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Delete_hcAppointmentReminderSettings",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcAppointmentReminderSettings",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2025-09-02T13:28:03Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

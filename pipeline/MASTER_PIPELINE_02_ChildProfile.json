@@ -1,0 +1,366 @@
+{
+	"name": "MASTER_PIPELINE_02_ChildProfile",
+	"properties": {
+		"activities": [
+			{
+				"name": "ChildProfileLessonSubTargets",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_ChildProfileLessonSubTargets",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ChildProfileLessonTarget",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ChildProfileLessonSubTargets",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_ChildProfileLessonTarget",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ChildProfileTeamMemberPreferences",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ChildProfileLessonTarget",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_ChildProfileTeamMemberPreferences",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ChildProfileTeamMemberOrg",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ChildProfileTeamMemberPreferences",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_ChildProfileTeamMemberOrg",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ChildProfileTeamMember",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ChildProfileTeamMemberOrg",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_ChildProfileTeamMember",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ChildProfileCoachingSessions",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ChildProfileTeamMember",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_ChildProfileCoachingSessions",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ChildProfileClinicalSettings",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ChildProfileCoachingSessions",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_ChildProfileClinicalSettings",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ChildProfileDiagnosis",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ChildProfileClinicalSettings",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_ChildProfileDiagnosis",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ChildProfileExternalMembers",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ChildProfileDiagnosis",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_ChildProfileExternalMembers",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ChildProfileRecommendations",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ChildProfileExternalMembers",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_ChildProfileRecommendations",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ChildProfileSandataInfo",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ChildProfileRecommendations",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_ChildProfileSandataInfo",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ChildProfileTargetMasteryCriteria",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ChildProfileSandataInfo",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_ChildProfileTargetMasteryCriteria",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ChildProfileAssessmentResponse",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ChildProfileTargetMasteryCriteria",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_ChildProfileAssessmentResponse",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ChildProfileEncrypt",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ChildProfileAssessmentResponse",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_ChildProfileEncrypt",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ChildProfileHistory",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ChildProfileEncrypt",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_ChildProfileHistory",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ChildProfile",
+				"type": "ExecutePipeline",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_ChildProfile",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2025-04-12T16:27:49Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

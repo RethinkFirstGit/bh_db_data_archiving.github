@@ -1,0 +1,35 @@
+{
+	"name": "Sink_BehaviorAssessmentLogAbcOptions",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "BH_Staging",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"DbName": {
+					"value": "@dataset().DbName",
+					"type": "Expression"
+				},
+				"DbServer": {
+					"value": "@dataset().DbServer",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"DbName": {
+				"type": "string"
+			},
+			"DbServer": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "BehaviorAssessmentLogAbcOptions"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

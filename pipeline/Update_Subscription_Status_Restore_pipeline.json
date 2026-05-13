@@ -1,0 +1,45 @@
+{
+	"name": "Update_Subscription_Status_Restore_pipeline",
+	"properties": {
+		"activities": [
+			{
+				"name": "Script1",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "ADF_LS_TargetDB",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"ServerName": "rta-bh-east-sql1.database.windows.net",
+						"DatabaseName": "rta-bh-prd-db1-hs",
+						"UserID": "RTA_ETL_Automation_User",
+						"Password": "XeWtvhrbFggtY8WJafCt"
+					}
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "update Subscription \nset SubscriptionStatusID = 1 \nwhere AccountInfoID in (@{join(pipeline().globalParameters.AccountID, ',')})\nand SubscriptionStatusID = 3 --Active",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-04-30T15:36:11Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

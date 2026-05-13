@@ -1,0 +1,39 @@
+{
+	"name": "Delete_hcTransaction",
+	"properties": {
+		"activities": [
+			{
+				"name": "Script1",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "DELETE t\nFROM dbo.hcTransaction t\nWHERE t.referenceId IN (\n    SELECT DISTINCT ha.AppointmentId\n    FROM dbo.hcAppointments ha\n    INNER JOIN dbo.ChildProfile cp ON ha.clientId = cp.id\n    INNER JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\n    INNER JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\n    INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n)\nAND t.hcTransactionTypeId != 0;\n\n",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-04-30T15:36:13Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,130 @@
+{
+	"name": "Create_And_Populate_AccountsToDelete",
+	"properties": {
+		"activities": [
+			{
+				"name": "Create AccountsToDelete Table",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Create_DeletedAccountsHistory_Table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[AccountsToDelete]') AND type in (N'U'))\nBEGIN\n    CREATE TABLE dbo.AccountsToDelete (\n        AccountId INT NOT NULL,\n        Source VARCHAR(50) NULL,  \n        DateInserted DATETIME DEFAULT GETDATE(),\n        CONSTRAINT PK_AccountsToDelete PRIMARY KEY (AccountId)\n    );\nEND"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Create_DeletedAccountsHistory_Table",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "IF NOT EXISTS (\n    SELECT 1 FROM sys.tables WHERE name = 'DeletedAccountsHistory'\n)\nBEGIN\n    CREATE TABLE dbo.DeletedAccountsHistory (\n        AccountId INT,\n        DateDeleted DATETIME DEFAULT GETDATE(),\n        CONSTRAINT PK_DeletedAccountsHistory PRIMARY KEY (AccountId)\n    );\nEND\n"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Top_10_Accounts_Populate AccountsToDelete Table_copy1",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Create AccountsToDelete Table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "-- Step 1: Truncate the staging table\nTRUNCATE TABLE dbo.AccountsToDelete;\n\n/**IF NOT EXISTS (SELECT 1 FROM dbo.AccountsToDelete)\nBEGIN\n    INSERT INTO dbo.AccountsToDelete (AccountId, Source)\n    SELECT TOP (4) AccountId, Source\n    FROM dbo.AllAccountsToDelete\n    WHERE IsDeleted = 0 AND Source = 'Large'\n    ORDER BY ACV;\nEND;**/\n\nIF NOT EXISTS (SELECT 1 FROM dbo.AccountsToDelete)\nBEGIN\n    INSERT INTO dbo.AccountsToDelete (AccountId, Source)\n    SELECT TOP (50) AccountId, Source\n    FROM dbo.AllAccountsToDelete\n    WHERE IsDeleted = 0 AND Source = 'Medium'\n    ORDER BY ACV;\nEND;\n\n"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Top_10_Accounts_Populate AccountsToDelete Table",
+				"type": "Script",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "-- Step 1: Truncate the table\nTRUNCATE TABLE dbo.AccountsToDelete;\n\n-- Step 2: Define the list of Account IDs and the Source\n\nINSERT INTO dbo.AccountsToDelete (AccountId, Source)\nSELECT v.AccountId, 'Medium Accounts' AS Source  -- Change Source to 'Small', 'Medium' or 'Large' if needed\nFROM (\n    VALUES \n (23698),\n(22660),\n(22521)\n) AS v(AccountId);"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-04-30T15:36:23Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

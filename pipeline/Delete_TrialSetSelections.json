@@ -1,0 +1,39 @@
+{
+	"name": "Delete_TrialSetSelections",
+	"properties": {
+		"activities": [
+			{
+				"name": "Script1",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "/*\nDELETE t\nFROM dbo.TrialSetSelections t\nJOIN dbo.TrialSet ts ON ts.id = t.TrialSetId\nLEFT JOIN dbo.ChildProfile cp ON ts.hollowchildprofileid = cp.id\nLEFT JOIN dbo.ChildProfileLessonTarget c ON ts.childProfileLessonTargetId = c.id\nLEFT JOIN dbo.tblMember m ON ts.MemberID = m.ID\nLEFT JOIN dbo.AccountInfo a ON \n    cp.accountInfoId = a.ID OR \n    m.accountInfoId = a.ID\nJOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nJOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\nWHERE \n    (\n        sub.OrganizationTypeId <> 2\n        OR (\n            sub.OrganizationTypeId = 2\n            AND a.ID NOT IN (23382)\n            AND sub.SubscriptionStatusID <> 1\n            AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n        )\n    );\n*/\n\n\n\nDELETE t\nFROM dbo.TrialSetSelections t\nJOIN dbo.TrialSet ts ON ts.id = t.TrialSetId\n\n-- Join through ChildProfile (preferred path for TrialSets)\nJOIN dbo.ChildProfile cp ON ts.hollowchildprofileid = cp.id\nJOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\n\n-- Only delete if account is in the list and meets criteria\nJOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nJOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n\n/**WHERE \n    (\n        sub.OrganizationTypeId <> 2\n        OR (\n            sub.OrganizationTypeId = 2\n            AND a.ID NOT IN (23382)\n            AND sub.SubscriptionStatusID <> 1\n            AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n        )\n    );\n\n***/",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-04-30T15:36:17Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

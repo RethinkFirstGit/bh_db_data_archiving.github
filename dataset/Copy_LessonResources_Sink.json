@@ -1,0 +1,17 @@
+{
+	"name": "Copy_LessonResources_Sink",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "BHDataArchiveDev",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "LessonResources_New"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,210 @@
+{
+	"name": "MASTER_PIPELINE_06A_Forms",
+	"properties": {
+		"activities": [
+			{
+				"name": "Delete_hcFormResponseLessonNotesTargets",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete_hcFormResponseBehaviorTrackingExcluded",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcFormResponseLessonNotesTargets",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Delete_hcFormResponseLessonNotes",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete_hcFormResponseLessonNotesTargets",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcFormResponseLessonNotes",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Delete_hcFormResponse",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete_hcFormResponseLessonNotes",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcFormResponse",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Delete_hcFormResponseLessonsExcluded",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete_hcFormResponse",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcFormResponseLessonsExcluded",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Delete_hcFormResponseRemoteSignatureRequest",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete_hcFormResponseLessonsExcluded",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcFormResponseRemoteSignatureRequest",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Delete_hcForm",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete_hcFormResponseRemoteSignatureRequest",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcForm",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Delete_hcFormField",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete_hcForm",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcFormField",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Delete_hcFormFunders",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete_hcFormField",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcFormFunders",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Delete_hcFormResponseBehaviorTrackingExcluded",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcFormResponseBehaviorTrackingExcluded",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2025-04-14T17:55:34Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,216 @@
+{
+	"name": "hcAppointments_Restore_DB_Insert",
+	"properties": {
+		"activities": [
+			{
+				"name": "CopyhcAppointments",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Copy data1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "select t1.* from (\nselect -- ap.* \nap.AppointmentId\n,ap.AppointmentTypeId\n,ap.AppointmentDescription\n,ap.StaffId\n,ap.ClientId\n,ap.OccurrenceTypeId\n,ap.OccurrenceFrequency\n,ap.FrequencyInterval\n,ap.StartDate\n,ap.EndDate\n,ap.StartTime\n,ap.EndTime\n,ap.DayTypes\n,ap.MonthDay\n,ap.ScheduledById\n,ap.ScheduledOn\n,ap.ExpirationDate\n,ap.ClientVerificationDate\n,ap.StaffVerificationDate\n,ap.CancellationTypeId\n,ap.CancellationNote\n,ap.RescheduleDueDate\n,ap.RescheduleAssignedToId\n,ap.SessionNoteResponseId\n,ap.SessionNoteFormId\n,ap.ServiceId\n,ap.PaycodeId\n,ap.FunderId\n,ap.ProcedureCodeId\n,ap.LocationId\n,ap.AddressId\n,ap.ClientSignatureId\n,ap.StaffSignatureId\n,ap.AssociatedAppointmentId\n,ap.DiagnosisId\n,ap.SessionNoteReviewedOn\n,ap.StartingAddressId\n,ap.EndingAddressId\n,ap.SessionNoteReviewedBy\n,ap.SeriesAppointmentId\n,ap.OccurrenceEndDate\n,ap.ActualStartTime\n,ap.ActualEndTime\n,ap.SignatureParentName\n,ap.SignatureParentRelationship\n,ap.FromLocationId\n,ap.FromLocation\n,ap.ToLocationId\n,ap.ToLocation\n,ap.Mileage\n,ap.ActivityTagId\n,ap.CancellationTagId\n,ap.CopaymentMethodId\n,ap.CopaymentReferenceNumber\n,ap.CopaymentAmountCollected\n,ap.ProviderServiceId\n,ap.RescheduleFromId\n,ap.hcProviderBillingCodeCredentialId\n,ap.hcPropagatingAccountInfoId\n,ap.hcPropagatingProviderServiceId\n,ap.hcPropagatingStaffMemberId\n,ap.hcPropagatingChildProfileId\n,ap.hcPropagatingChildProfileAuthorizationId\n,ap.hcPropagatingFunderId\n,ap.hcPropagatingChildProfileFunderId\n,ap.hcPropagatingProviderBillingCodeId\n,ap.ModifiedBy\n,ap.DateLastModified\n,ap.SeriesAppointmentStartDate\n,ap.MonthTypeId\n,ap.MonthOccurrenceDayId\n,ap.MonthOccurrenceTypeId\n,ap.DateBillingReported\n,ap.VerifiedById\n,ap.Notes\n,ap.ProcedureCodeIdPreviousReference\n,ap.SessionNoteDraftFormId\n,ap.SessionNoteDraftResponseId\n,ap.SessionNoteDraftOn\n,ap.SessionNoteDraftStaffMemberId\n,ap.KareoEncounterId\n,ap.ParentLatitude\n,ap.ParentLongitude\n,ap.StaffMemberLatitude\n,ap.StaffMemberLongitude\n,ap.StaffVerifiedAddress\n,ap.ParentVerifiedAddress\n,ap.AdminVerificationDate\n,ap.AdminVerifiedBy\n,ap.DatePayrollReported\n,ap.VerifiedFromSessionNote\n,ap.hcProviderBillingCodeId\n,ap.DateDoeBilled\n,ap.PrincipalVerificationDate\n,ap.PrincipalSignatureId\n,ap.InitOccurrenceStartDate\n,ap.ClockInLatitude\n,ap.ClockInLongitude\n,ap.ClockOutLatitude\n,ap.ClockOutLongitude\n,ap.ClockInAddress\n,ap.ClockOutAddress\n,ap.EVVStatusId\n,ap.EVVRejectedReason\n,ap.ToLocationLatitude\n,ap.ToLocationLongitude\n,ap.parentRecordInd\n,ap.staffRecordInd\n,ap.DPHServiceLogId\n,ap.DPHProgressNoteId\n,ap.HhaxTransactionID\n,ap.EVVActionTakenId\n,ap.dateRecovered\n,ap.WorkflowHistoryId\n,ap.AppointmentEvvTellusLogId\n,ap.DeletedBy\n,ap.CreatedBy\n,ap.SandataID\n,ap.UnarchivedReasonId\n,ap.StatusId\n,ap.WasRescheduled\n,ap.UncancelReasonId\n,ap.OvernightId\nfrom @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name} ap \ninner join dbo.ChildProfile p on (ap.clientId=p.id ) \ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\nwhere a.Id in (@{join(pipeline().globalParameters.AccountID, ',')}) --and  ap.IsMigrated = 0\n\n )t1\nleft join Temp_hcAppointments t2 on t1.AppointmentId = t2.AppointmentId AND t1.StartDate = t2.StartDate\nWHERE t2.AppointmentId IS NULL AND t2.StartDate IS NULL",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Archive_DS_SourceDB",
+						"type": "DatasetReference",
+						"parameters": {
+							"ServerName": "@pipeline().globalParameters.SourceServerName",
+							"DatabaseName": "@pipeline().globalParameters.SourceDatabaseName",
+							"UserID": "@pipeline().globalParameters.SourceUserID",
+							"Password": "@pipeline().globalParameters.SourcePassword",
+							"Schema_Name": "@pipeline().parameters.Schema_Name",
+							"Table_Name": "@pipeline().parameters.Table_Name"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Archive_DS_TargetDB",
+						"type": "DatasetReference",
+						"parameters": {
+							"ServerName": "@pipeline().globalParameters.TargetServerName",
+							"DatabaseName": "@pipeline().globalParameters.TargetDatabaseName",
+							"UserID": "@pipeline().globalParameters.TargetUserID",
+							"Password": "@pipeline().globalParameters.TargetPassword",
+							"Schema_Name": "@pipeline().parameters.Schema_Name",
+							"Table_Name": "@pipeline().parameters.Table_Name"
+						}
+					}
+				]
+			},
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "select AppointmentId,StartDate from @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name}",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "AppointmentId",
+									"type": "Int32",
+									"physicalType": "int"
+								},
+								"sink": {
+									"name": "AppointmentId",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "StartDate",
+									"type": "Date",
+									"physicalType": "date"
+								},
+								"sink": {
+									"name": "StartDate",
+									"type": "Date",
+									"physicalType": "date"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "ADF_DS_TargetDB",
+						"type": "DatasetReference",
+						"parameters": {
+							"ServerName": {
+								"value": "@pipeline().globalParameters.TargetServerName",
+								"type": "Expression"
+							},
+							"DatabaseName": {
+								"value": "@pipeline().globalParameters.TargetDatabaseName",
+								"type": "Expression"
+							},
+							"UserID": {
+								"value": "@pipeline().globalParameters.TargetUserID",
+								"type": "Expression"
+							},
+							"Password": {
+								"value": "@pipeline().globalParameters.TargetPassword",
+								"type": "Expression"
+							},
+							"Schema_Name": {
+								"value": "@pipeline().parameters.Schema_Name",
+								"type": "Expression"
+							},
+							"Table_Name": {
+								"value": "@pipeline().parameters.Table_Name",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ADF_DS_SourceDB",
+						"type": "DatasetReference",
+						"parameters": {
+							"ServerName": {
+								"value": "@pipeline().globalParameters.SourceServerName",
+								"type": "Expression"
+							},
+							"DatabaseName": {
+								"value": "@pipeline().globalParameters.SourceDatabaseName",
+								"type": "Expression"
+							},
+							"UserID": {
+								"value": "@pipeline().globalParameters.SourceUserID",
+								"type": "Expression"
+							},
+							"Password": {
+								"value": "@pipeline().globalParameters.SourcePassword",
+								"type": "Expression"
+							},
+							"Schema_Name": "dbo",
+							"Table_Name": "Temp_hcAppointments"
+						}
+					}
+				]
+			}
+		],
+		"parameters": {
+			"Schema_Name": {
+				"type": "string",
+				"defaultValue": "dbo"
+			},
+			"Table_Name": {
+				"type": "string",
+				"defaultValue": "hcAppointments"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-12-12T16:21:23Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

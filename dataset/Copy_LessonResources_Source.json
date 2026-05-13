@@ -1,0 +1,84 @@
+{
+	"name": "Copy_LessonResources_Source",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Copy_From_Weekly_Refresh",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "LessonId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ResourceLocation",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MaterialResourceId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ResourceType",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Description",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PlanGroup",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DateCreated",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "DateLastModified",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "DateDeleted",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "ModifiedBy",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DeletedBy",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CreatedBy",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "LessonResources"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

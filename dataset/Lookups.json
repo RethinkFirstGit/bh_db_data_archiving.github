@@ -1,0 +1,13 @@
+{
+	"name": "Lookups",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "BH_Prod",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

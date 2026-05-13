@@ -1,0 +1,64 @@
+{
+	"name": "Copy_Target_Sink",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "BHDataArchiveDev",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Name",
+				"type": "varchar"
+			},
+			{
+				"name": "shortName",
+				"type": "varchar"
+			},
+			{
+				"name": "ModifiedBy",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DeletedBy",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CreatedBy",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DateDeleted",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "DateLastModified",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "DateCreated",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Targets_New"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,435 @@
+{
+	"name": "MASTER_PIPELINE_03_Staff",
+	"properties": {
+		"activities": [
+			{
+				"name": "hcStaffServiceFunder",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcStaffServiceFunder",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcStaffService",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcStaffServiceFunder",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcStaffService",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcStaffCustomFieldOptionValues",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcStaffService",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcStaffCustomFieldOptionValues",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcStaffCustomFieldsOptions",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcStaffCustomFieldOptionValues",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcStaffCustomFieldsOptions",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcStaffCustomFields",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcStaffCustomFieldValues",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcStaffCustomFields",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcStaffCustomFieldValues",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcStaffCustomFieldsOptions",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcStaffCustomFieldValues",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcStaffMemberCredential",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcStaffCustomFields",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcStaffMemberCredential",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcStaffMemberLanguage",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcStaffMemberCredential",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcStaffMemberLanguage",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcStaffMemberLocation",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcStaffMemberLanguage",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcStaffMemberLocation",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcStaffMemberPayroll",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcStaffMemberLocation",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcStaffMemberPayroll",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcStaffCredential",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcStaffMemberPayroll",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcStaffCredential",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcStaffCredentialType",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcStaffCredential",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcStaffCredentialType",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcStaffTitle",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcStaffCredentialType",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcStaffTitle",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcStaffStatus",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcStaffTitle",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcStaffStatus",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcStaffMileage",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcStaffStatus",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcStaffMileage",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcStaffPaycodes",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcStaffMileage",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcStaffPaycodes",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcStaffMember",
+				"type": "ExecutePipeline",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcStaffMember",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcSettings",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcStaffPaycodes",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcSettings",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "PasswordHistory",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcSettings",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_PasswordHistory",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2025-04-16T14:08:31Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

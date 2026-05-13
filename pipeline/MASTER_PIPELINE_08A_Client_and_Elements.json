@@ -1,0 +1,279 @@
+{
+	"name": "MASTER_PIPELINE_08A_Client_and_Elements",
+	"properties": {
+		"activities": [
+			{
+				"name": "Delete_hcClientCustomFieldOptionValues",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcClientCustomFieldOptionValues",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Delete_hcClientCustomFields",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete_hcClientCustomFieldsOptions",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcClientCustomFields",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Delete_hcClientCustomFieldsOptions",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete_hcClientCustomFieldValues",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcClientCustomFieldsOptions",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Delete_hcClientCustomFieldValues",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete_hcClientCustomFieldOptionValues",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcClientCustomFieldValues",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Delete_hcClientStatus",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete_hcClientCustomFields",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcClientStatus",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Delete_hcElementField",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete_hcClientStatus",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcElementField",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Delete_hcElementFieldValues",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete_hcElementField",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcElementFieldValues",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Delete_hcemployeetype",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete_EmployeeBenefitUsers",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcemployeetype",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Delete_hcEncounterAppointmentLink",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete_hcemployeetype",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcEncounterAppointmentLink",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Delete_hcEncounterAttachments",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete_hcEncounterAppointmentLink",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_hcEncounterAttachments",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Delete_EmployeeBenefitEmailVerification",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete_hcElementFieldValues",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_EmployeeBenefitEmailVerification",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Delete_EmployeeBenefitUsers",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Delete_EmployeeBenefitEmailVerification",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_EmployeeBenefitUsers",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2025-08-14T15:05:07Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

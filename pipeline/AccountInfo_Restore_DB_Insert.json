@@ -1,0 +1,256 @@
+{
+	"name": "AccountInfo_Restore_DB_Insert",
+	"properties": {
+		"activities": [
+			{
+				"name": "AccountInfoCopyDynamic",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Copy data1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "select t1.* from (select \nID\n,billingFirstname\n,billingLastname\n,billingAddress1\n,billingAddress2\n,billingAddress3\n,billingCity\n,billingZip\n,billingStateId\n,billingCountryId\n,CreditCardTypeID\n,CreditCardNumber\n,ExpirationDate\n,BraintreeKey\n,DateCreated\n,DateLastModified\n,DateDeleted\n,accountType\n,parentID\n,accountOrganizationName\n,accountOrganizationTypeId\n,accountAddress1\n,accountAddress2\n,accountAddress3\n,accountCity\n,accountStateId\n,accountCountryId\n,accountZip\n,apiKey\n,testAcct\n,empBenefitkey\n,ebSubscriptionType\n,CoachingSessions\n,trainingProgramKey\n,name\n,email\n,website\n,phoneNumber\n,faxNumber\n,providerLogo\n,federalTaxId\n,nationalProviderId\n,isLockoutRequired\n,ebWelcomeText\n,ebCompanyLogo\n,ebLogoWidth\n,ebLogoHeight\n,ebSignUpCode\n,LearningProcessAttributesId\n,EnableAppointmentReminders\n,hcAppointmentReminderTypeId\n,CalendarStartHour\n,CalendarEndHour\n,hcLocationCodeId\n,IsStaffVerificationRequired\n,IsParentVerificationRequired\n,IsSessionNoteEnteredRequired\n,TProID\n,hcTimezoneId\n,ClearingHouseId\n,billingProviderName\n,billingProviderEmail\n,billingProviderPhone\n,billingProviderExtension\n,billingProviderFax\n,IsInternational\n,accountTown\n,billingTown\n,AppUrl\n,MedicaidIdNumber\n,UseCustomDomains\n,ProgramCode\n,AllowToVerifyWithoutAuthorization\n,RequireAppointmentLocation\n,ModifiedBy\n,DeletedBy\n,CreatedBy\n,AllowToEnterLocation\n,ContactRemidersRequiered\n,IncludeClientHomeLocation\n,IncludeStaffHomeLocation\n,AllowToUnarchiveAppointments\n,AllowToUncancelAppointments\n,ShowLogoOnRbt\n,IsOvernight\n,InsuranceFunderPolicy     \nfrom @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name} a   where a.Id in (@{join(pipeline().globalParameters.AccountID, ',')}) \n--and  t.IsMigrated = 0\n)t1\nleft join Temp_AccountInfo t2 on t1.Id = t2.ID\nwhere t2.ID is null",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Archive_DS_SourceDB",
+						"type": "DatasetReference",
+						"parameters": {
+							"ServerName": "@pipeline().globalParameters.SourceServerName",
+							"DatabaseName": "@pipeline().globalParameters.SourceDatabaseName",
+							"UserID": "@pipeline().globalParameters.SourceUserID",
+							"Password": "@pipeline().globalParameters.SourcePassword",
+							"Schema_Name": "@pipeline().parameters.Schema_Name",
+							"Table_Name": "@pipeline().parameters.Table_Name"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Archive_DS_TargetDB",
+						"type": "DatasetReference",
+						"parameters": {
+							"ServerName": "@pipeline().globalParameters.TargetServerName",
+							"DatabaseName": {
+								"value": "@pipeline().globalParameters.TargetDatabaseName",
+								"type": "Expression"
+							},
+							"UserID": "@pipeline().globalParameters.TargetUserID",
+							"Password": "@pipeline().globalParameters.TargetPassword",
+							"Schema_Name": "@pipeline().parameters.Schema_Name",
+							"Table_Name": "@pipeline().parameters.Table_Name"
+						}
+					}
+				]
+			},
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Script1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "select id from @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name}",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "id",
+									"type": "Int32",
+									"physicalType": "int"
+								},
+								"sink": {
+									"name": "ID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "ADF_DS_TargetDB",
+						"type": "DatasetReference",
+						"parameters": {
+							"ServerName": {
+								"value": "@pipeline().globalParameters.TargetServerName",
+								"type": "Expression"
+							},
+							"DatabaseName": {
+								"value": "@pipeline().globalParameters.TargetDatabaseName",
+								"type": "Expression"
+							},
+							"UserID": {
+								"value": "@pipeline().globalParameters.TargetUserID",
+								"type": "Expression"
+							},
+							"Password": {
+								"value": "@pipeline().globalParameters.TargetPassword",
+								"type": "Expression"
+							},
+							"Schema_Name": {
+								"value": "@pipeline().parameters.Schema_Name",
+								"type": "Expression"
+							},
+							"Table_Name": {
+								"value": "@pipeline().parameters.Table_Name",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ADF_DS_SourceDB",
+						"type": "DatasetReference",
+						"parameters": {
+							"ServerName": {
+								"value": "@pipeline().globalParameters.SourceServerName",
+								"type": "Expression"
+							},
+							"DatabaseName": {
+								"value": "@pipeline().globalParameters.SourceDatabaseName",
+								"type": "Expression"
+							},
+							"UserID": {
+								"value": "@pipeline().globalParameters.SourceUserID",
+								"type": "Expression"
+							},
+							"Password": {
+								"value": "@pipeline().globalParameters.SourcePassword",
+								"type": "Expression"
+							},
+							"Schema_Name": "dbo",
+							"Table_Name": "Temp_AccountInfo"
+						}
+					}
+				]
+			},
+			{
+				"name": "Script1",
+				"type": "Script",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "Archive_Link_Service_Delete",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"ServerName": {
+							"value": "@pipeline().globalParameters.TargetServerName",
+							"type": "Expression"
+						},
+						"DatabaseName": {
+							"value": "@pipeline().globalParameters.TargetDatabaseName",
+							"type": "Expression"
+						},
+						"UserID": {
+							"value": "@pipeline().globalParameters.TargetUserID",
+							"type": "Expression"
+						}
+					}
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "delete from accountinfo where accountOrganizationName IN ('FTC Kids','Inn Health Center')  --Delete new ID 26351 map with FTC Kids"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			}
+		],
+		"parameters": {
+			"Schema_Name": {
+				"type": "string",
+				"defaultValue": "dbo"
+			},
+			"Table_Name": {
+				"type": "string",
+				"defaultValue": "AccountInfo"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-01-19T07:11:34Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

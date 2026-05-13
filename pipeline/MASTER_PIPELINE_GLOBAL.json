@@ -1,0 +1,417 @@
+{
+	"name": "MASTER_PIPELINE_GLOBAL",
+	"properties": {
+		"activities": [
+			{
+				"name": "MASTER_PIPELINE_01_Accounts",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "MASTER_PIPELINE_01_Create_And_Populate_AccountsToDelete",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "MASTER_PIPELINE_02_ChildProfile",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "MASTER_PIPELINE_01A_Accounts",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "MASTER_PIPELINE_02_ChildProfile",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "MASTER_PIPELINE_03_Staff",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "MASTER_PIPELINE_02_ChildProfile",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "MASTER_PIPELINE_03_Staff",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "MASTER_PIPELINE_05_Assessments",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "MASTER_PIPELINE_04C_Lessons_Curriculum",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "MASTER_PIPELINE_05_Assessments",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "MASTER_PIPELINE_06_Behavior_Tracking",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "MASTER_PIPELINE_05_Assessments",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "MASTER_PIPELINE_06_Behavior_Tracking",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "MASTER_PIPELINE_07_Reports",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "MASTER_PIPELINE_06A_Forms",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "MASTER_PIPELINE_07_Reports",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "MASTER_PIPELINE_08_Miscellaneous",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "MASTER_PIPELINE_07_Reports",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "MASTER_PIPELINE_08_Miscellaneous",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "MASTER_PIPELINE_09_System_Config",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "MASTER_PIPELINE_08A_Client_and_Elements",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "MASTER_PIPELINE_09_System_Config",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "MASTER_PIPELINE_10_Audit_and_History",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "MASTER_PIPELINE_09A_HcAppointments_Cleanup",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "MASTER_PIPELINE_10_Audit_and_History",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "MASTER_PIPELINE_11_Subscription_AccountInfo",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "MASTER_PIPELINE_10_Audit_and_History",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "MASTER_PIPELINE_11_Subscription_AccountInfo",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "MASTER_PIPELINE_06A_Forms",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "MASTER_PIPELINE_06_Behavior_Tracking",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "MASTER_PIPELINE_06A_Forms",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "MASTER_PIPELINE_08A_Client_and_Elements",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "MASTER_PIPELINE_08_Miscellaneous",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "MASTER_PIPELINE_08A_Client_and_Elements",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "MASTER_PIPELINE_09A_HcAppointments_Cleanup",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "MASTER_PIPELINE_09_System_Config",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "MASTER_PIPELINE_09A_HcAppointments_Cleanup",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "MASTER_PIPELINE_01A_Accounts",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "MASTER_PIPELINE_01_Accounts",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "MASTER_PIPELINE_01A_Accounts",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "MASTER_PIPELINE_12_Populate_DeletedAccountsHistory",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "MASTER_PIPELINE_11_Subscription_AccountInfo",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "MASTER_PIPELINE_12_Populate_DeletedAccountsHistory",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "MASTER_PIPELINE_04A_Lessons_Curriculum",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "MASTER_PIPELINE_03_Staff",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "MASTER_PIPELINE_04A_Lessons_Curriculum",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "MASTER_PIPELINE_04B_Lessons_Curriculum",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "MASTER_PIPELINE_04A_Lessons_Curriculum",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "MASTER_PIPELINE_04B_Lessons_Curriculum",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "MASTER_PIPELINE_04C_Lessons_Curriculum",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "MASTER_PIPELINE_04B_Lessons_Curriculum",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "MASTER_PIPELINE_04C_Lessons_Curriculum",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2025-05-21T20:24:42Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

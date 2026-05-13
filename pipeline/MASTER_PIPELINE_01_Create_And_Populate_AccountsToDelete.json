@@ -1,0 +1,26 @@
+{
+	"name": "MASTER_PIPELINE_01_Create_And_Populate_AccountsToDelete",
+	"properties": {
+		"activities": [
+			{
+				"name": "Execute Pipeline1",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Create_And_Populate_AccountsToDelete",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2025-04-15T19:55:37Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

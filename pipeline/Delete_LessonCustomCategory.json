@@ -1,0 +1,760 @@
+{
+	"name": "Delete_LessonCustomCategory",
+	"properties": {
+		"activities": [
+			{
+				"name": "Script1",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Script with WHILE loop",
+				"type": "Script",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "-- Declare batch size and loop count\nDECLARE @batchSize INT = 10000;\nDECLARE @i INT = 0;\nDECLARE @rows INT = 1;\n\nWHILE @i < 30 AND @rows > 0\nBEGIN\n    DELETE FROM dbo.LessonCustomCategory\n    WHERE Id IN (\n        SELECT TOP (@batchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.Lesson l ON t.LessonId = l.id\n        INNER JOIN dbo.Subscription sub ON sub.id = l.SubscriptionId\n        INNER JOIN dbo.AccountInfo a ON sub.accountInfoID = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n        WHERE \n            sub.OrganizationTypeId <> 2\n            OR (\n                sub.OrganizationTypeId = 2\n                AND a.ID NOT IN (23382)\n                AND sub.SubscriptionStatusID <> 1\n                AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n            )\n        ORDER BY t.Id\n    );\n\n    SET @rows = @@ROWCOUNT;\n    SET @i += 1;\nEND;\n",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Script2",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Script1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Script3",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Script2",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Script4",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Script3",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Script5",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Script4",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Script6",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Script5",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Script7",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Script6",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Script8",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Script7",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Script9",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Script8",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Script10",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Script9",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Script11",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Script10",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Script12",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Script11",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Script13",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Script12",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Script14",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Script13",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Script15",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Script14",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Script16",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Script15",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Script17",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Script16",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Script18",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Script17",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Script19",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Script18",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Script20",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Script19",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			}
+		],
+		"variables": {
+			"RowsRemaining": {
+				"type": "Integer",
+				"defaultValue": 1
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-04-30T15:36:15Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

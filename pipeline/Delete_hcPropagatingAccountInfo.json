@@ -1,0 +1,39 @@
+{
+	"name": "Delete_hcPropagatingAccountInfo",
+	"properties": {
+		"activities": [
+			{
+				"name": "Script1",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "DELETE t\nFROM dbo.hcPropagatingAccountInfo t\nJOIN dbo.tblMember tm ON tm.id = t.CreatedBy\nJOIN dbo.AccountInfo a ON tm.accountInfoId = a.ID\nJOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nJOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\nWHERE\n    sub.OrganizationTypeId <> 2\n    OR (\n        sub.OrganizationTypeId = 2\n        AND a.ID NOT IN (23382)\n        AND sub.SubscriptionStatusID <> 1\n        AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n    );\n",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-04-30T15:36:14Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

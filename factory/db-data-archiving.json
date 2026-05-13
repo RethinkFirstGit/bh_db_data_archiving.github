@@ -1,0 +1,77 @@
+{
+	"name": "db-data-archiving",
+	"properties": {
+		"globalParameters": {
+			"SourceDbServer": {
+				"type": "string",
+				"value": "rta-bh-dev-internal-sql.database.windows.net"
+			},
+			"SourceDbName": {
+				"type": "string",
+				"value": "rta-bh-data-archive-test"
+			},
+			"SinkDbServer": {
+				"type": "string",
+				"value": "vmbhsqlclone.eastus.cloudapp.azure.com"
+			},
+			"SinkDbName": {
+				"type": "string",
+				"value": "adf250114"
+			},
+			"SourceServerName": {
+				"type": "string",
+				"value": "rta-bh-dev-internal-sql.database.windows.net"
+			},
+			"SourceDatabaseName": {
+				"type": "string",
+				"value": "rta-bh-prd-db1-hs_2025-05-03T23-32Z_UnArchive_Dev"
+			},
+			"TargetServerName": {
+				"type": "string",
+				"value": "rta-bh-east-sql1.database.windows.net"
+			},
+			"TargetDatabaseName": {
+				"type": "string",
+				"value": "rta-bh-prd-db1-hs"
+			},
+			"TargetUserID": {
+				"type": "string",
+				"value": "RTA_ETL_Automation_User"
+			},
+			"TargetPassword": {
+				"type": "string",
+				"value": "XeWtvhrbFggtY8WJafCt"
+			},
+			"AccountID": {
+				"type": "array",
+				"value": [
+					23187
+				]
+			},
+			"SourceUserID": {
+				"type": "string",
+				"value": "rtaadmin"
+			},
+			"SourcePassword": {
+				"type": "string",
+				"value": "5uP3rUZ3R84wD"
+			}
+		},
+		"trustModeClaimForMi": {
+			"value": "Enabled",
+			"editable": true
+		}
+	},
+	"location": "eastus2",
+	"identity": {
+		"type": "SystemAssigned,UserAssigned",
+		"principalId": "693147e1-3bd0-497b-9730-769cea009940",
+		"tenantId": "447f1ce6-5f5f-443c-b917-25edd4901c27",
+		"userAssignedIdentities": {
+			"/subscriptions/45fd92c0-b657-4b35-99cb-06f52800331d/resourcegroups/Default-Data-EastUS2/providers/Microsoft.ManagedIdentity/userAssignedIdentities/rta-bh-prod-loggingdb-arch-idy": {
+				"clientId": "12e0dfc2-7f5e-47a0-96b2-12e80fd8cbca",
+				"principalId": "5c377dd4-3ab2-4d95-9e90-025e30b06055"
+			}
+		}
+	}
+}

@@ -1,0 +1,243 @@
+{
+	"name": "Master_Sequential_Restore_Pipeline",
+	"properties": {
+		"activities": [
+			{
+				"name": "Execute Pipeline1",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Execute Temp Table Script",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Master_Pipeline_Account_RestoreDB_1",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Execute Pipeline1_copy1",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Execute Pipeline1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Master_Pipeline_Account_RestoreDB_2",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Execute Pipeline1_copy2",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Execute Pipeline1_copy1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Master_Pipeline_Account_RestoreDB_3",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Execute Pipeline1_copy3",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Execute Pipeline1_copy2",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Master_Pipeline_Account_RestoreDB_4",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Execute Temp Table Script",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "ADF_LS_SourceDB",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"ServerName": {
+							"value": "@pipeline().globalParameters.SourceServerName",
+							"type": "Expression"
+						},
+						"DatabaseName": {
+							"value": "@pipeline().globalParameters.SourceDatabaseName",
+							"type": "Expression"
+						},
+						"UserID": {
+							"value": "@pipeline().globalParameters.SourceUserID",
+							"type": "Expression"
+						},
+						"Password": {
+							"value": "@pipeline().globalParameters.SourcePassword",
+							"type": "Expression"
+						}
+					}
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "BEGIN\nDECLARE @Count INT=1,@TableName Varchar(1000),@TotalCount INT\nDROP TABLE IF EXISTS #TEMP\nCREATE TABLE #TEMP(ID INT Identity(1,1),TableName Varchar(100))\nINSERT #TEMP\nVALUES \n('ABADosageAssessment')\n,('ABADosageAssessmentAgreement')\n,('ABADosageAssessmentResponses')\n,('AbcOptions')\n,('AccountCoachingSessions')\n,('AccountFileTag')\n,('AccountFileTagToFile')\n,('AccountInfo')\n,('AccountRole')\n,('ActivityTests')\n,('ActivityTestSessionResponses')\n,('ActivityTestSessions')\n,('Affiliate')\n,('Answer')\n,('AnswerRating')\n,('ApplicationLog')\n,('AppointmentNonPropagationUpdates')\n,('AppointmentPropagation')\n,('AppointmentSandataInfo')\n,('BehaviorAssessment')\n,('BehaviorAssessmentAudit')\n,('BehaviorAssessmentLog')\n,('BehaviorAssessmentLogAbcOptions')\n,('BehaviorFormPlanFunction')\n,('BehaviorFunctionSkills')\n,('BehaviorFunctionSkillsAudit')\n,('BehaviorNote')\n,('BehaviorPlan')\n--,('BehaviorPlanAudit')\n,('BehaviorPlanCustomCategory')\n,('BehaviorPlanDataRecording')\n,('BehaviorPlanDataRecordingDetails')\n,('BehaviorPlanFunction')\n,('BehaviorPlanFunctionAudit')\n,('BehaviorPlanHistory')\n,('BehaviorPlanHistoryAudit')\n,('BehaviorPlanMembers')\n,('BehaviorPlanMembersAudit')\n,('BehaviorPlanNotes')\n,('BehaviorPlanNotesAudit')\n,('BehaviorPlanReviews')\n,('BehaviorTracking')\n,('BehaviorTrackingAudit')\n,('BillingHistory')\n,('BillingItem')\n,('BillingSyncResults')\n,('ChangeAudit')\n,('ChildProfile')\n,('ChildProfileAssessmentResponse')\n,('ChildProfileCoachingSessions')\n,('ChildProfileDiagnosis')\n,('ChildProfileEncrypt')\n,('ChildProfileExternalMembers')\n,('ChildProfileHistory')\n,('ChildProfileLessonSubTargets')\n,('ChildProfileLessonTarget')\n,('ChildProfileRecommendations')\n,('ChildProfileSandataInfo')\n,('ChildProfileTargetMasteryCriteria')\n,('ChildProfileTeamMember')\n,('ChildProfileTeamMemberOrg')\n,('ChildProfileTeamMemberPreferences')\n,('CurrentActivity')\n,('CurrentCurriculum')\n,('CurrentCurriculumHistory')\n,('CurrentCurriculumStrategy')\n,('Curriculum')\n,('CurriculumLog')\n,('DataPhase')\n,('DataWarehouseSettings')\n--,('Debug')\n,('DPHReports')\n,('DurationData')\n,('EmailLog')\n,('EmailTemplate')\n,('EmployeeBenefitEmailVerification')\n,('EmployeeBenefitUsers')\n,('ExportSubscription')\n,('ExternalMembers')\n,('FileCabinet')\n,('FileCabinetEmailView')\n,('FileCabinetFiles')\n,('FileCabinetFolders')\n,('FrequencyData')\n,('hcAppointmentAcknowledgeableException')\n,('hcAppointmentUnarchivedReasons')\n,('hcAppointmentClockingDetails')\n,('hcAppointmentCustomTags')\n,('hcAppointmentEVVReasons')\n,('hcAppointmentEvvTellusLog')\n,('hcAppointmentReminderActual')\n,('hcAppointmentReminderSettings')\n,('hcAppointmentReminderTemplate')\n,('hcAppointments')\n,('hcAppointmentSessionComments')\n,('hcAvailabilities')\n,('hcChargeEntries')\n,('hcChildProfileAssessment')\n,('hcChildProfileAssessmentShare')\n,('hcChildProfileAuthorization')\n,('hcChildProfileAuthorizationBillingCode')\n,('hcChildProfileContacts')\n,('hcChildProfileContactsEncrypt')\n,('hcChildProfileDiagnosis')\n,('hcChildProfileFunderMapping')\n,('hcChildProfileFunderServiceLineMapping')\n,('hcChildProfileHealthCondition')\n,('hcChildProfileHealthConditionEncryption')\n,('hcChildProfileMedication')\n,('hcChildProfileMedicationEncryption')\n,('hcChildProfilePreference')\n,('hcChildProfileReferringProvider')\n,('hcChildProfileScheduleAssessment')\n,('hcChildProfileStaffAgePreference')\n,('hcChildProfileStaffGenderPreference')\n,('hcChildProfileStaffLanguagePreference')\n,('hcChildProfileStaffMember')\n,('hcClientCustomFieldOptionValues')\n,('hcClientCustomFields')\n,('hcClientCustomFieldsOptions')\n,('hcClientCustomFieldValues')\n,('hcElementField')\n,('hcElementFieldValues')\n,('hcElementType')\n,('hcClientStatus')\n,('hcEncounterAppointmentLink')\n,('hcEncounterAttachments')\n,('hcForm')\n,('hcFormField')\n,('hcEncounters')\n,('hcFormFunders')\n,('hcFormResponse')\n,('hcFormResponseLessonNotes')\n,('hcFormResponseLessonNotesTargets')\n,('hcFormResponseLessonsExcluded')\n,('hcFormResponseRemoteSignatureRequest')\n,('hcFunder')\n,('hcFunderCaseManager')\n,('hcFunderInsurancePlans')\n,('hcFunderPreventableDates')\n,('hcFunderSessionNoteExceptions')\n,('hcGlobalLock')\n,('hcNote')\n,('hcGlobalLockStaffException')\n,('hcPerson')\n,('hcPayOver')\n,('hcPropagatingChildProfile')\n,('hcPropagatingChildProfileAuthorization')\n,('hcPropagatingChildProfileFunder')\n,('hcPlaceOfService')\n,('hcPropagatingFunders')\n,('hcProviderBillingCode')\n,('hcProviderBillingCodeCredentials')\n,('hcProviderLocation')\n,('hcProviderServiceLine')\n,('hcProviderServices')\n,('hcReferringProvider')\n,('hcRolePermissions')\n,('hcReportHistory')\n,('hcServiceFunder')\n,('hcSettings')\n,('hcStaffCredential')\n,('hcStaffCredentialType')\n,('hcStaffCustomFieldOptionValues')\n,('hcStaffCustomFields')\n,('hcStaffCustomFieldsOptions')\n,('hcStaffCustomFieldValues')\n,('hcStaffMember')\n,('hcStaffMemberAgeGroup')\n,('hcStaffMemberCredential')\n,('hcStaffMemberLanguage')\n,('hcStaffMemberLocation')\n,('hcStaffMemberPayroll')\n,('hcStaffMileage')\n,('hcStaffPaycodes')\n,('hcStaffService')\n,('hcStaffServiceFunder')\n,('hcStaffStatus')\n,('hcTasks')\n,('hcTransaction')\n,('hcWorkflowHistory')\n,('hcStaffTitle')\n,('hollowAccountInfoSubscriber')\n,('hollowAccountLeaderRole6')\n,('hollowAccountMasteryCriteria')\n,('hollowCaregiver')\n,('hollowChildProfileLessonMasteryCriteria')\n,('hollowChildProfileLessonStatus')\n--,('hollowSubscriberCaregiver')\n,('IepGoal')\n,('IepObjective')\n,('IepPlanDates')\n,('IntervalData')\n,('KareoInsuranceCompanies')\n,('LearningProcessAttributes')\n,('LearningPrompt')\n,('Lesson')\n,('KareoSettings')\n,('LessonAccountCustomCategory')\n,('LessonCustomCategory')\n,('LessonStep')\n,('LessonStrategy')\n,('LessonTarget')\n,('MasteryCriteria')\n,('LessonNote')\n,('MedicaidIdNumbers')\n,('MemberAccountHistory')\n,('MFAUnsubscribedMembers')\n,('OccurrenceLateEntries')\n,('PasswordHistory')\n,('PeerSupportTopicPosts')\n,('PeerSupportTopics')\n,('PhaseChange')\n,('PhaseChangeForBehavior')\n,('PhaseChangeForLesson')\n,('PrincipalSignatures')\n,('PublishContent')\n,('Question')\n,('QuestionCategory')\n--,('RecapMembers')\n,('RecapProfiles')\n,('rptObjectives')\n,('rptTargets')\n,('rptUserActivityLog')\n,('RTAExceptions')\n,('RTAReports')\n--,('RTAResources')\n,('SavedBehaviorReportDetails')\n,('SavedBehaviorReports')\n,('SavedReportData')\n,('SavedReportDetails')\n,('SavedReports')\n,('ScheduledReportAdditionalParameters')\n,('ScheduledReports')\n,('SessionSchedule')\n,('SessionScheduleLesson')\n,('SetssInvoices')\n,('SharedFolderAccess')\n,('StaffMemberSandataInfo')\n,('StaffSignatures')\n,('Subscription')\n,('SubscriptionProduct')\n,('Targets')\n,('TargetTeachingSteps')\n,('tblChangeTracking')\n,('SubscriptionPromotion')\n,('tblMember')\n,('tblMemberAccountRole')\n,('tblMemberFeatureHistory')\n,('TeachingStep')\n,('tblMemberRole')\n,('TestResultHistory')\n,('TrialSet')\n,('TrialSetDetails')\n,('TrialSetSelections')\n,('TrialSetSession')\n,('TestVideoHistory')\n,('UserActivityLog')\n,('UserSessionLog')\n,('VbMappAssessment')\n,('VbMappPurchaseHistory')\n,('VbMappSelection')\n,('VideoServerInfo')\n,('HistoricalAccountLevel')\n,('HistoricalActiveCounts')\n,('HistoricalChildProfileLevel')\n,('HistoricalMemberLevel')\n,('hcPropagatingProviderServices')\n,('DiagnosisLU')\n,('hcEmployeeType')\n,('hcPayer')\n,('hollowCaregiver')\n,('RecordResultLessonMethodType')\n,('SubscriptionPaymentType')\n,('BehaviorTrackingIntensityLevels')\n,('SSOMetadata')\n,('SSOSettings')\n,('ActionTracking')\n,('IntegrationPartnerDetail')\n,('hcAppointmentUncancelReasons')\n,('hcAddress')\n,('hcFormResponse')\n,('hcPropagatingAccountInfo')\n,('hcPropagatingStaffMember')\n,('SubscriptionRecurrence')\n,('HistoricalGroups')\n,('hcNoteType')\n,('LessonBehaviorGraphLink')\n,('SystemTeachingSteps')\n,('ChildProfileClinicalSettings')\n\n\nSELECT @TotalCount = COUNT(1) FROM #TEMP\n\nWHILE @Count <= @TotalCount\nBEGIN\nSET @TableName = NULL\n\tSELECT @TableName = TableName FROM #TEMP WHERE ID = @Count\n\tIF @TableName = 'hcAppointments'\n\tBEGIN\n\t\tEXEC ('DROP TABLE IF EXISTS Temp_' + @TableName)\n\t\tEXEC ('CREATE TABLE Temp_' + @TableName + '(AppointmentId INT,StartDate date)')\n\tEND\n\tELSE IF @TableName = 'AppointmentSandataInfo'\n\tBEGIN\n\t\tEXEC ('DROP TABLE IF EXISTS Temp_' + @TableName)\n\t\tEXEC ('CREATE TABLE Temp_' + @TableName + '(AppointmentId INT)')\n\tEND\n\tELSE IF @TableName = 'ChildProfileAssessmentResponse'\n\tBEGIN\n\t\tEXEC ('DROP TABLE IF EXISTS Temp_' + @TableName)\n\t\tEXEC ('CREATE TABLE Temp_' + @TableName + '(childProfileId INT,assessmentAssessmentQuestionId INT)')\n\tEND\n\tELSE IF @TableName = 'ChildProfileDiagnosis'\n\tBEGIN\n\t\tEXEC ('DROP TABLE IF EXISTS Temp_' + @TableName)\n\t\tEXEC ('CREATE TABLE Temp_' + @TableName + '(childProfileId INT,diagnosisId INT)')\n\tEND\n\tELSE IF @TableName = 'ChildProfileSandataInfo'\n\tBEGIN\n\t\tEXEC ('DROP TABLE IF EXISTS Temp_' + @TableName)\n\t\tEXEC ('CREATE TABLE Temp_' + @TableName + '(ChildProfileId INT,MedicaidId nvarchar(100))')\n\tEND\n\tELSE IF @TableName IN('ChildProfileTeamMember','ChildProfileTeamMemberOrg','ChildProfileTeamMemberPreferences')\n\tBEGIN\n\t\tEXEC ('DROP TABLE IF EXISTS Temp_' + @TableName)\n\t\tEXEC ('CREATE TABLE Temp_' + @TableName + '(ChildProfileId INT,memberId INT)')\n\tEND\n\tELSE IF @TableName IN('hcFormResponseLessonsExcluded')\n\tBEGIN\n\t\tEXEC ('DROP TABLE IF EXISTS Temp_' + @TableName)\n\t\tEXEC ('CREATE TABLE Temp_' + @TableName + '(HcFormResponseId INT,LessonId INT)')\n\tEND\n\tELSE IF @TableName IN('hollowAccountInfoSubscriber')\n\tBEGIN\n\t\tEXEC ('DROP TABLE IF EXISTS Temp_' + @TableName)\n\t\tEXEC ('CREATE TABLE Temp_' + @TableName + '(accountInfoId INT,subscriberId INT)')\n\tEND\n\tELSE IF @TableName IN('hollowAccountLeaderRole6')\n\tBEGIN\n\t\tEXEC ('DROP TABLE IF EXISTS Temp_' + @TableName)\n\t\tEXEC ('CREATE TABLE Temp_' + @TableName + '(accountInfoId INT,memberID INT)')\n\tEND\n\tELSE IF @TableName IN('hollowChildProfileLessonStatus')\n\tBEGIN\n\t\tEXEC ('DROP TABLE IF EXISTS Temp_' + @TableName)\n\t\tEXEC ('CREATE TABLE Temp_' + @TableName + '(childProfileId INT,lessonId INT)')\n\tEND\n\tELSE IF @TableName IN('MFAUnsubscribedMembers')\n\tBEGIN\n\t\tEXEC ('DROP TABLE IF EXISTS Temp_' + @TableName)\n\t\tEXEC ('CREATE TABLE Temp_' + @TableName + '(MemberId INT)')\n\tEND\n\tELSE IF @TableName IN('PhaseChangeForBehavior')\n\tBEGIN\n\t\tEXEC ('DROP TABLE IF EXISTS Temp_' + @TableName)\n\t\tEXEC ('CREATE TABLE Temp_' + @TableName + '(PhaseChangeId INT,BehaviorTrackingId INT)')\n\tEND\n\tELSE IF @TableName IN('PhaseChangeForLesson')\n\tBEGIN\n\t\tEXEC ('DROP TABLE IF EXISTS Temp_' + @TableName)\n\t\tEXEC ('CREATE TABLE Temp_' + @TableName + '(PhaseChangeId INT,CurrentCurriculumId INT)')\n\tEND\n\tELSE IF @TableName IN('rptUserActivityLog')\n\tBEGIN\n\t\tEXEC ('DROP TABLE IF EXISTS Temp_' + @TableName)\n\t\tEXEC ('CREATE TABLE Temp_' + @TableName + '(rptId INT)')\n\tEND\n\tELSE IF @TableName IN('SessionScheduleLesson')\n\tBEGIN\n\t\tEXEC ('DROP TABLE IF EXISTS Temp_' + @TableName)\n\t\tEXEC ('CREATE TABLE Temp_' + @TableName + '(sessionScheduleId INT,lessonId INT)')\n\tEND\n\tELSE IF @TableName IN('StaffMemberSandataInfo')\n\tBEGIN\n\t\tEXEC ('DROP TABLE IF EXISTS Temp_' + @TableName)\n\t\tEXEC ('CREATE TABLE Temp_' + @TableName + '(MemberId INT,MedicaidId nvarchar(100))')\n\tEND\n\tELSE IF @TableName IN('ScheduledReportAdditionalParameters')\n\tBEGIN\n\t\tEXEC ('DROP TABLE IF EXISTS Temp_' + @TableName)\n\t\tEXEC ('CREATE TABLE Temp_' + @TableName + '(ScheduledReportId INT)')\n\tEND\n\tELSE IF @TableName IN('ChildProfileClinicalSettings')\n\tBEGIN\n\t\tEXEC ('DROP TABLE IF EXISTS Temp_' + @TableName)\n\t\tEXEC ('CREATE TABLE Temp_' + @TableName + '(ChildProfileId INT)')\n\tEND\n\tELSE IF @TableName IN('rptTargets','rptObjectives')\n\tBEGIN\n\t\tEXEC ('DROP TABLE IF EXISTS Temp_' + @TableName)\n\t\tEXEC ('CREATE TABLE Temp_' + @TableName + '(rptId INT)')\n\tEND\n\tELSE IF @TableName IN('RecapProfiles')\n\tBEGIN\n\t\tEXEC ('DROP TABLE IF EXISTS Temp_' + @TableName)\n\t\tEXEC ('CREATE TABLE Temp_' + @TableName + '(ChildProfileId INT,MemberId INT)')\n\tEND\n\tELSE\n\tBEGIN\n\t\tEXEC ('DROP TABLE IF EXISTS Temp_' + @TableName)\n\t\tEXEC ('CREATE TABLE Temp_' + @TableName + '(ID INT)')\n\tEND\n\n\tSET @Count = @Count + 1\nEND\n\n\nEnd"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Execute Drop Temp Table Script",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Execute_pipeline_restore_missingTables",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "ADF_LS_SourceDB",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"ServerName": {
+							"value": "@pipeline().globalParameters.SourceServerName",
+							"type": "Expression"
+						},
+						"DatabaseName": {
+							"value": "@pipeline().globalParameters.SourceDatabaseName",
+							"type": "Expression"
+						},
+						"UserID": {
+							"value": "@pipeline().globalParameters.SourceUserID",
+							"type": "Expression"
+						},
+						"Password": {
+							"value": "@pipeline().globalParameters.SourcePassword",
+							"type": "Expression"
+						}
+					}
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "BEGIN\nDECLARE @Count INT=1,@TableName Varchar(1000),@TotalCount INT\nDROP TABLE IF EXISTS #TEMP\nCREATE TABLE #TEMP(ID INT Identity(1,1),TableName Varchar(100))\nINSERT #TEMP\nVALUES \n('ABADosageAssessment')\n,('ABADosageAssessmentAgreement')\n,('ABADosageAssessmentResponses')\n,('AbcOptions')\n,('AccountCoachingSessions')\n,('AccountFileTag')\n,('AccountFileTagToFile')\n,('AccountInfo')\n,('AccountRole')\n,('ActivityTests')\n,('ActivityTestSessionResponses')\n,('ActivityTestSessions')\n,('Affiliate')\n,('Answer')\n,('AnswerRating')\n,('ApplicationLog')\n,('AppointmentNonPropagationUpdates')\n,('AppointmentPropagation')\n,('AppointmentSandataInfo')\n,('BehaviorAssessment')\n,('BehaviorAssessmentAudit')\n,('BehaviorAssessmentLog')\n,('BehaviorAssessmentLogAbcOptions')\n,('BehaviorFormPlanFunction')\n,('BehaviorFunctionSkills')\n,('BehaviorFunctionSkillsAudit')\n,('BehaviorNote')\n,('BehaviorPlan')\n--,('BehaviorPlanAudit')\n,('BehaviorPlanCustomCategory')\n,('BehaviorPlanDataRecording')\n,('BehaviorPlanDataRecordingDetails')\n,('BehaviorPlanFunction')\n,('BehaviorPlanFunctionAudit')\n,('BehaviorPlanHistory')\n,('BehaviorPlanHistoryAudit')\n,('BehaviorPlanMembers')\n,('BehaviorPlanMembersAudit')\n,('BehaviorPlanNotes')\n,('BehaviorPlanNotesAudit')\n,('BehaviorPlanReviews')\n,('BehaviorTracking')\n,('BehaviorTrackingAudit')\n,('BillingHistory')\n,('BillingItem')\n,('BillingSyncResults')\n,('ChangeAudit')\n,('ChildProfile')\n,('ChildProfileAssessmentResponse')\n,('ChildProfileCoachingSessions')\n,('ChildProfileDiagnosis')\n,('ChildProfileEncrypt')\n,('ChildProfileExternalMembers')\n,('ChildProfileHistory')\n,('ChildProfileLessonSubTargets')\n,('ChildProfileLessonTarget')\n,('ChildProfileRecommendations')\n,('ChildProfileSandataInfo')\n,('ChildProfileTargetMasteryCriteria')\n,('ChildProfileTeamMember')\n,('ChildProfileTeamMemberOrg')\n,('ChildProfileTeamMemberPreferences')\n,('CurrentActivity')\n,('CurrentCurriculum')\n,('CurrentCurriculumHistory')\n,('CurrentCurriculumStrategy')\n,('Curriculum')\n,('CurriculumLog')\n,('DataPhase')\n,('DataWarehouseSettings')\n--,('Debug')\n,('DPHReports')\n,('DurationData')\n,('EmailLog')\n,('EmailTemplate')\n,('EmployeeBenefitEmailVerification')\n,('EmployeeBenefitUsers')\n,('ExportSubscription')\n,('ExternalMembers')\n,('FileCabinet')\n,('FileCabinetEmailView')\n,('FileCabinetFiles')\n,('FileCabinetFolders')\n,('FrequencyData')\n,('hcAppointmentAcknowledgeableException')\n,('hcAppointmentUnarchivedReasons')\n,('hcAppointmentClockingDetails')\n,('hcAppointmentCustomTags')\n,('hcAppointmentEVVReasons')\n,('hcAppointmentEvvTellusLog')\n,('hcAppointmentReminderActual')\n,('hcAppointmentReminderSettings')\n,('hcAppointmentReminderTemplate')\n,('hcAppointments')\n,('hcAppointmentSessionComments')\n,('hcAvailabilities')\n,('hcChargeEntries')\n,('hcChildProfileAssessment')\n,('hcChildProfileAssessmentShare')\n,('hcChildProfileAuthorization')\n,('hcChildProfileAuthorizationBillingCode')\n,('hcChildProfileContacts')\n,('hcChildProfileContactsEncrypt')\n,('hcChildProfileDiagnosis')\n,('hcChildProfileFunderMapping')\n,('hcChildProfileFunderServiceLineMapping')\n,('hcChildProfileHealthCondition')\n,('hcChildProfileHealthConditionEncryption')\n,('hcChildProfileMedication')\n,('hcChildProfileMedicationEncryption')\n,('hcChildProfilePreference')\n,('hcChildProfileReferringProvider')\n,('hcChildProfileScheduleAssessment')\n,('hcChildProfileStaffAgePreference')\n,('hcChildProfileStaffGenderPreference')\n,('hcChildProfileStaffLanguagePreference')\n,('hcChildProfileStaffMember')\n,('hcClientCustomFieldOptionValues')\n,('hcClientCustomFields')\n,('hcClientCustomFieldsOptions')\n,('hcClientCustomFieldValues')\n,('hcElementField')\n,('hcElementFieldValues')\n,('hcElementType')\n,('hcClientStatus')\n,('hcEncounterAppointmentLink')\n,('hcEncounterAttachments')\n,('hcForm')\n,('hcFormField')\n,('hcEncounters')\n,('hcFormFunders')\n,('hcFormResponse')\n,('hcFormResponseLessonNotes')\n,('hcFormResponseLessonNotesTargets')\n,('hcFormResponseLessonsExcluded')\n,('hcFormResponseRemoteSignatureRequest')\n,('hcFunder')\n,('hcFunderCaseManager')\n,('hcFunderInsurancePlans')\n,('hcFunderPreventableDates')\n,('hcFunderSessionNoteExceptions')\n,('hcGlobalLock')\n,('hcNote')\n,('hcGlobalLockStaffException')\n,('hcPerson')\n,('hcPayOver')\n,('hcPropagatingChildProfile')\n,('hcPropagatingChildProfileAuthorization')\n,('hcPropagatingChildProfileFunder')\n,('hcPlaceOfService')\n,('hcPropagatingFunders')\n,('hcProviderBillingCode')\n,('hcProviderBillingCodeCredentials')\n,('hcProviderLocation')\n,('hcProviderServiceLine')\n,('hcProviderServices')\n,('hcReferringProvider')\n,('hcRolePermissions')\n,('hcReportHistory')\n,('hcServiceFunder')\n,('hcSettings')\n,('hcStaffCredential')\n,('hcStaffCredentialType')\n,('hcStaffCustomFieldOptionValues')\n,('hcStaffCustomFields')\n,('hcStaffCustomFieldsOptions')\n,('hcStaffCustomFieldValues')\n,('hcStaffMember')\n,('hcStaffMemberAgeGroup')\n,('hcStaffMemberCredential')\n,('hcStaffMemberLanguage')\n,('hcStaffMemberLocation')\n,('hcStaffMemberPayroll')\n,('hcStaffMileage')\n,('hcStaffPaycodes')\n,('hcStaffService')\n,('hcStaffServiceFunder')\n,('hcStaffStatus')\n,('hcTasks')\n,('hcTransaction')\n,('hcWorkflowHistory')\n,('hcStaffTitle')\n,('hollowAccountInfoSubscriber')\n,('hollowAccountLeaderRole6')\n,('hollowAccountMasteryCriteria')\n,('hollowCaregiver')\n,('hollowChildProfileLessonMasteryCriteria')\n,('hollowChildProfileLessonStatus')\n--,('hollowSubscriberCaregiver')\n,('IepGoal')\n,('IepObjective')\n,('IepPlanDates')\n,('IntervalData')\n,('KareoInsuranceCompanies')\n,('LearningProcessAttributes')\n,('LearningPrompt')\n,('Lesson')\n,('KareoSettings')\n,('LessonAccountCustomCategory')\n,('LessonCustomCategory')\n,('LessonStep')\n,('LessonStrategy')\n,('LessonTarget')\n,('MasteryCriteria')\n,('LessonNote')\n,('MedicaidIdNumbers')\n,('MemberAccountHistory')\n,('MFAUnsubscribedMembers')\n,('OccurrenceLateEntries')\n,('PasswordHistory')\n,('PeerSupportTopicPosts')\n,('PeerSupportTopics')\n,('PhaseChange')\n,('PhaseChangeForBehavior')\n,('PhaseChangeForLesson')\n,('PrincipalSignatures')\n,('PublishContent')\n,('Question')\n,('QuestionCategory')\n--,('RecapMembers')\n,('RecapProfiles')\n,('rptObjectives')\n,('rptTargets')\n,('rptUserActivityLog')\n,('RTAExceptions')\n,('RTAReports')\n--,('RTAResources')\n,('SavedBehaviorReportDetails')\n,('SavedBehaviorReports')\n,('SavedReportData')\n,('SavedReportDetails')\n,('SavedReports')\n,('ScheduledReportAdditionalParameters')\n,('ScheduledReports')\n,('SessionSchedule')\n,('SessionScheduleLesson')\n,('SetssInvoices')\n,('SharedFolderAccess')\n,('StaffMemberSandataInfo')\n,('StaffSignatures')\n,('Subscription')\n,('SubscriptionProduct')\n,('Targets')\n,('TargetTeachingSteps')\n,('tblChangeTracking')\n,('SubscriptionPromotion')\n,('tblMember')\n,('tblMemberAccountRole')\n,('tblMemberFeatureHistory')\n,('TeachingStep')\n,('tblMemberRole')\n,('TestResultHistory')\n,('TrialSet')\n,('TrialSetDetails')\n,('TrialSetSelections')\n,('TrialSetSession')\n,('TestVideoHistory')\n,('UserActivityLog')\n,('UserSessionLog')\n,('VbMappAssessment')\n,('VbMappPurchaseHistory')\n,('VbMappSelection')\n,('VideoServerInfo')\n,('HistoricalAccountLevel')\n,('HistoricalActiveCounts')\n,('HistoricalChildProfileLevel')\n,('HistoricalMemberLevel')\n,('hcPropagatingProviderServices')\n,('DiagnosisLU')\n,('hcEmployeeType')\n,('hcPayer')\n,('hollowCaregiver')\n,('RecordResultLessonMethodType')\n,('SubscriptionPaymentType')\n,('BehaviorTrackingIntensityLevels')\n,('SSOMetadata')\n,('SSOSettings')\n,('ActionTracking')\n,('IntegrationPartnerDetail')\n,('hcAppointmentUncancelReasons')\n,('hcAddress')\n,('hcFormResponse')\n,('hcPropagatingAccountInfo')\n,('hcPropagatingStaffMember')\n,('SubscriptionRecurrence')\n,('HistoricalGroups')\n,('hcNoteType')\n,('LessonBehaviorGraphLink')\n,('SystemTeachingSteps')\n,('ChildProfileClinicalSettings')\n\nSELECT @TotalCount = COUNT(1) FROM #TEMP\n\nWHILE @Count <= @TotalCount\nBEGIN\nSET @TableName = NULL\n\tSELECT @TableName = TableName FROM #TEMP WHERE ID = @Count\n\tEXEC ('DROP TABLE IF EXISTS Temp_' + @TableName)\n\n\tSET @Count = @Count + 1\nEND\n\n\nEnd"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "update_subscription_status",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Execute Drop Temp Table Script",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Update_Subscription_Status_Restore_pipeline",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Execute_pipeline_restore_missingTables",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Execute Pipeline1_copy3",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Execute_pipeline_restore_missingTables",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-01-19T07:11:36Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

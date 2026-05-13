@@ -1,0 +1,42 @@
+{
+	"name": "pipeline2",
+	"properties": {
+		"activities": [
+			{
+				"name": "Script1",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "ADF_LS_TargetDB",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"ServerName": "rta-bh-east-sql1.database.windows.net",
+						"DatabaseName": "rta-bh-prd-db1-hs",
+						"UserID": "RTA_ETL_Automation_User",
+						"Password": "XeWtvhrbFggtY8WJafCt"
+					}
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "EXEC\t[dbo].[Usp_getsource_Count_Tables]\r\n\t\t@SourceDB = N'rta-bh-prd-db1-hs',\r\n\t\t--@AccountInfoIDs = N'23409,24190'\r\n\t\t@AccountInfoIDs =N'23187'\r\n\r\n"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-04-30T15:51:29Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

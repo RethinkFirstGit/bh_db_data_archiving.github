@@ -1,0 +1,18 @@
+{
+	"name": "FileAccessHistory_Trigger",
+	"properties": {
+		"description": "Trigger to initiate the copy of data > 90 days from the FileAcessHistory Table from Prod to Dev, then delete the data after copying.",
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"pipelines": [],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Day",
+				"interval": 7,
+				"startTime": "2023-07-01T16:00:00Z",
+				"timeZone": "UTC"
+			}
+		}
+	}
+}

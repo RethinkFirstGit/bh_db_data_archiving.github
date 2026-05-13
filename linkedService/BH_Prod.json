@@ -1,0 +1,27 @@
+{
+	"name": "BH_Prod",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"parameters": {
+			"DbName": {
+				"type": "String",
+				"defaultValue": "rta-bh-Rethink-Consolidated-dev01-db"
+			},
+			"DbServer": {
+				"type": "string",
+				"defaultValue": "rta-bh-dev-internal-sql.database.windows.net"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"server": "@{linkedService().DbServer}",
+			"database": "@{linkedService().DbName}",
+			"encrypt": "mandatory",
+			"trustServerCertificate": false,
+			"authenticationType": "SQL",
+			"userName": "rtaadmin",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQDNGN0Y2MDIyLTIyOEYtNEUzMC1BNzUyLThBQTE1RUE0N0VERV8yNzRlNmI5Mi0wMmFhLTRhZDMtYjM3ZC0yY2YxMjkyMjEzZGEiDQp9"
+		}
+	}
+}

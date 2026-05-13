@@ -1,0 +1,1843 @@
+{
+	"name": "Master_Pipeline_Account_RestoreDB_1",
+	"properties": {
+		"activities": [
+			{
+				"name": "AccountInfo_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "AccountInfo_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Subscription_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "AccountInfo_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Subscription_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcAppointments_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ChildProfile_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "hcAppointments_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ChildProfile_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcStaffMember__Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ChildProfile_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcStaffMember__Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "tblMember_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "hcStaffMember_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "tblMember_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Subscription_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "tblMember_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "SSOMetadata__Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcAppointments_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "SSOMetadata__Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ActionTracking__Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "SSOMetadata__Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ActionTracking__Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcAvailabilities__Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ActionTracking__Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "hcAvailabilities_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcElementField_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcAvailabilities__Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "hcElementField_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcElementFieldvalues_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcElementField_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "hcElementFieldvalues_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcElementType_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcElementFieldvalues_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "hcElementType_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcForm_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcElementType_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "hcForm_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcFormField_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcForm_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "hcFormField_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "EmployeeBenefitEmailVerification_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcPerson_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "EmployeeBenefitEmailVerification_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ABADosageAssessment_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "EmployeeBenefitEmailVerification_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ABADosageAssessment_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ABADosageAssessmentResponses_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ABADosageAssessment_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ABADosageAssessmentResponses_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "AccountCoachingSessions_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ABADosageAssessmentResponses_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "AccountCoachingSessions_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "AccountFileTag_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "AccountCoachingSessions_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "AccountFileTag_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "AccountRole_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "AccountFileTag_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "AccountRole_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ActivityTests_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "AccountRole_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ActivityTests_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ActivityTestSessionResponses_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ActivityTests_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ActivityTestSessionResponses_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ActivityTestSessions_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ActivityTestSessionResponses_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ActivityTestSessions_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Affiliate_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ActivityTestSessions_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Affiliate_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Answer_Copy_Dynamic",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Affiliate_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Answer_Copy_Dynamic",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ApplicationLog_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Answer_Copy_Dynamic",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ApplicationLog_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "AppointmentNonPropagationUpdates_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ApplicationLog_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "AppointmentNonPropagationUpdates_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "AppointmentSandataInfo_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "AppointmentNonPropagationUpdates_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "AppointmentSandataInfo_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BehaviorAssessment_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BehaviorTracking_Restore_DB_Insert_copy1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "BehaviorAssessment_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BehaviorAssessmentlog_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BehaviorAssessment_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "BehaviorAssessmentlog_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BehaviorAssessmentLogAbcOptions_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BehaviorAssessmentlog_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "BehaviorAssessmentLogAbcOptions_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BehaviorFormPlanFunction_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BehaviorAssessmentLogAbcOptions_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "BehaviorFormPlanFunction_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BehaviorFunctionSkills_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BehaviorFormPlanFunction_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "BehaviorFunctionSkills_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BehaviorNote_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BehaviorFunctionSkills_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "BehaviorNote_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BehaviorPlanDataRecording_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BehaviorNote_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "BehaviorPlanDataRecording_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BehaviorPlanDataRecordingDetails_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BehaviorPlanDataRecording_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "BehaviorPlanDataRecordingDetails_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BehaviorPlanMembers_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BehaviorPlanDataRecordingDetails_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "BehaviorPlanMembers_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BehaviorPlanNotes_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BehaviorPlanMembers_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "BehaviorPlanNotes_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BehaviorPlanReviews_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BehaviorPlanNotes_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "BehaviorPlanReviews_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BillingHistory_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BehaviorPlanReviews_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "BillingHistory_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcAppointmentUnarchivedReasons_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BillingHistory_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "hcAppointmentUnarchivedReasons_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BillingItem_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcAppointmentUnarchivedReasons_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "BillingItem_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ChildProfileAssessmentResponse_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BillingItem_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ChildProfileAssessmentResponse_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ChildProfileDiagnosis_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ChildProfileAssessmentResponse_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ChildProfileDiagnosis_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ChildProfileEncrypt_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ChildProfileDiagnosis_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ChildProfileEncrypt_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ChildProfileExternalMembers_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ChildProfileEncrypt_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ChildProfileExternalMembers_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ChildProfileHistory_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ChildProfileExternalMembers_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ChildProfileHistory_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ChildProfileLessonSubTargets_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ChildProfileLessonTarget_Restore_DB_Insert1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ChildProfileLessonSubTargets_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ChildProfileRecommendations_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ChildProfileLessonSubTargets_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ChildProfileRecommendations_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ChildProfileSandataInfo_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ChildProfileRecommendations_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ChildProfileSandataInfo_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ChildProfileTargetMasteryCriteria_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ChildProfileSandataInfo_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ChildProfileTargetMasteryCriteria_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ChildProfileTeamMember_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ChildProfileTargetMasteryCriteria_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ChildProfileTeamMember_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ChildProfileTeamMemberOrg_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ChildProfileTeamMember_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ChildProfileTeamMemberOrg_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ChildProfileTeamMemberPreferences_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ChildProfileTeamMemberOrg_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ChildProfileTeamMemberPreferences_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "CurrentActivity_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ChildProfileTeamMemberPreferences_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "CurrentActivity_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "CurrentCurriculum_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "CurrentActivity_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "CurrentCurriculum_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "CurrentCurriculumStrategy_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "CurrentCurriculum_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "CurrentCurriculumStrategy_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "CurriculumLog__Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "CurrentCurriculumStrategy_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "CurriculumLog__Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ChildProfileCoachingSessions_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "CurriculumLog__Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ChildProfileCoachingSessions_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "DataWarehouseSettings_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ChildProfileCoachingSessions_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "DataWarehouseSettings_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "DataPhase_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "DataWarehouseSettings_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "DataPhase_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "DPHReports_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "DataPhase_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "DPHReports_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "DurationData_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "DPHReports_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "DurationData_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ExternalMembers_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "DurationData_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ExternalMembers_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "FileCabinet_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ExternalMembers_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "FileCabinet_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "FileCabinetEmailView_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "FileCabinet_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "FileCabinetEmailView_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "FileCabinetFolders_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "FileCabinetEmailView_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "FileCabinetFolders_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "FrequencyData _Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "FileCabinetFolders_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "FrequencyData _Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcAppointmentAcknowledgeableException_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "FrequencyData _Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "hcAppointmentAcknowledgeableException_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcChildProfileAuthorization_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcAppointmentAcknowledgeableException_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "hcChildProfileAuthorization_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcClientCustomFields_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcChildProfileAuthorization_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "hcClientCustomFields_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "MedicaidIdNumbers_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcClientCustomFields_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "MedicaidIdNumbers_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BehaviorPlanFunction_Restore_DB_Insert_copy1",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BehaviorPlan_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "BehaviorPlanFunction_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BehaviorTracking_Restore_DB_Insert_copy1",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BehaviorPlanFunction_Restore_DB_Insert_copy1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "BehaviorTracking_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BehaviorPlan_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "AppointmentSandataInfo_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "BehaviorPlan_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "IepGoal_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ChildProfileHistory_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "IepGoal_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "IepObjective_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "IepGoal_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "IepObjective_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Curriculum_Restore_DB_Insert1",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "IepObjective_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Curriculum_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "ChildProfileLessonTarget_Restore_DB_Insert1",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Curriculum_Restore_DB_Insert1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ChildProfileLessonTarget_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcPerson_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcFormField_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "hcPerson_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-01-19T07:11:35Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

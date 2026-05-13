@@ -1,0 +1,25 @@
+{
+	"name": "LessonCustomCategory",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "BHDataArchiveDev",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"DbName": {
+				"type": "string"
+			},
+			"DbServer": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "LessonCustomCategory"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

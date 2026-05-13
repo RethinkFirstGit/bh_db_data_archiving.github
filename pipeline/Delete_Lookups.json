@@ -1,0 +1,36 @@
+{
+	"name": "Delete_Lookups",
+	"properties": {
+		"activities": [
+			{
+				"name": "Script1",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "select TABLE_SCHEMA,TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE table_type LIKE '%BASE TABLE%'\nAND table_name IN (\n'ABADosageAssessmentOptions',\n'ABADosageAssessmentQuestions',\n'ABADosageAssessmentSections',\n'ABADosageAssessmentTypes',\n'AccountSecuritySettings',\n'AccountTypeLU',\n'AcknowledgeableException',\n'Activity',\n'ActivityQuestions',\n'ActivityQuestionTargetMapping',\n'AgeGroupLU',\n'AnswerTypesLU',\n'AppAnnouncement',\n'ApplicationSettings',\n'AppointmentIntegrationOptions',\n'AppointmentIntegrationOptionTypes',\n'AreaOfConcernLU',\n'Assessment',\n'AssessmentAssessmentQuestion',\n'AssessmentQuestion',\n'AssessmentQuestionLesson',\n'AssessmentStatusLU',\n'BehaviorAfterLU',\n'BehaviorBeforeLU',\n'BehaviorCategoryLU',\n'BehaviorContextLU',\n'BehaviorFunctionsLU',\n'BehaviorLearning',\n'BehaviorLearningVideos',\n'BehaviorNonLessonSkillsLU',\n'BehaviorNotePriorityLU',\n'BehaviorPossibleReasonLU',\n'BehaviorSkillsStrategyLU',\n'BehaviorStrategyLessons',\n'BillingOptions',\n'CaregiverEmployeeBenefitLU',\n'CaregiverLU',\n'CaregiverOrgLU',\n'ChildRelationshipLU',\n'ClearingHouse',\n'ClearingHouseType',\n'CoachingTypeLU',\n'CommonStandardsCategories',\n'CommonStandardsRationals',\n'ConnectionTypeLU',\n'ConsecutiveUnitTypes',\n'CountryLU',\n'CreditCardTypeLU',\n'CurriculumTypeLU',\n'DefaultRoleTypeLU',\n'DiagnosisLUTypes',\n'DPHIntegrationReportStatuses',\n'DPHReportProcessingLogs',\n'Encounter',\n'EventStatusLU',\n'EventTypeLU',\n'evnews_Modification',\n'EVVActionTaken',\n'EVVReasonCode',\n'EVVStatus',\n'FAQ',\n'FAQCategories',\n'FileCabinetFolderTypesLU',\n'FormResponseStatus',\n'GenderLU',\n'Grades',\n'GroupMemberStatusLU',\n'hcAlertOptions',\n'hcAppointmentCancellationTypes',\n'hcAppointmentCustomTagTypes',\n'hcAppointmentDayTypes',\n'hcAppointmentMonthOccurrenceTypes',\n'hcAppointmentMonthTypes',\n'hcAppointmentOccurrenceTypes',\n'hcAppointmentReminderTimeFrame',\n'hcAppointmentReminderTypes',\n'hcAppointmentTransaction',\n'hcAppointmentTypes',\n'hcAppointmentUnarchivedDefaultReasons',\n'hcAppointmentUncancelDefaultReasons',\n'hcAssessedBehavior',\n'hcAssessmentPreferenceTypeLU',\n'hcAssessmentTypesLU',\n'hcAuthorizationDistributionTypes',\n'hcAuthorizationRenderingProviderType',\n'hcAuthorizationSubmissionTypes',\n'hcAuthorizationType',\n'hcBillingCode',\n'hcBillingCodeDuration',\n'hcBillingCodeTemplates',\n'hcBillingProviderOptions',\n'hcBillingSubmissionMethods',\n'hcChargePayment',\n'hcChildProfileBehaviorResponse',\n'hcClaims',\n'hcClaimStatus',\n'hcCombineChargeTypes',\n'hcCopaymentTypes',\n'hcCustomDiagnosis',\n'hcEncounterAttachmentTypes',\n'hcEncounterStatus',\n'hcEntityTypes',\n'hcFormGraphCalculationTypes',\n'hcFormGraphDurationTypes',\n'hcFormGraphFrequencyTypes',\n'hcFormGraphTypes',\n'hcFormGraphViewTypes',\n'hcFormResponseBehaviorTrackingExcluded',\n'hcFormTypes',\n'hcFrequencyType',\n'hcFunderCoverageTypes',\n'hcFunderTypeLU',\n'hcInsuranceConfirmationTypes',\n'hcInsuranceFunderPolicy',\n'hcLocationCodes',\n'hcMemberPermissions',\n'hcOvernightAppointments',\n'hcPaymentMethod',\n'hcPaymentTypeLU',\n'hcPayOverOption',\n'hcPermissions',\n'hcPermissionsAccessLevels',\n'hcPermissionsLevelType',\n'hcPropagatingAccountInfo',\n'hcPropagatingProviderServices',\n'hcPropagatingStaffMember',\n'hcProviderBillingCodeRateTypes',\n'hcProviderBillingCodeRoundingTypes',\n'hcReasonCode',\n'hcRelationshipToInsured',\n'hcScheduleTypes',\n'hcServiceNPIBillingTypes',\n'hcSettingTypes',\n'hcStaffCertificationLU',\n'hcStaffExperienceTypes',\n'hcStaffMemberPayrollTypes',\n'hcTaskAutomatedTypes',\n'hcTaskEntryTypes',\n'hcTaskTypes',\n'hcTaskWorkAreas',\n'hcTaxonomyCodes',\n'hcTimezones',\n'hcTransactionType',\n'hcUnitType',\n'hcWorkflowStatus',\n'hcWorkflowTypes',\n'HistoricalDailyUsersStats',\n'HistoricalGroups',\n'Holidays',\n'HomepageContactUsForm',\n'IntegrationEntityMap',\n'IntegrationEntityType',\n'IntegrationPartnerDetail',\n'IntegrationType',\n'IntervalLU',\n'Jurisdiction',\n'LanguageLU',\n'LessonCategory',\n'LessonCategoryType',\n'LessonElimination',\n'LessonNotePriorityLU',\n'LessonResourceTypeLU',\n'LessonStatus',\n'LessonStepStatus',\n'LevelOfImpairmentLU',\n'MailingListEmailAddresses',\n'MailingListTypeLU',\n'MaritalStatusLU',\n'MemberMultiAccountLink',\n'Messaging_Files',\n'MethodTypeLU',\n'NetsmartIntegrationType',\n'OrganizationSubscriberInterests',\n'OrganizationSubscribers',\n'OrganizationType',\n'OrganizationTypeLU',\n'OSTypeLU',\n'PaymentFrequencyLU',\n'PaymentMethodBilling',\n'PaymentMethodLU',\n'PeerSupportGroupMembers',\n'PeerSupportGroups',\n'PhaseChangeDataType',\n'PhaseChangeType',\n'Playlist',\n'PopoverOptionInfo',\n'PopoverOptionValue',\n'Product',\n'ProgramLU',\n'Promotion',\n'PromotionItem',\n'PromotionOption',\n'PromotionOptionProduct',\n'RecapProfiles',\n'RecordResultsLU',\n'RecordResultsPreferencesLU',\n'RecordResultsTemplate',\n'ReleaseLog',\n'Review',\n'RTAAccountListLU',\n'RTADateRangeLU',\n'RTADurationLU',\n'RTAExceptions',\n'RTAMetricTypeLU',\n'RTAResources',\n'RTAResources''Zips_USA',\n'RTASubMetricTypeLU',\n'RTATags',\n'SandataProcedureCodeMapping',\n'SandataResponseMessageHumanReadableMessagePairs',\n'SandataTimezones',\n'SavedBehaviorReportDetails',\n'ScheduledReportTypes',\n'ServiceCategoryLU',\n'ServiceIntensityTypes',\n'SignupNotification',\n'SSOMetadataType',\n'SSOProtocol',\n'SSOSettings',\n'StateLU',\n'StatusLU',\n'SubscriptionRecurrence',\n'SubscriptionStatusLU',\n'SubscriptionSubTypeLU',\n'SubscriptionTypeLU',\n'SupervisionRequest',\n'SupportTypeLU',\n'SyncResultStatus',\n'SyncResultType',\n'tblMemberFeatureLU',\n'tblRole',\n'TeachingMaterial',\n'TeachingMaterialPromoCode',\n'Test',\n'Testanswer',\n'TestQuestion',\n'TestSection',\n'Timezone',\n'TipOfTheWeek',\n'TrackIntensityStatuses',\n'TrainingLevelsLU',\n'TrainingModuleLU',\n'TrialTypeDefaultLU',\n'UserActionLU',\n'VbMappLessonMapping',\n'VerbalStatusLessonElimination',\n'VerbalStatusLU'\n)"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-04-30T15:36:13Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

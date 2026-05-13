@@ -1,0 +1,279 @@
+{
+	"name": "Master_Pipeline_Account_RestoreDB_4",
+	"properties": {
+		"activities": [
+			{
+				"name": "hcTransaction_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "BillingSyncResults_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "hcTransaction_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "BillingSyncResults_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcAppointmentClockingDetails_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "BillingSyncResults_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcAppointmentClockingDetails_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "AppointmentPropagation_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "hcAppointmentClockingDetails_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "AppointmentPropagation_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcNote_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "AppointmentPropagation_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcNote_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcNoteType_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "hcNote_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcChildProfileAssessmentShare_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcChildProfileAssessment _Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "hcChildProfileAssessmentShare_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcChildProfileAssessment _Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcChargeEntries_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "hcChildProfileAssessment _Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcChargeEntries_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcAppointmentUncancelReasons_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "hcChargeEntries_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcAppointmentUncancelReasons_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcAppointmentSessionComments_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "hcAppointmentUncancelReasons_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcAppointmentSessionComments_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "hcAppointmentSessionComments_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcPropagatingStaffMember",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcTransaction_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "hcPropagatingStaffMember_Restore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "hcNoteType_Restore_DB_Insert",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "hcChildProfileAssessmentShare_Restore_DB_Insert",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "hcNoteTypeRestore_DB_Insert",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-01-19T07:11:34Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

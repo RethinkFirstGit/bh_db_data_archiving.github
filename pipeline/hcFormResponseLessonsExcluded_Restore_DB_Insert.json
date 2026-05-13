@@ -1,0 +1,193 @@
+{
+	"name": "hcFormResponseLessonsExcluded_Restore_DB_Insert",
+	"properties": {
+		"activities": [
+			{
+				"name": "CopyhcFormResponseLessonsExcluded",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Copy data1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "select t1.* from (select    --ap.* \nap.HcFormResponseId\n,ap.LessonId\n,ap.DateCreated\n,ap.DateDeleted\nfrom @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name} ap \ninner join dbo.hcFormResponse fr on (hcFormResponseId=fr.id)\ninner join  dbo.hcForm hf on (hcFormid=hf.id)\ninner join AccountInfo a on (a.ID=hf.accountInfoId  )\nwhere a.Id in (@{join(pipeline().globalParameters.AccountID, ',')})\n\n)t1\nleft join Temp_hcFormResponseLessonsExcluded t2 on t1.HcFormResponseId = t2.HcFormResponseId AND t1.LessonId = t2.LessonId\nWHERE t2.HcFormResponseId IS NULL AND t2.LessonId IS NULL",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Archive_DS_SourceDB",
+						"type": "DatasetReference",
+						"parameters": {
+							"ServerName": "@pipeline().globalParameters.SourceServerName",
+							"DatabaseName": "@pipeline().globalParameters.SourceDatabaseName",
+							"UserID": "@pipeline().globalParameters.SourceUserID",
+							"Password": "@pipeline().globalParameters.SourcePassword",
+							"Schema_Name": "@pipeline().parameters.Schema_Name",
+							"Table_Name": "@pipeline().parameters.Table_Name"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Archive_DS_TargetDB",
+						"type": "DatasetReference",
+						"parameters": {
+							"ServerName": "@pipeline().globalParameters.TargetServerName",
+							"DatabaseName": "@pipeline().globalParameters.TargetDatabaseName",
+							"UserID": "@pipeline().globalParameters.TargetUserID",
+							"Password": "@pipeline().globalParameters.TargetPassword",
+							"Schema_Name": "@pipeline().parameters.Schema_Name",
+							"Table_Name": "@pipeline().parameters.Table_Name"
+						}
+					}
+				]
+			},
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "select HcFormResponseId,LessonId from @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name}",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "HcFormResponseId",
+									"type": "Int32",
+									"physicalType": "int"
+								},
+								"sink": {
+									"name": "HcFormResponseId",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "LessonId",
+									"type": "Int32",
+									"physicalType": "int"
+								},
+								"sink": {
+									"name": "LessonId",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "ADF_DS_TargetDB",
+						"type": "DatasetReference",
+						"parameters": {
+							"ServerName": "@pipeline().globalParameters.TargetServerName",
+							"DatabaseName": "@pipeline().globalParameters.TargetDatabaseName",
+							"UserID": "@pipeline().globalParameters.TargetUserID",
+							"Password": "@pipeline().globalParameters.TargetPassword",
+							"Schema_Name": "@pipeline().parameters.Schema_Name",
+							"Table_Name": "@pipeline().parameters.Table_Name"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ADF_DS_SourceDB",
+						"type": "DatasetReference",
+						"parameters": {
+							"ServerName": "@pipeline().globalParameters.SourceServerName",
+							"DatabaseName": "@pipeline().globalParameters.SourceDatabaseName",
+							"UserID": "@pipeline().globalParameters.SourceUserID",
+							"Password": "@pipeline().globalParameters.SourcePassword",
+							"Schema_Name": {
+								"value": "dbo",
+								"type": "Expression"
+							},
+							"Table_Name": {
+								"value": "Temp_hcFormResponseLessonsExcluded",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			}
+		],
+		"parameters": {
+			"Schema_Name": {
+				"type": "string",
+				"defaultValue": "dbo"
+			},
+			"Table_Name": {
+				"type": "string",
+				"defaultValue": "hcFormResponseLessonsExcluded"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-12-12T16:21:36Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

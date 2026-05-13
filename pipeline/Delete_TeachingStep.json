@@ -1,0 +1,39 @@
+{
+	"name": "Delete_TeachingStep",
+	"properties": {
+		"activities": [
+			{
+				"name": "Script1",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "DELETE t\nFROM dbo.TeachingStep t\nJOIN dbo.LearningProcessAttributes lp ON t.LearningProcessAttributesId = lp.id\n\nINNER JOIN dbo.AccountInfo a1 ON a1.LearningProcessAttributesId = lp.id\nINNER JOIN dbo.Subscription sub1 ON sub1.accountInfoID = a1.ID\nINNER JOIN dbo.AccountsToDelete atd1 ON a1.ID = atd1.AccountId\n\nINNER JOIN dbo.CurrentCurriculum cc ON t.LearningProcessAttributesId = cc.LearningProcessAttributesId\nINNER JOIN dbo.ChildProfile cp ON cc.childprofileid = cp.id\nINNER JOIN dbo.AccountInfo a2 ON cp.accountInfoId = a2.ID\nINNER JOIN dbo.Subscription sub2 ON sub2.accountInfoID = a2.ID\nINNER JOIN dbo.AccountsToDelete atd2 ON a2.ID = atd2.AccountId\n\nWHERE \n    (\n        (\n            a1.ID IS NOT NULL AND atd1.AccountId IS NOT NULL AND\n            (\n                sub1.OrganizationTypeId <> 2\n                OR (\n                    sub1.OrganizationTypeId = 2\n                    AND a1.ID NOT IN (23382)\n                    AND sub1.SubscriptionStatusID <> 1\n                    AND sub1.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n                )\n            )\n        )\n        OR\n        (\n            a2.ID IS NOT NULL AND atd2.AccountId IS NOT NULL AND\n            (\n                sub2.OrganizationTypeId <> 2\n                OR (\n                    sub2.OrganizationTypeId = 2\n                    AND a2.ID NOT IN (23382)\n                    AND sub2.SubscriptionStatusID <> 1\n                    AND sub2.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n                )\n            )\n        )\n    );\n",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-04-30T15:36:14Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

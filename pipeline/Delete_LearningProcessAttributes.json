@@ -1,0 +1,39 @@
+{
+	"name": "Delete_LearningProcessAttributes",
+	"properties": {
+		"activities": [
+			{
+				"name": "Script1",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "DELETE t\nFROM dbo.LearningProcessAttributes t\nWHERE EXISTS (\n    SELECT 1\n    FROM dbo.BehaviorTracking b\n    JOIN dbo.ChildProfile cp ON cp.id = b.ChildProfileID\n    JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\n    JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\n    JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    WHERE b.LearningProcessAttributesId = t.ID\n)\nOR EXISTS (\n    SELECT 1\n    FROM dbo.AccountInfo a\n    JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\n    JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    WHERE a.LearningProcessAttributesId = t.ID\n)\nOR EXISTS (\n    SELECT 1\n    FROM dbo.CurrentCurriculum cc\n    JOIN dbo.ChildProfile cp ON cp.id = cc.childProfileid\n    JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\n    JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\n    JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    WHERE cc.LearningProcessAttributesId = t.ID\n);\n",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-04-30T15:36:16Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

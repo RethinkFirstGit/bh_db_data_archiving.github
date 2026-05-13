@@ -1,0 +1,210 @@
+{
+	"name": "MASTER_PIPELINE_10_Audit_and_History",
+	"properties": {
+		"activities": [
+			{
+				"name": "TestVideoHistory",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_TestVideoHistory",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "HistoricalChildProfileLevel",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "TestVideoHistory",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_HistoricalChildProfileLevel",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "HistoricalMemberLevel",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "HistoricalChildProfileLevel",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_HistoricalMemberLevel",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "HistoricalActiveCounts",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "HistoricalMemberLevel",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_HistoricalActiveCounts",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "HistoricalAccountLevel",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "HistoricalActiveCounts",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_HistoricalAccountLevel",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "OccurrenceLateEntries",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "HistoricalAccountLevel",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_OccurrenceLateEntries",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "TestResultHistory",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "OccurrenceLateEntries",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_TestResultHistory",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "UserSessionLog",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "TestResultHistory",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_UserSessionLog",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "UserActivityLog",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "UserSessionLog",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_UserActivityLog",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2025-04-11T23:47:21Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,97 @@
+{
+	"name": "Create_And_Populate_AccountsToDelete_Table",
+	"properties": {
+		"activities": [
+			{
+				"name": "Create AccountsToDelete Table",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[AccountsToDelete]') AND type in (N'U'))\nBEGIN\n    CREATE TABLE dbo.AccountsToDelete (\n        AccountId INT NOT NULL,\n        Source VARCHAR(50) NULL,  \n        DateInserted DATETIME DEFAULT GETDATE(),\n        CONSTRAINT PK_AccountsToDelete PRIMARY KEY (AccountId)\n    );\nEND"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Populate AccountsToDelete Table",
+				"type": "Script",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "TRUNCATE TABLE dbo.AccountsToDelete;\nINSERT INTO dbo.AccountsToDelete (AccountId, Source)\nSELECT DISTINCT ai.id,\n       CASE \n           WHEN sub.OrganizationTypeId <> 2 THEN 'Non-BH'\n           ELSE 'Inactive BH'\n       END AS Source\nFROM dbo.AccountInfo ai\nINNER JOIN dbo.Subscription sub ON sub.accountInfoID = ai.id\nWHERE \n    (\n        sub.OrganizationTypeId <> 2\n    )\n    OR\n    (\n        sub.OrganizationTypeId = 2\n        AND ai.id NOT IN (23382)\n        AND sub.SubscriptionStatusID <> 1\n        AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n    );\n"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Manually Populate Table",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "Create AccountsToDelete Table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "BHDataArchiveDev",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "TRUNCATE TABLE dbo.AccountsToDelete;\n\nINSERT INTO dbo.AccountsToDelete (AccountId, Source)\nVALUES (21061, 'Test');\n"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-04-30T15:36:19Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

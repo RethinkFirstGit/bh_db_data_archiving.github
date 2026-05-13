@@ -1,0 +1,204 @@
+{
+	"name": "Subscription_Restore_DB_Insert",
+	"properties": {
+		"activities": [
+			{
+				"name": "SubscriptionCopyDynamic",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Copy data1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "select t1.* from (select s.ID\n      ,s.hollowSubscriberID\n      ,s.SubscriptionStartDate\n      ,s.NextPaymentDate\n      ,s.PaidThroughDate\n      ,s.SubscriptionStatusID\n      ,s.hollowTotalProfiles\n      ,s.PaymentFrequencyID\n      ,s.AmountPerBilling\n      ,s.SubscriptionTypeID\n      ,s.PaymentMethodID\n      ,s.SupportTypeID\n      ,s.AutomatedBilling\n      ,s.termsacceptance\n      ,s.CustomizedCurriculum\n      ,s.DateCreated\n      ,s.DateLastModified\n      ,s.DateDeleted\n      ,s.SubscriptionSubTypeID\n      ,s.LastNotificationSent\n      ,s.LastPaymentDate\n      ,s.LastBillingAmount\n      ,s.CommonStandards\n      ,s.BehaviorTracking\n      ,s.maxAccountProfiles\n      ,s.IEP\n      ,s.accountInfoID\n      ,s.dateSubscriptionStatusChanged\n      ,s.EZData\n      ,s.MasteryCriteria\n      ,s.inclusion\n      ,s.EmployeeBenefitProgram\n      ,s.EmployeeBenefitProvider\n      ,s.ExtendSessionTimeout\n      ,s.OrganizationTypeId\n      ,s.PreTestTarget\n      ,s.coachingTypeId\n      ,s.trainingProgram\n      ,s.maxAccountMembers\n      ,s.ShowRbt\n      ,s.ShowClinical\n      ,s.ShowScheduling\n      ,s.ShowBilling\n      ,s.AcademicCurriculum\n      ,s.VbMappLicenses\n      ,s.ShowVbMapp\n      ,s.BillingOptionId\n      ,s.DisableCKEditor\n      ,s.ShowANSIClaims\n      ,s.ShowParentVerification\n      ,s.ShowMessaging\n      ,s.AssessmentOnly\n      ,s.ShowNycInvoicing\n      ,s.ShowSetss\n      ,s.ShowGraphs\n      ,s.ShowTherawe\n      ,s.ShowEVV\n      ,s.MaxDemoClients\n      ,s.ShowExceedAuth\n      ,s.ShowDPH\n      ,s.ShowSecuritySettings\n      ,s.ModifiedBy\n      ,s.DeletedBy\n      ,s.CreatedBy\n      ,s.IsNextGen\n      ,s.BhAnalyticsLicenses\n      ,s.ShowBhAnalyticsBasicCharts\n      ,s.ShowClientSetup\n      ,s.ShowAutismAnalytica\n      ,s.ShowEssentialsForLiving\n      ,s.NewMedicalNecessityAssessment\n      ,s.ShowAttendBehavior\n      ,s.NetsmartIntegrationTypeId\n      ,s.UseSSO\n      ,s.ShowIntensity\n      ,s.ShowAISessionNoteDataSummary\nfrom @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name} \n\t\t s inner join accountinfo a on (s.accountinfoid=a.id)\nwhere a.Id in (@{join(pipeline().globalParameters.AccountID, ',')}) --and  s.IsMigrated = 0\n)t1\nleft join Temp_Subscription t2 on t1.Id = t2.ID\nWHERE t2.ID IS NULL\n",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Archive_DS_SourceDB",
+						"type": "DatasetReference",
+						"parameters": {
+							"ServerName": "@pipeline().globalParameters.SourceServerName",
+							"DatabaseName": "@pipeline().globalParameters.SourceDatabaseName",
+							"UserID": "@pipeline().globalParameters.SourceUserID",
+							"Password": "@pipeline().globalParameters.SourcePassword",
+							"Schema_Name": "@pipeline().parameters.Schema_Name",
+							"Table_Name": "@pipeline().parameters.Table_Name"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Archive_DS_TargetDB",
+						"type": "DatasetReference",
+						"parameters": {
+							"ServerName": "@pipeline().globalParameters.TargetServerName",
+							"DatabaseName": "@pipeline().globalParameters.TargetDatabaseName",
+							"UserID": "@pipeline().globalParameters.TargetUserID",
+							"Password": "@pipeline().globalParameters.TargetPassword",
+							"Schema_Name": "@pipeline().parameters.Schema_Name",
+							"Table_Name": "@pipeline().parameters.Table_Name"
+						}
+					}
+				]
+			},
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "select id from @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name}",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "id",
+									"type": "Int32",
+									"physicalType": "int"
+								},
+								"sink": {
+									"name": "ID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "ADF_DS_TargetDB",
+						"type": "DatasetReference",
+						"parameters": {
+							"ServerName": {
+								"value": "@pipeline().globalParameters.TargetServerName",
+								"type": "Expression"
+							},
+							"DatabaseName": {
+								"value": "@pipeline().globalParameters.TargetDatabaseName",
+								"type": "Expression"
+							},
+							"UserID": {
+								"value": "@pipeline().globalParameters.TargetUserID",
+								"type": "Expression"
+							},
+							"Password": {
+								"value": "@pipeline().globalParameters.TargetPassword",
+								"type": "Expression"
+							},
+							"Schema_Name": {
+								"value": "@pipeline().parameters.Schema_Name",
+								"type": "Expression"
+							},
+							"Table_Name": {
+								"value": "@pipeline().parameters.Table_Name",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ADF_DS_SourceDB",
+						"type": "DatasetReference",
+						"parameters": {
+							"ServerName": {
+								"value": "@pipeline().globalParameters.SourceServerName",
+								"type": "Expression"
+							},
+							"DatabaseName": {
+								"value": "@pipeline().globalParameters.SourceDatabaseName",
+								"type": "Expression"
+							},
+							"UserID": {
+								"value": "@pipeline().globalParameters.SourceUserID",
+								"type": "Expression"
+							},
+							"Password": {
+								"value": "@pipeline().globalParameters.SourcePassword",
+								"type": "Expression"
+							},
+							"Schema_Name": "dbo",
+							"Table_Name": "Temp_Subscription"
+						}
+					}
+				]
+			}
+		],
+		"parameters": {
+			"Schema_Name": {
+				"type": "string",
+				"defaultValue": "dbo"
+			},
+			"Table_Name": {
+				"type": "string",
+				"defaultValue": "Subscription"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-12-12T16:21:22Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

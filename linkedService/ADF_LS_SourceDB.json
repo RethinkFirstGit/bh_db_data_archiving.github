@@ -1,0 +1,35 @@
+{
+	"name": "ADF_LS_SourceDB",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"parameters": {
+			"ServerName": {
+				"type": "string",
+				"defaultValue": "rta-bh-dev-internal-sql.database.windows.net"
+			},
+			"DatabaseName": {
+				"type": "string",
+				"defaultValue": "rta-bh-prd-db1-hs_2025-05-03T23-32Z_UnArchive_Dev"
+			},
+			"UserID": {
+				"type": "string",
+				"defaultValue": "rtaadmin"
+			},
+			"Password": {
+				"type": "string",
+				"defaultValue": "5uP3rUZ3R84wD"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"server": "@{linkedService().ServerName}",
+			"database": "@{linkedService().DatabaseName}",
+			"encrypt": "mandatory",
+			"trustServerCertificate": false,
+			"authenticationType": "SQL",
+			"userName": "@{linkedService().UserID}",
+			"password": "@{linkedService().Password}"
+		}
+	}
+}

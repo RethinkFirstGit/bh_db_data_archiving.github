@@ -1,0 +1,48 @@
+{
+	"name": "Archive_DS_SourceDB",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Archive_Link_Service_Restore",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"ServerName": "rta-bh-dev-internal-sql.database.windows.net",
+				"DatabaseName": "rta-bh-prd-db1-hs_2025-05-03T23-32Z_UnArchive_Dev",
+				"UserID": "rtaadmin"
+			}
+		},
+		"parameters": {
+			"ServerName": {
+				"type": "string"
+			},
+			"DatabaseName": {
+				"type": "string"
+			},
+			"UserID": {
+				"type": "string"
+			},
+			"Password": {
+				"type": "string"
+			},
+			"Schema_Name": {
+				"type": "string"
+			},
+			"Table_Name": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().Schema_Name",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().Table_Name",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

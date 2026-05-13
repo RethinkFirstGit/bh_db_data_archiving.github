@@ -1,0 +1,118 @@
+{
+	"name": "MASTER_PIPELINE_01A_Accounts",
+	"properties": {
+		"activities": [
+			{
+				"name": "tblMemberAccountRole",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "tblChangeTracking",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_tblMemberAccountRole",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "tblMemberRole",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_tblMemberRole",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "tblMemberFeatureHistory",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "tblMemberRole",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_tblMemberFeatureHistory",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "tblChangeTracking",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "tblMemberFeatureHistory",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_tblChangeTracking",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "AccountRole",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "tblMemberAccountRole",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "Delete_AccountRole",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2025-04-15T19:55:35Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
