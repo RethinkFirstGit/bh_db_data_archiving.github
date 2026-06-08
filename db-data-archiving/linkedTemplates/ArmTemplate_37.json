@@ -1,0 +1,4367 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "db-data-archiving"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/MFAUnsubscribedMembers_Restore_DB_Insert')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyMFAUnsubscribedMembers",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select t1.* from (select ap.MemberId\n,ap.Email\n,ap.FirstName\n,ap.LastName\n,ap.AmountOfRemainingPopupImpressions\n,ap.DateDeleted \nfrom @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name} ap \t\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\nwhere a.Id in (@{join(pipeline().globalParameters.AccountID, ',')}) --and  ap.IsMigrated = 0\n)t1\nleft join Temp_MFAUnsubscribedMembers t2 on t1.MemberId = t2.MemberId\nWHERE t2.MemberId IS NULL",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Archive_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.SourceServerName",
+									"DatabaseName": "@pipeline().globalParameters.SourceDatabaseName",
+									"UserID": "@pipeline().globalParameters.SourceUserID",
+									"Password": "@pipeline().globalParameters.SourcePassword",
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Archive_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.TargetServerName",
+									"DatabaseName": "@pipeline().globalParameters.TargetDatabaseName",
+									"UserID": "@pipeline().globalParameters.TargetUserID",
+									"Password": "@pipeline().globalParameters.TargetPassword",
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						]
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select MemberId from @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name}",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "MemberId",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "MemberId",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADF_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.TargetServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.TargetDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.TargetUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.TargetPassword",
+										"type": "Expression"
+									},
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADF_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.SourceServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.SourceDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.SourceUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.SourcePassword",
+										"type": "Expression"
+									},
+									"Schema_Name": "dbo",
+									"Table_Name": "Temp_MFAUnsubscribedMembers"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"Schema_Name": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"Table_Name": {
+						"type": "string",
+						"defaultValue": "MFAUnsubscribedMembers"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-12-12T16:21:26Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/MasteryCriteria_Restore_DB_Insert')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyMasteryCriteria",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select t1.* from (select a.* from (select distinct --MC.* \nMC.id\n,MC.Direction\n,MC.CollectionMethodTypeId\n,MC.LearningProcessAttributesId\n,MC.DateCreated\n,MC.DateLastModified\n,MC.DateDeleted\n,MC.InitialValue\n,MC.ComparedValue\n,MC.ConsecutiveUnitType\n,MC.ConescutiveCount\n,MC.ValueUnitType\n,MC.MinimumTrials\n,MC.hollowIepGoalId\n,MC.hollowIepObjectiveId\n,MC.IsMaintenance\n,MC.ModifiedBy\n,MC.DeletedBy\n,MC.CreatedBy\n,MC.calculationType\n,MC.calculationTypeChangedOn\n,MC.BehaviorTrackingIntensityLevelId\nfrom @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name} MC \ninner join LearningProcessAttributes LPA on (LPA.Id= MC.LearningProcessAttributesId)\nInner Join dbo.BehaviorTracking b on (b.LearningProcessAttributesId=LPA.ID )\nInner Join ChildProfile C ON C.ID = B.ChildProfileID\ninner join AccountInfo A on C.AccountInfoID = A.ID\n\nwhere a.Id in (@{join(pipeline().globalParameters.AccountID, ',')}) --and  ap.IsMigrated = 0\n--and mc.Ismigrated=0\nunion\nselect distinct --MC.* \nMC.id\n,MC.Direction\n,MC.CollectionMethodTypeId\n,MC.LearningProcessAttributesId\n,MC.DateCreated\n,MC.DateLastModified\n,MC.DateDeleted\n,MC.InitialValue\n,MC.ComparedValue\n,MC.ConsecutiveUnitType\n,MC.ConescutiveCount\n,MC.ValueUnitType\n,MC.MinimumTrials\n,MC.hollowIepGoalId\n,MC.hollowIepObjectiveId\n,MC.IsMaintenance\n,MC.ModifiedBy\n,MC.DeletedBy\n,MC.CreatedBy\n,MC.calculationType\n,MC.calculationTypeChangedOn\n,MC.BehaviorTrackingIntensityLevelId\nfrom @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name} MC \ninner join LearningProcessAttributes LPA on (LPA.Id= MC.LearningProcessAttributesId)\ninner join AccountInfo A on A.LearningProcessAttributesId = LPA.ID\nwhere a.Id in (@{join(pipeline().globalParameters.AccountID, ',')}) --and  ap.IsMigrated = 0\n--and mc.Ismigrated=0\nunion\nselect distinct-- MC.* \nMC.id\n,MC.Direction\n,MC.CollectionMethodTypeId\n,MC.LearningProcessAttributesId\n,MC.DateCreated\n,MC.DateLastModified\n,MC.DateDeleted\n,MC.InitialValue\n,MC.ComparedValue\n,MC.ConsecutiveUnitType\n,MC.ConescutiveCount\n,MC.ValueUnitType\n,MC.MinimumTrials\n,MC.hollowIepGoalId\n,MC.hollowIepObjectiveId\n,MC.IsMaintenance\n,MC.ModifiedBy\n,MC.DeletedBy\n,MC.CreatedBy\n,MC.calculationType\n,MC.calculationTypeChangedOn\n,MC.BehaviorTrackingIntensityLevelId\nfrom @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name} MC \ninner join LearningProcessAttributes LPA on (LPA.Id= MC.LearningProcessAttributesId)\nInner join CurrentCurriculum CC ON LPA.ID = CC.LearningProcessAttributesId\ninner join dbo.ChildProfile p on (CC.childprofileid=p.id ) \ninner join AccountInfo A on p.AccountInfoID = A.ID\nwhere a.Id in (@{join(pipeline().globalParameters.AccountID, ',')}) ) a --and  ap.IsMigrated = 0)a\n)t1\nleft join Temp_MasteryCriteria t2 on t1.Id = t2.ID\nWHERE t2.ID IS NULL",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Archive_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.SourceServerName",
+									"DatabaseName": "@pipeline().globalParameters.SourceDatabaseName",
+									"UserID": "@pipeline().globalParameters.SourceUserID",
+									"Password": "@pipeline().globalParameters.SourcePassword",
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Archive_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.TargetServerName",
+									"DatabaseName": "@pipeline().globalParameters.TargetDatabaseName",
+									"UserID": "@pipeline().globalParameters.TargetUserID",
+									"Password": "@pipeline().globalParameters.TargetPassword",
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						]
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select id from @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name}",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "id",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "ID",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADF_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.TargetServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.TargetDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.TargetUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.TargetPassword",
+										"type": "Expression"
+									},
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADF_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.SourceServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.SourceDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.SourceUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.SourcePassword",
+										"type": "Expression"
+									},
+									"Schema_Name": "dbo",
+									"Table_Name": "Temp_MasteryCriteria"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"Schema_Name": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"Table_Name": {
+						"type": "string",
+						"defaultValue": "MasteryCriteria"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-12-12T16:21:23Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/MedicaidIdNumbers_Restore_DB_Insert')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyMedicaidIdNumbers",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select t1.* from (select ap.id\n,ap.accountId\n,ap.medicaidIdNumber\n,ap.createdBy\n,ap.modifiedBy\n,ap.deletedBy\n,ap.dateCreated\n,ap.dateLastModified\n,ap.dateDeleted \nfrom @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name} ap \t\t\ninner join AccountInfo a on (a.ID=ap.accountId  )\nwhere a.Id in (@{join(pipeline().globalParameters.AccountID, ',')})\n)t1\nleft join Temp_MedicaidIdNumbers t2 on t1.Id = t2.ID\nWHERE t2.ID IS NULL",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Archive_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.SourceServerName",
+									"DatabaseName": "@pipeline().globalParameters.SourceDatabaseName",
+									"UserID": "@pipeline().globalParameters.SourceUserID",
+									"Password": "@pipeline().globalParameters.SourcePassword",
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Archive_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.TargetServerName",
+									"DatabaseName": "@pipeline().globalParameters.TargetDatabaseName",
+									"UserID": "@pipeline().globalParameters.TargetUserID",
+									"Password": "@pipeline().globalParameters.TargetPassword",
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						]
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select id from @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name}",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "id",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "ID",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADF_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.TargetServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.TargetDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.TargetUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.TargetPassword",
+										"type": "Expression"
+									},
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADF_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.SourceServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.SourceDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.SourceUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.SourcePassword",
+										"type": "Expression"
+									},
+									"Schema_Name": "dbo",
+									"Table_Name": "Temp_MedicaidIdNumbers"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"Schema_Name": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"Table_Name": {
+						"type": "string",
+						"defaultValue": "MedicaidIdNumbers"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-12-12T16:21:26Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/MemberAccountHistory_Restore_DB_Insert')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyMemberAccountHistory",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select t1.* from (select  ap.id\n,ap.MemberId\n,ap.AccountInfoId\n,ap.StartDate\n,ap.EndDate\n,ap.DateCreated\n,ap.DateLastModified\n,ap.DateDeleted\n,ap.ModifiedBy\n,ap.DeletedBy\n,ap.CreatedBy \nfrom @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name} ap \ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\nwhere a.Id in (@{join(pipeline().globalParameters.AccountID, ',')}) --and  ap.IsMigrated = 0\n)t1\nleft join Temp_MemberAccountHistory t2 on t1.Id = t2.ID\nWHERE t2.ID IS NULL",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Archive_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.SourceServerName",
+									"DatabaseName": "@pipeline().globalParameters.SourceDatabaseName",
+									"UserID": "@pipeline().globalParameters.SourceUserID",
+									"Password": "@pipeline().globalParameters.SourcePassword",
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Archive_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.TargetServerName",
+									"DatabaseName": "@pipeline().globalParameters.TargetDatabaseName",
+									"UserID": "@pipeline().globalParameters.TargetUserID",
+									"Password": "@pipeline().globalParameters.TargetPassword",
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						]
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select id from @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name}",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "id",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "ID",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADF_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.TargetServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.TargetDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.TargetUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.TargetPassword",
+										"type": "Expression"
+									},
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADF_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.SourceServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.SourceDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.SourceUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.SourcePassword",
+										"type": "Expression"
+									},
+									"Schema_Name": "dbo",
+									"Table_Name": "Temp_MemberAccountHistory"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"Schema_Name": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"Table_Name": {
+						"type": "string",
+						"defaultValue": "MemberAccountHistory"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-12-12T16:21:24Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OccurrenceLateEntries_Restore_DB_Insert')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyOccurrenceLateEntries",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select t1.* from (select  ap.Id\n,ap.AppointmentId\n,ap.OccurrenceDate\n,ap.CreatedBy\n,ap.ModifiedBy\n,ap.DeletedBy\n,ap.DateCreated\n,ap.DateLastModified\n,ap.DateDeleted\n,ap.ReportId \nfrom @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name} ap \ninner join dbo.hcAppointments ha on (ap.AppointmentId=ha.AppointmentId )\ninner join dbo.ChildProfile p on (ha.clientId=p.id ) \ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\nwhere a.Id in (@{join(pipeline().globalParameters.AccountID, ',')}) --and  ap.IsMigrated = 0\n)t1\nleft join Temp_OccurrenceLateEntries t2 on t1.Id = t2.ID\nWHERE t2.ID IS NULL\n",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Archive_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.SourceServerName",
+									"DatabaseName": "@pipeline().globalParameters.SourceDatabaseName",
+									"UserID": "@pipeline().globalParameters.SourceUserID",
+									"Password": "@pipeline().globalParameters.SourcePassword",
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Archive_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.TargetServerName",
+									"DatabaseName": "@pipeline().globalParameters.TargetDatabaseName",
+									"UserID": "@pipeline().globalParameters.TargetUserID",
+									"Password": "@pipeline().globalParameters.TargetPassword",
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						]
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select id from @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name}",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "id",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "ID",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADF_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.TargetServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.TargetDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.TargetUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.TargetPassword",
+										"type": "Expression"
+									},
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADF_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.SourceServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.SourceDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.SourceUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.SourcePassword",
+										"type": "Expression"
+									},
+									"Schema_Name": "dbo",
+									"Table_Name": "Temp_OccurrenceLateEntries"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"Schema_Name": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"Table_Name": {
+						"type": "string",
+						"defaultValue": "OccurrenceLateEntries"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-12-12T16:21:25Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PasswordHistory_Restore_DB_Insert')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyPasswordHistory",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select t1.* from (select  ap.ID\n,ap.MemberID\n,ap.Password\n,ap.DateCreated\n,ap.DateLastModified\n,ap.DateDeleted\n,ap.ModifiedBy\n,ap.DeletedBy\n,ap.CreatedBy \nfrom @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name} ap  \t\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\nwhere a.Id in (@{join(pipeline().globalParameters.AccountID, ',')}) --and  ap.IsMigrated = 0\n)t1\nleft join Temp_PasswordHistory t2 on t1.Id = t2.ID\nWHERE t2.ID IS NULL",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Archive_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.SourceServerName",
+									"DatabaseName": "@pipeline().globalParameters.SourceDatabaseName",
+									"UserID": "@pipeline().globalParameters.SourceUserID",
+									"Password": "@pipeline().globalParameters.SourcePassword",
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Archive_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.TargetServerName",
+									"DatabaseName": "@pipeline().globalParameters.TargetDatabaseName",
+									"UserID": "@pipeline().globalParameters.TargetUserID",
+									"Password": "@pipeline().globalParameters.TargetPassword",
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						]
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select id from @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name}",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "id",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "ID",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADF_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.TargetServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.TargetDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.TargetUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.TargetPassword",
+										"type": "Expression"
+									},
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADF_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.SourceServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.SourceDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.SourceUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.SourcePassword",
+										"type": "Expression"
+									},
+									"Schema_Name": "dbo",
+									"Table_Name": "Temp_PasswordHistory"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"Schema_Name": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"Table_Name": {
+						"type": "string",
+						"defaultValue": "PasswordHistory"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-12-12T16:21:24Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PeerSupportTopicPosts_Restore_DB_Insert')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyPeerSupportTopicPosts",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select t1.* from (select   ap.ID\n,ap.PostingTitle\n,ap.PostingContent\n,ap.MemberID\n,ap.DatePosted\n,ap.DateLastModified\n,ap.DateDeleted\n,ap.DateCreated\n,ap.PeerSupportTopicId \nfrom @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name} ap \ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\nwhere a.Id in (@{join(pipeline().globalParameters.AccountID, ',')}) --and  ap.IsMigrated = 0\n)t1\nleft join Temp_PeerSupportTopicPosts t2 on t1.Id = t2.ID\nWHERE t2.ID IS NULL",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Archive_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.SourceServerName",
+									"DatabaseName": "@pipeline().globalParameters.SourceDatabaseName",
+									"UserID": "@pipeline().globalParameters.SourceUserID",
+									"Password": "@pipeline().globalParameters.SourcePassword",
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Archive_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.TargetServerName",
+									"DatabaseName": "@pipeline().globalParameters.TargetDatabaseName",
+									"UserID": "@pipeline().globalParameters.TargetUserID",
+									"Password": "@pipeline().globalParameters.TargetPassword",
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						]
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select id from @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name}",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "id",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "ID",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADF_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.TargetServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.TargetDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.TargetUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.TargetPassword",
+										"type": "Expression"
+									},
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADF_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.SourceServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.SourceDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.SourceUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.SourcePassword",
+										"type": "Expression"
+									},
+									"Schema_Name": "dbo",
+									"Table_Name": "Temp_PeerSupportTopicPosts"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"Schema_Name": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"Table_Name": {
+						"type": "string",
+						"defaultValue": "PeerSupportTopicPosts"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-12-12T16:21:20Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PeerSupportTopics_Restore_DB_Insert')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyPeerSupportTopics",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select t1.* from (select  ap.id\n,ap.name\n,ap.groupId\n,ap.lessonId\n,ap.dateCreated\n,ap.dateLastModified\n,ap.dateDeleted\n,ap.memberId\n,ap.description\n,ap.strategies\n,ap.forumType \nfrom @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name} ap \ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\nwhere a.Id in (@{join(pipeline().globalParameters.AccountID, ',')}) --and  ap.IsMigrated = 0\n)t1\nleft join Temp_PeerSupportTopics t2 on t1.Id = t2.ID\nWHERE t2.ID IS NULL",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Archive_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.SourceServerName",
+									"DatabaseName": "@pipeline().globalParameters.SourceDatabaseName",
+									"UserID": "@pipeline().globalParameters.SourceUserID",
+									"Password": "@pipeline().globalParameters.SourcePassword",
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Archive_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.TargetServerName",
+									"DatabaseName": "@pipeline().globalParameters.TargetDatabaseName",
+									"UserID": "@pipeline().globalParameters.TargetUserID",
+									"Password": "@pipeline().globalParameters.TargetPassword",
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						]
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select id from @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name}",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "id",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "ID",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADF_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.TargetServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.TargetDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.TargetUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.TargetPassword",
+										"type": "Expression"
+									},
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADF_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.SourceServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.SourceDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.SourceUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.SourcePassword",
+										"type": "Expression"
+									},
+									"Schema_Name": "dbo",
+									"Table_Name": "Temp_PeerSupportTopics"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"Schema_Name": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"Table_Name": {
+						"type": "string",
+						"defaultValue": "PeerSupportTopics"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-12-12T16:21:22Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PhaseChangeForBehavior_Restore_DB_Insert')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyPhaseChangeForBehavior",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select t1.* from (select ap.PhaseChangeId\n,ap.BehaviorTrackingId\n,ap.DateDeleted\n,ap.ModifiedBy\n,ap.DeletedBy\n,ap.CreatedBy\n,ap.DateLastModified\n,ap.DateCreated \nfrom @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name} ap \ninner join dbo.BehaviorTrackingAudit bt on (ap.BehaviorTrackingid=bt.id  )\ninner join ChildProfile p on (bt.childprofileid=p.id ) \ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\nwhere a.Id in (@{join(pipeline().globalParameters.AccountID, ',')}) --and  ap.IsMigrated = 0\n)t1\nleft join Temp_PhaseChangeForBehavior t2 on t1.PhaseChangeId = t2.PhaseChangeId AND t1.BehaviorTrackingId = t2.BehaviorTrackingId\nWHERE t2.PhaseChangeId IS NULL AND t2.BehaviorTrackingId IS NULL",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Archive_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.SourceServerName",
+									"DatabaseName": "@pipeline().globalParameters.SourceDatabaseName",
+									"UserID": "@pipeline().globalParameters.SourceUserID",
+									"Password": "@pipeline().globalParameters.SourcePassword",
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Archive_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.TargetServerName",
+									"DatabaseName": "@pipeline().globalParameters.TargetDatabaseName",
+									"UserID": "@pipeline().globalParameters.TargetUserID",
+									"Password": "@pipeline().globalParameters.TargetPassword",
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						]
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select PhaseChangeId,BehaviorTrackingId from @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name}",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "PhaseChangeId",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "PhaseChangeId",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									},
+									{
+										"source": {
+											"name": "BehaviorTrackingId",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "BehaviorTrackingId",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADF_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.TargetServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.TargetDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.TargetUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.TargetPassword",
+										"type": "Expression"
+									},
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADF_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.SourceServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.SourceDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.SourceUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.SourcePassword",
+										"type": "Expression"
+									},
+									"Schema_Name": "dbo",
+									"Table_Name": "Temp_PhaseChangeForBehavior"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"Schema_Name": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"Table_Name": {
+						"type": "string",
+						"defaultValue": "PhaseChangeForBehavior"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-12-12T16:21:22Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PhaseChangeForLesson_Restore_DB_Insert')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyPhaseChangeForLesson",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select t1.* from (select  ap.PhaseChangeId\n,ap.CurrentCurriculumId\n,ap.DateDeleted\n,ap.ModifiedBy\n,ap.DeletedBy\n,ap.CreatedBy\n,ap.DateLastModified\n,ap.DateCreated\nfrom @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name} ap \ninner join dbo.CurrentCurriculum cc on (ap.CurrentCurriculumid=cc.id   )\ninner join dbo.ChildProfile p on (cc.childprofileid=p.id ) \ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\nwhere a.Id in (@{join(pipeline().globalParameters.AccountID, ',')}) --and  ap.IsMigrated = 0\n)t1\nleft join Temp_PhaseChangeForLesson t2 on t1.PhaseChangeId = t2.PhaseChangeId AND t1.CurrentCurriculumId = t2.CurrentCurriculumId\nWHERE t2.PhaseChangeId IS NULL AND t2.CurrentCurriculumId IS NULL",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Archive_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.SourceServerName",
+									"DatabaseName": "@pipeline().globalParameters.SourceDatabaseName",
+									"UserID": "@pipeline().globalParameters.SourceUserID",
+									"Password": "@pipeline().globalParameters.SourcePassword",
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Archive_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.TargetServerName",
+									"DatabaseName": "@pipeline().globalParameters.TargetDatabaseName",
+									"UserID": "@pipeline().globalParameters.TargetUserID",
+									"Password": "@pipeline().globalParameters.TargetPassword",
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						]
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select PhaseChangeId,CurrentCurriculumId from @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name}",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "PhaseChangeId",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "PhaseChangeId",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									},
+									{
+										"source": {
+											"name": "CurrentCurriculumId",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "CurrentCurriculumId",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADF_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.TargetServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.TargetDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.TargetUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.TargetPassword",
+										"type": "Expression"
+									},
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADF_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.SourceServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.SourceDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.SourceUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.SourcePassword",
+										"type": "Expression"
+									},
+									"Schema_Name": "dbo",
+									"Table_Name": "Temp_PhaseChangeForLesson"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"Schema_Name": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"Table_Name": {
+						"type": "string",
+						"defaultValue": "PhaseChangeForLesson"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-12-12T16:21:25Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PhaseChange_Restore_DB_Insert')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyPhaseChange",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select t1.* from (select ap.id\n,ap.PhaseChangeType\n,ap.PhaseName\n,ap.PhaseDate\n,ap.MemberId\n,ap.DateDeleted\n,ap.DateCreated\n,ap.DateLastModified\n,ap.PhaseChangeDataTypeId\n,ap.ReferenceId\n,ap.ModifiedBy\n,ap.DeletedBy\n,ap.CreatedBy\nfrom @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name} ap \ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\nwhere a.Id in (@{join(pipeline().globalParameters.AccountID, ',')}) --and  ap.IsMigrated = 0\n)t1\nleft join Temp_PhaseChange t2 on t1.Id = t2.ID\nWHERE t2.ID IS NULL",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Archive_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.SourceServerName",
+									"DatabaseName": "@pipeline().globalParameters.SourceDatabaseName",
+									"UserID": "@pipeline().globalParameters.SourceUserID",
+									"Password": "@pipeline().globalParameters.SourcePassword",
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Archive_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.TargetServerName",
+									"DatabaseName": "@pipeline().globalParameters.TargetDatabaseName",
+									"UserID": "@pipeline().globalParameters.TargetUserID",
+									"Password": "@pipeline().globalParameters.TargetPassword",
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						]
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select id from @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name}",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "id",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "ID",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADF_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.TargetServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.TargetDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.TargetUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.TargetPassword",
+										"type": "Expression"
+									},
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADF_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.SourceServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.SourceDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.SourceUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.SourcePassword",
+										"type": "Expression"
+									},
+									"Schema_Name": "dbo",
+									"Table_Name": "Temp_PhaseChange"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"Schema_Name": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"Table_Name": {
+						"type": "string",
+						"defaultValue": "PhaseChange"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-12-12T16:21:25Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PrincipalSignatures_Restore_DB_Insert')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyPrincipalSignatures",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select t1.* from (SELECT ap.Id\n,ap.AccountInfoId\n,ap.PrincipalName\n,ap.PrincipalSignatureId\n,ap.DateCreated\n,ap.DateLastModified\n,ap.DateDeleted\n,ap.CreatedBy\n,ap.ModifiedBy\n,ap.DeletedBy\nfrom @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name} ap  \ninner join dbo.AccountInfo a on (ap.accountInfoId=a.ID )\nwhere a.Id in (@{join(pipeline().globalParameters.AccountID, ',')}) --and  ap.IsMigrated = 0\n)t1\nleft join Temp_PrincipalSignatures t2 on t1.Id = t2.ID\nWHERE t2.ID IS NULL",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Archive_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.SourceServerName",
+									"DatabaseName": "@pipeline().globalParameters.SourceDatabaseName",
+									"UserID": "@pipeline().globalParameters.SourceUserID",
+									"Password": "@pipeline().globalParameters.SourcePassword",
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Archive_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.TargetServerName",
+									"DatabaseName": "@pipeline().globalParameters.TargetDatabaseName",
+									"UserID": "@pipeline().globalParameters.TargetUserID",
+									"Password": "@pipeline().globalParameters.TargetPassword",
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						]
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select id from @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name}",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "id",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "ID",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADF_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.TargetServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.TargetDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.TargetUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.TargetPassword",
+										"type": "Expression"
+									},
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADF_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.SourceServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.SourceDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.SourceUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.SourcePassword",
+										"type": "Expression"
+									},
+									"Schema_Name": "dbo",
+									"Table_Name": "Temp_PrincipalSignatures"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"Schema_Name": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"Table_Name": {
+						"type": "string",
+						"defaultValue": "PrincipalSignatures"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-12-12T16:21:23Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PublishContent_Restore_DB_Insert')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyPublishContent",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select t1.* from (select  ap.ID\n,ap.MemberID\n,ap.Title\n,ap.Author\n,ap.Publication\n,ap.ShortDescription\n,ap.Article\n,ap.Link\n,ap.PDF\n,ap.RTAPosting\n,ap.CommunityPosting\n,ap.HP\n,ap.CommunityHP\n,ap.Photo\n,ap.Caption\n,ap.IsRss\n,ap.IsProtected\n,ap.DateCreated\n,ap.DatePublished\n,ap.StartTime\n,ap.DateExpired\n,ap.DateLastModified\n,ap.DateDeleted\n,ap.TipOfTheWeek\n,ap.videoFileName\n,ap.PeerSupportTopicId\n,ap.ToolTipTitle\n,ap.ResourceImage\n,ap.ModifiedBy\n,ap.DeletedBy\n,ap.CreatedBy\nfrom @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name} ap \ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\nwhere a.Id in (@{join(pipeline().globalParameters.AccountID, ',')}) --and  ap.IsMigrated = 0\n)t1\nleft join Temp_PublishContent t2 on t1.Id = t2.ID\nWHERE t2.ID IS NULL",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Archive_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.SourceServerName",
+									"DatabaseName": "@pipeline().globalParameters.SourceDatabaseName",
+									"UserID": "@pipeline().globalParameters.SourceUserID",
+									"Password": "@pipeline().globalParameters.SourcePassword",
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Archive_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.TargetServerName",
+									"DatabaseName": "@pipeline().globalParameters.TargetDatabaseName",
+									"UserID": "@pipeline().globalParameters.TargetUserID",
+									"Password": "@pipeline().globalParameters.TargetPassword",
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						]
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select id from @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name}",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "id",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "ID",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADF_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.TargetServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.TargetDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.TargetUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.TargetPassword",
+										"type": "Expression"
+									},
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADF_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.SourceServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.SourceDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.SourceUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.SourcePassword",
+										"type": "Expression"
+									},
+									"Schema_Name": "dbo",
+									"Table_Name": "Temp_PublishContent"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"Schema_Name": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"Table_Name": {
+						"type": "string",
+						"defaultValue": "PublishContent"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-12-12T16:21:23Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/QuestionCategory_Restore_DB_Insert')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyQuestionCategory",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select t1.* from (select   ap.ID\n,ap.CategoryName\n,ap.ParentID\n,ap.DateCreated\n,ap.DateLastModified\n,ap.DateDeleted\n,ap.ModifiedBy\n,ap.DeletedBy\n,ap.CreatedBy\nfrom @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name} ap \ninner join dbo.Question q on (ap.id=q.QuestionCategoryID )\ninner join dbo.tblMember tm on (tm.id =q.memberId    )\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\nwhere a.Id in (@{join(pipeline().globalParameters.AccountID, ',')}) --and  ap.IsMigrated = 0\n)t1\nleft join Temp_QuestionCategory t2 on t1.Id = t2.ID\nWHERE t2.ID IS NULL",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Archive_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.SourceServerName",
+									"DatabaseName": "@pipeline().globalParameters.SourceDatabaseName",
+									"UserID": "@pipeline().globalParameters.SourceUserID",
+									"Password": "@pipeline().globalParameters.SourcePassword",
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Archive_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.TargetServerName",
+									"DatabaseName": "@pipeline().globalParameters.TargetDatabaseName",
+									"UserID": "@pipeline().globalParameters.TargetUserID",
+									"Password": "@pipeline().globalParameters.TargetPassword",
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						]
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select id from @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name}",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "id",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "ID",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADF_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.TargetServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.TargetDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.TargetUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.TargetPassword",
+										"type": "Expression"
+									},
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADF_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.SourceServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.SourceDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.SourceUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.SourcePassword",
+										"type": "Expression"
+									},
+									"Schema_Name": "dbo",
+									"Table_Name": "Temp_QuestionCategory"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"Schema_Name": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"Table_Name": {
+						"type": "string",
+						"defaultValue": "QuestionCategory"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-12-12T16:21:26Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Question_Restore_DB_Insert')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyQuestion",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select t1.* from (select  ap.ID\n,ap.QuestionBody\n,ap.Details\n,ap.MemberID\n,ap.QuestionCategoryID\n,ap.DateCreated\n,ap.DateLastModified\n,ap.DateDeleted\n,ap.ModifiedBy\n,ap.DeletedBy\n,ap.CreatedBy\nfrom @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name} ap\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\nwhere a.Id in (@{join(pipeline().globalParameters.AccountID, ',')}) \n)t1\nleft join Temp_Question t2 on t1.Id = t2.ID\nWhere t2.ID IS NULL",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Archive_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.SourceServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.SourceDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.SourceUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.SourcePassword",
+										"type": "Expression"
+									},
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADF_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.TargetServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.TargetDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.TargetUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.TargetPassword",
+										"type": "Expression"
+									},
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select id from @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name}",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "id",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "ID",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADF_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.TargetServerName",
+									"DatabaseName": "@pipeline().globalParameters.TargetDatabaseName",
+									"UserID": {
+										"value": "@pipeline().globalParameters.TargetUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.TargetPassword",
+										"type": "Expression"
+									},
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADF_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.SourceServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.SourceDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.SourceUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.SourcePassword",
+										"type": "Expression"
+									},
+									"Schema_Name": "dbo",
+									"Table_Name": "Temp_Question"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"Schema_Name": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"Table_Name": {
+						"type": "string",
+						"defaultValue": "Question"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-02-06T05:28:23Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RTAExceptions_Restore_DB_Insert')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "RTAExceptionsCopyDynamic",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select t1.* from (select ap.ID\n,ap.ExceptionType\n,ap.AccountId\n,ap.Email\n,ap.DateCreated\n,ap.DateLastModified\n,ap.DateDeleted\n,ap.ModifiedBy\n,ap.DeletedBy\n,ap.CreatedBy \nfrom @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name} ap \ninner join AccountInfo a on (a.ID=ap.accountId  )\nwhere a.Id in (@{join(pipeline().globalParameters.AccountID, ',')}) --and  ap.IsMigrated = 0\n)t1\nleft join Temp_RTAExceptions t2 on t1.Id = t2.ID\nWhere t2.ID is null",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Archive_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.SourceServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.SourceDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.SourceUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.SourcePassword",
+										"type": "Expression"
+									},
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Archive_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.TargetServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.TargetDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.TargetUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.TargetPassword",
+										"type": "Expression"
+									},
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select id from @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name}",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "id",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "ID",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADF_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.TargetServerName",
+									"DatabaseName": "@pipeline().globalParameters.TargetDatabaseName",
+									"UserID": {
+										"value": "@pipeline().globalParameters.TargetUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.TargetPassword",
+										"type": "Expression"
+									},
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADF_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.SourceServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.SourceDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.SourceUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.SourcePassword",
+										"type": "Expression"
+									},
+									"Schema_Name": "dbo",
+									"Table_Name": "Temp_RTAExceptions"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"Schema_Name": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"Table_Name": {
+						"type": "string",
+						"defaultValue": "RTAExceptions"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-02-06T05:28:22Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RTAReports_Restore_DB_Insert')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyRTAReports",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select t1.* from (select ap.id\n,ap.reportName\n,ap.AccountListID\n,ap.AccountID\n,ap.DateRangeID\n,ap.FromDate\n,ap.ToDate\n,ap.MetricsList\n,ap.DataPointsSubMetricsID\n,ap.StepsMasteredDurationID\n,ap.DataPointsDurationID\n,ap.LessonsMasteredDurationID\n,ap.MemberID\n,ap.dateCreated\n,ap.dateLastModified\n,ap.dateDeleted\n,ap.ModifiedBy\n,ap.DeletedBy\n,ap.CreatedBy\nfrom @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name} ap \t\t\t\ninner join AccountInfo a on (a.ID=ap.accountId  )\nwhere a.Id in (@{join(pipeline().globalParameters.AccountID, ',')}) --and  ap.IsMigrated = 0\n)t1\nleft join Temp_RTAReports t2 on t1.Id = t2.ID\nWHERE t2.ID IS NULL",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Archive_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.SourceServerName",
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.SourceDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.SourceUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.SourcePassword",
+										"type": "Expression"
+									},
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Archive_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.TargetServerName",
+									"DatabaseName": "@pipeline().globalParameters.TargetDatabaseName",
+									"UserID": "@pipeline().globalParameters.TargetUserID",
+									"Password": "@pipeline().globalParameters.TargetPassword",
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						]
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select id from @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name}",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "id",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "ID",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADF_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.TargetServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.TargetDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.TargetUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.TargetPassword",
+										"type": "Expression"
+									},
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADF_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.SourceServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.SourceDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.SourceUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.SourcePassword",
+										"type": "Expression"
+									},
+									"Schema_Name": "dbo",
+									"Table_Name": "Temp_RTAReports"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"Schema_Name": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"Table_Name": {
+						"type": "string",
+						"defaultValue": "RTAReports"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-12-12T16:21:26Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RecapProfiles_Restore_DB_Insert')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopydataRecapProfiles",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select t1.* from (select ap.ChildProfileId\n,ap.MemberId\n,ap.AccountInfoId\n,ap.NoOfDataPoints\n,ap.Level3AccountInfoId\n,ap.Level2AccountInfoId\n,ap.Level1AccountInfoId\n,ap.AccountType\n,ap.AccountName\n,ap.StudentLastName\n,ap.StudentFirstName\n,ap.TeamMemberLastName\n,ap.TeamMemberFirstName\n,ap.ModifiedBy\n,ap.DeletedBy\n,ap.CreatedBy\n,ap.DateDeleted\n,ap.DateLastModified\n,ap.DateCreated\nFROM @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name} ap\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\ninner join dbo.AccountInfo a on (tm.accountinfoId=a.ID )\nWHERE a.Id in (@{join(pipeline().globalParameters.AccountID, ',')}) \n)t1\nleft join Temp_RecapProfiles t2 on t1.ChildProfileId = t2.ChildProfileId and t1.MemberId = t2.MemberId\nwhere t2.ChildProfileId is null and t2.MemberId is null",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Archive_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.SourceServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.SourceDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.SourceUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.SourcePassword",
+										"type": "Expression"
+									},
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Archive_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.TargetServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.TargetDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.TargetUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.TargetPassword",
+										"type": "Expression"
+									},
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select ChildProfileId,MemberId from @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name}",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "ChildProfileId",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "ChildProfileId",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									},
+									{
+										"source": {
+											"name": "MemberId",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "MemberId",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADF_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.TargetServerName",
+									"DatabaseName": "@pipeline().globalParameters.TargetDatabaseName",
+									"UserID": {
+										"value": "@pipeline().globalParameters.TargetUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.TargetPassword",
+										"type": "Expression"
+									},
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADF_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.SourceServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.SourceDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.SourceUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.SourcePassword",
+										"type": "Expression"
+									},
+									"Schema_Name": "dbo",
+									"Table_Name": "Temp_RecapProfiles"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"Schema_Name": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"Table_Name": {
+						"type": "string",
+						"defaultValue": "RecapProfiles"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-02-06T05:28:22Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RecordResultLessonMethodType_Restore_DB_Insert')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyRecordResultLessonMethodType",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select t1.* from (select  ap.id\n,ap.ChildProfileId\n,ap.LessonId\n,ap.MethodType\n,ap.Value\n,ap.DateCreated\n,ap.DateLastModified\n,ap.DateDeleted\n,ap.ModifiedBy\n,ap.DeletedBy\n,ap.CreatedBy \nfrom @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name} ap \ninner join dbo.ChildProfile p on (ap.childprofileId=p.id ) \ninner join dbo.AccountInfo a on (p.accountinfoId=a.ID )\nwhere a.Id in (@{join(pipeline().globalParameters.AccountID, ',')}) --and  ap.IsMigrated = 0\n)t1\nleft join Temp_RecordResultLessonMethodType t2 on t1.Id = t2.ID\nWHERE t2.ID IS NULL",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Archive_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.SourceServerName",
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.SourceDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.SourceUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.SourcePassword",
+										"type": "Expression"
+									},
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Archive_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.TargetServerName",
+									"DatabaseName": "@pipeline().globalParameters.TargetDatabaseName",
+									"UserID": "@pipeline().globalParameters.TargetUserID",
+									"Password": "@pipeline().globalParameters.TargetPassword",
+									"Schema_Name": "@pipeline().parameters.Schema_Name",
+									"Table_Name": "@pipeline().parameters.Table_Name"
+								}
+							}
+						]
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select id from @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name}",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "id",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "ID",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADF_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.TargetServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.TargetDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.TargetUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.TargetPassword",
+										"type": "Expression"
+									},
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADF_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.SourceServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.SourceDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.SourceUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.SourcePassword",
+										"type": "Expression"
+									},
+									"Schema_Name": "dbo",
+									"Table_Name": "Temp_RecordResultLessonMethodType"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"Schema_Name": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"Table_Name": {
+						"type": "string",
+						"defaultValue": "RecordResultLessonMethodType"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-12-12T16:21:25Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SSOMetadata__Restore_DB_Insert')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "SSOMetadataCopyDynamic",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select t1.* from (select  aaa.Id,\taaa.AccountId,\taaa.MetadataTypeId,aaa.MetadataValue,aaa.DateCreated,\n\taaa.CreatedBy,aaa.DateLastModified,aaa.\tModifiedBy\t,aaa.DateDeleted,aaa.DeletedBy\nfrom @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name} aaa inner join dbo.AccountInfo a on  (aaa.accountId=a.ID ) \nwhere a.Id in (@{join(pipeline().globalParameters.AccountID, ',')})\n)t1\nleft join Temp_SSOMetadata t2 on t1.Id = t2.ID\nWHERE t2.ID IS NULL",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Archive_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.SourceServerName",
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.SourceDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.SourceUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.SourcePassword",
+										"type": "Expression"
+									},
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Archive_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.TargetServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": "@pipeline().globalParameters.TargetDatabaseName",
+									"UserID": "@pipeline().globalParameters.TargetUserID",
+									"Password": "@pipeline().globalParameters.TargetPassword",
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select id from @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name}",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "id",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "ID",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADF_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.TargetServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.TargetDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.TargetUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.TargetPassword",
+										"type": "Expression"
+									},
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADF_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.SourceServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.SourceDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.SourceUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.SourcePassword",
+										"type": "Expression"
+									},
+									"Schema_Name": "dbo",
+									"Table_Name": "Temp_SSOMetadata"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"Schema_Name": {
+						"type": "string",
+						"defaultValue": "auth"
+					},
+					"Table_Name": {
+						"type": "string",
+						"defaultValue": "SSOMetadata"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2025-12-12T16:21:24Z"
+			},
+			"dependsOn": []
+		}
+	]
+}

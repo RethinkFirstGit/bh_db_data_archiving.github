@@ -1,0 +1,56 @@
+{
+	"SourceDbServer": {
+		"type": "string",
+		"value": "rta-bh-dev-internal-sql.database.windows.net"
+	},
+	"SourceDbName": {
+		"type": "string",
+		"value": "rta-bh-data-archive-test"
+	},
+	"SinkDbServer": {
+		"type": "string",
+		"value": "vmbhsqlclone.eastus.cloudapp.azure.com"
+	},
+	"SinkDbName": {
+		"type": "string",
+		"value": "adf250114"
+	},
+	"SourceServerName": {
+		"type": "string",
+		"value": "rta-bh-dev-internal-sql.database.windows.net"
+	},
+	"SourceDatabaseName": {
+		"type": "string",
+		"value": "rta-bh-prd-db1-hs_2025-05-03T23-32Z_UnArchive_Dev"
+	},
+	"TargetServerName": {
+		"type": "string",
+		"value": "rta-bh-east-sql1.database.windows.net"
+	},
+	"TargetDatabaseName": {
+		"type": "string",
+		"value": "rta-bh-prd-db1-hs"
+	},
+	"TargetUserID": {
+		"type": "string",
+		"value": "RTA_ETL_Automation_User"
+	},
+	"TargetPassword": {
+		"type": "string",
+		"value": "XeWtvhrbFggtY8WJafCt"
+	},
+	"AccountID": {
+		"type": "array",
+		"value": [
+			23187
+		]
+	},
+	"SourceUserID": {
+		"type": "string",
+		"value": "rtaadmin"
+	},
+	"SourcePassword": {
+		"type": "string",
+		"value": "5uP3rUZ3R84wD"
+	}
+}

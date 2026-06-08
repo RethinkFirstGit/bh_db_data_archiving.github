@@ -1,0 +1,756 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "db-data-archiving"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/Sink_LessonTarget')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Staging",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "LessonTarget"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sink_MFAUnsubscribedMembers')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Staging",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "MFAUnsubscribedMembers"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sink_MasteryCriteria')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Staging",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "MasteryCriteria"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sink_MedicaidIdNumbers')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Staging",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "MedicaidIdNumbers"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sink_MemberAccountHistory')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Staging",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "MemberAccountHistory"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sink_OccurrenceLateEntries')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Staging",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "OccurrenceLateEntries"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sink_PasswordHistory')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Staging",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "PasswordHistory"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sink_PeerSupportTopicPosts')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Staging",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "PeerSupportTopicPosts"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sink_PeerSupportTopics')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Staging",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "PeerSupportTopics"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sink_PhaseChange')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Staging",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "PhaseChange"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sink_PhaseChangeForBehavior')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Staging",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "PhaseChangeForBehavior"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sink_PhaseChangeForLesson')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Staging",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "PhaseChangeForLesson"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sink_PopoverOptionValue')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Staging",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "PopoverOptionValue"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sink_PrincipalSignatures')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Staging",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "PrincipalSignatures"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sink_PublishContent')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Staging",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "PublishContent"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sink_Question')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Staging",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Question"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sink_QuestionCategory')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Staging",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "QuestionCategory"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sink_RTAExceptions')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Staging",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "RTAExceptions"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sink_RTAReports')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Staging",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "RTAReports"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sink_RTAResources')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Staging",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "RTAResources"
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}

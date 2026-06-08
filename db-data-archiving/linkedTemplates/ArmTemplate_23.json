@@ -1,0 +1,776 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "db-data-archiving"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/Lookups_Source')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"TableName": {
+						"type": "string"
+					},
+					"SchemaName": {
+						"type": "string",
+						"defaultValue": "dbo"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "SchemaName",
+						"type": "varchar"
+					},
+					{
+						"name": "TableName",
+						"type": "varchar"
+					},
+					{
+						"name": "NumberOfRows",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "DBName",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().SchemaName",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().TableName",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/MFAUnsubscribedMembers')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "MFAUnsubscribedMembers"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/MasteryCriteria')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "MasteryCriteria"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/MedicaidIdNumbers')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "MedicaidIdNumbers"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/MemberAccountHistory')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "MemberAccountHistory"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OccurrenceLateEntries')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "OccurrenceLateEntries"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PasswordHistory')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "PasswordHistory"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PeerSupportTopicPosts')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "PeerSupportTopicPosts"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PeerSupportTopics')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "PeerSupportTopics"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PhaseChange')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "PhaseChange"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PhaseChangeForBehavior')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "PhaseChangeForBehavior"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PhaseChangeForLesson')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "PhaseChangeForLesson"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PopoverOptionValue')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "PopoverOptionValue"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PrincipalSignatures')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "PrincipalSignatures"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PublishContent')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "PublishContent"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Question')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Question"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/QuestionCategory')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "QuestionCategory"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RTAExceptions')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "RTAExceptions"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RTAReports')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "RTAReports"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RTAResources')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "RTAResources"
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}

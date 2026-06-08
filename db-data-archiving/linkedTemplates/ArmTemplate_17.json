@@ -1,0 +1,756 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "db-data-archiving"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/BehaviorPlanReviews')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "BehaviorPlanReviews"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BehaviorTracking')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "BehaviorTracking"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BehaviorTrackingAudit')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "BehaviorTrackingAudit"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BehaviorTrackingIntensityLevels')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "BehaviorTrackingIntensityLevels"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BillingHistory')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "BillingHistory"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BillingItem')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "BillingItem"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BillingSyncResults')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "BillingSyncResults"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CCMerge')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "CCMerge"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ChildProfile')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "ChildProfile"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ChildProfileAssessmentResponse')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "ChildProfileAssessmentResponse"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ChildProfileClinicalSettings')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "ChildProfileClinicalSettings"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ChildProfileCoachingSessions')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "ChildProfileCoachingSessions"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ChildProfileDiagnosis')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "ChildProfileDiagnosis"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ChildProfileEncrypt')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "ChildProfileEncrypt"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ChildProfileExternalMembers')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "ChildProfileExternalMembers"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ChildProfileHistory')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "ChildProfileHistory"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ChildProfileLessonSubTargets')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "ChildProfileLessonSubTargets"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ChildProfileLessonTarget')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "ChildProfileLessonTarget"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ChildProfileRecommendations')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "ChildProfileRecommendations"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ChildProfileSandataInfo')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "ChildProfileSandataInfo"
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}

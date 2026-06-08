@@ -1,0 +1,1645 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "db-data-archiving"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_HistoricalMemberLevel')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM reporting.HistoricalMemberLevel t\nINNER JOIN dbo.tblMember tm ON tm.id = t.memberId\nINNER JOIN dbo.AccountInfo a ON tm.accountInfoId = a.ID\nINNER JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n/**WHERE \n    sub.OrganizationTypeId <> 2\n    OR (\n        sub.OrganizationTypeId = 2\n        AND a.ID NOT IN (23382)\n        AND sub.SubscriptionStatusID <> 1\n        AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n    );\n**/",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:20Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_IepGoal')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.IepGoal t\nINNER JOIN dbo.ChildProfile cp ON t.childProfileId = cp.id\nINNER JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\nINNER JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n/**WHERE \n    sub.OrganizationTypeId <> 2\n    OR (\n        sub.OrganizationTypeId = 2\n        AND a.ID NOT IN (23382)\n        AND sub.SubscriptionStatusID <> 1\n        AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n    );\n**/",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:14Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_IepObjective')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.IepObjective t\nINNER JOIN dbo.IepGoal ieg ON t.Iepgoalid = ieg.id\nINNER JOIN dbo.ChildProfile cp ON ieg.childProfileId = cp.id\nINNER JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\nINNER JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n/**WHERE \n    sub.OrganizationTypeId <> 2\n    OR (\n        sub.OrganizationTypeId = 2\n        AND a.ID NOT IN (23382)\n        AND sub.SubscriptionStatusID <> 1\n        AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n    );\n**/",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:14Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_IepPlanDates')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.IepPlanDates t\nINNER JOIN dbo.ChildProfile cp ON t.childProfileId = cp.id\nINNER JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\nINNER JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\nWHERE \n    sub.OrganizationTypeId <> 2\n    OR (\n        sub.OrganizationTypeId = 2\n        AND a.ID NOT IN (23382)\n        AND sub.SubscriptionStatusID <> 1\n        AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n    );\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:29Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_IntervalData')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.IntervalData t\nINNER JOIN dbo.tblMember tm ON tm.id = t.memberId\nINNER JOIN dbo.AccountInfo a ON tm.accountInfoId = a.ID\nINNER JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n/**WHERE \n    sub.OrganizationTypeId <> 2\n    OR (\n        sub.OrganizationTypeId = 2\n        AND a.ID NOT IN (23382)\n        AND sub.SubscriptionStatusID <> 1\n        AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n    );\n    **/\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:13Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_KareoInsuranceCompanies')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.KareoInsuranceCompanies t\nINNER JOIN dbo.AccountInfo a ON t.accountInfoId = a.ID\nINNER JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\nWHERE \n    sub.OrganizationTypeId <> 2\n    OR (\n        sub.OrganizationTypeId = 2\n        AND a.ID NOT IN (23382)\n        AND sub.SubscriptionStatusID <> 1\n        AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n    );\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:18Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_KareoSettings')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.KareoSettings t\nINNER JOIN dbo.AccountInfo a ON t.accountInfoId = a.ID\nINNER JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\nWHERE \n    sub.OrganizationTypeId <> 2\n    OR (\n        sub.OrganizationTypeId = 2\n        AND a.ID NOT IN (23382)\n        AND sub.SubscriptionStatusID <> 1\n        AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n    );\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:24Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_LearningProcessAttributes')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.LearningProcessAttributes t\nWHERE EXISTS (\n    SELECT 1\n    FROM dbo.BehaviorTracking b\n    JOIN dbo.ChildProfile cp ON cp.id = b.ChildProfileID\n    JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\n    JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\n    JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    WHERE b.LearningProcessAttributesId = t.ID\n)\nOR EXISTS (\n    SELECT 1\n    FROM dbo.AccountInfo a\n    JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\n    JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    WHERE a.LearningProcessAttributesId = t.ID\n)\nOR EXISTS (\n    SELECT 1\n    FROM dbo.CurrentCurriculum cc\n    JOIN dbo.ChildProfile cp ON cp.id = cc.childProfileid\n    JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\n    JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\n    JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    WHERE cc.LearningProcessAttributesId = t.ID\n);\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:16Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_LearningPrompt')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.learningprompt t\nINNER JOIN dbo.LearningProcessAttributes lp ON t.LearningProcessAttributesId = lp.id\nINNER JOIN dbo.CurrentCurriculum cc ON cc.LearningProcessAttributesId = lp.id\nINNER JOIN dbo.ChildProfile cp ON cc.childProfileid = cp.id\nINNER JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\nINNER JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n/**WHERE \n    sub.OrganizationTypeId <> 2\n    OR (\n        sub.OrganizationTypeId = 2\n        AND a.ID NOT IN (23382)\n        AND sub.SubscriptionStatusID <> 1\n        AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n    );\n**/",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:17Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_Lesson')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.Lesson t\nWHERE t.ID IN (\n    SELECT t.id\n    FROM dbo.Lesson t\n    JOIN dbo.Subscription s ON s.id = t.SubscriptionId\n    JOIN dbo.AccountInfo a ON s.accountInfoId = a.ID\n    JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n\n    UNION\n\n    SELECT t.id\n    FROM dbo.Lesson t\n    JOIN dbo.LessonAccountCustomCategory cc ON cc.LessonId = t.id\n    JOIN dbo.AccountsToDelete atd ON cc.AccountId = atd.AccountId\n\n    UNION\n\n    SELECT t.id\n    FROM dbo.Lesson t\n    JOIN dbo.LessonCustomCategory cc ON cc.LessonId = t.id\n    JOIN dbo.ChildProfile cp ON cp.id = cc.ClientId\n    JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\n    JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n\n    UNION\n\n    SELECT t.id\n    FROM dbo.Lesson t\n    JOIN dbo.LessonNote n ON n.lessonId = t.id\n    JOIN dbo.ChildProfile cp ON cp.id = n.childProfileId\n    JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\n    JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n)\nAND NOT EXISTS (\n    SELECT 1\n    FROM dbo.hcFormResponseLessonsExcluded hfrle\n    WHERE hfrle.LessonId = t.id\n)\nAND NOT EXISTS (\n    SELECT 1\n    FROM dbo.LessonCustomCategory lcc\n    WHERE lcc.LessonId = t.id\n);\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:14Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_LessonAccountCustomCategory')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.LessonAccountCustomCategory t\nINNER JOIN dbo.AccountInfo a ON t.accountId = a.ID\nINNER JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\nWHERE \n    (\n        sub.OrganizationTypeId <> 2\n        OR (\n            sub.OrganizationTypeId = 2\n            AND a.ID NOT IN (23382)\n            AND sub.SubscriptionStatusID <> 1\n            AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n        )\n    );\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:16Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_LessonBehaviorGraphLink')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1_Original",
+						"type": "Script",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.LessonBehaviorGraphLink t\nJOIN dbo.BehaviorTracking bt ON bt.id = t.BehaviorId\nJOIN dbo.ChildProfile cp ON cp.id = bt.childProfileId\nJOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\nJOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nJOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\nWHERE \n    (\n        sub.OrganizationTypeId <> 2\n        OR (\n            sub.OrganizationTypeId = 2\n            AND a.ID NOT IN (23382)\n            AND sub.SubscriptionStatusID <> 1\n            AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n        )\n    );\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Script1_Updated",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.LessonBehaviorGraphLink t\nINNER JOIN dbo.hcFormResponse fr ON t.hcFormResponseId = fr.id\nINNER JOIN dbo.ChildProfile cp ON fr.childProfileId = cp.id\nINNER JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId;\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:17Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_LessonCustomCategory')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Script with WHILE loop",
+						"type": "Script",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "-- Declare batch size and loop count\nDECLARE @batchSize INT = 10000;\nDECLARE @i INT = 0;\nDECLARE @rows INT = 1;\n\nWHILE @i < 30 AND @rows > 0\nBEGIN\n    DELETE FROM dbo.LessonCustomCategory\n    WHERE Id IN (\n        SELECT TOP (@batchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.Lesson l ON t.LessonId = l.id\n        INNER JOIN dbo.Subscription sub ON sub.id = l.SubscriptionId\n        INNER JOIN dbo.AccountInfo a ON sub.accountInfoID = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n        WHERE \n            sub.OrganizationTypeId <> 2\n            OR (\n                sub.OrganizationTypeId = 2\n                AND a.ID NOT IN (23382)\n                AND sub.SubscriptionStatusID <> 1\n                AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n            )\n        ORDER BY t.Id\n    );\n\n    SET @rows = @@ROWCOUNT;\n    SET @i += 1;\nEND;\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Script2",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "Script1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Script3",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "Script2",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Script4",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "Script3",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Script5",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "Script4",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Script6",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "Script5",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Script7",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "Script6",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Script8",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "Script7",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Script9",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "Script8",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Script10",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "Script9",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Script11",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "Script10",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Script12",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "Script11",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Script13",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "Script12",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Script14",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "Script13",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Script15",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "Script14",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Script16",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "Script15",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Script17",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "Script16",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Script18",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "Script17",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Script19",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "Script18",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Script20",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "Script19",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DECLARE @BatchSize INT = 50000;\nDECLARE @DeletedRows INT = 1;\n\nWHILE @DeletedRows > 0\nBEGIN\n    ;WITH ToDelete AS (\n        SELECT TOP (@BatchSize) t.Id\n        FROM dbo.LessonCustomCategory t\n        INNER JOIN dbo.ChildProfile cp ON t.ClientId = cp.Id\n        INNER JOIN dbo.AccountInfo a ON cp.AccountInfoId = a.ID\n        INNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    )\n    DELETE t\n    FROM dbo.LessonCustomCategory t\n    INNER JOIN ToDelete td ON t.Id = td.Id;\n\n    SET @DeletedRows = @@ROWCOUNT;\n\n    IF @DeletedRows < @BatchSize\n        BREAK;\nEND\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"RowsRemaining": {
+						"type": "Integer",
+						"defaultValue": 1
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:15Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_LessonNote')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.LessonNote t\nINNER JOIN dbo.ChildProfile cp ON t.childProfileId = cp.id\nINNER JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\nINNER JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\nWHERE\n    sub.OrganizationTypeId <> 2\n    OR (\n        sub.OrganizationTypeId = 2\n        AND a.ID NOT IN (23382)\n        AND sub.SubscriptionStatusID <> 1\n        AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n    );\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:15Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_LessonResources')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "WITH cteLessons AS (\n    SELECT t.id \n    FROM dbo.Lesson t\n    JOIN dbo.Subscription s ON s.id = t.SubscriptionId\n    JOIN dbo.AccountInfo a ON s.accountInfoId = a.ID\n    JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\n    JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    WHERE \n        (\n            sub.OrganizationTypeId <> 2\n            OR (\n                sub.OrganizationTypeId = 2\n                AND a.ID NOT IN (23382)\n                AND sub.SubscriptionStatusID <> 1\n                AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n            )\n        )\n\n    UNION\n\n    SELECT t.id\n    FROM dbo.Lesson t\n    JOIN dbo.LessonAccountCustomCategory cc ON cc.LessonId = t.id\n    JOIN dbo.AccountInfo a ON cc.AccountId = a.ID\n    JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\n    JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    WHERE \n        (\n            sub.OrganizationTypeId <> 2\n            OR (\n                sub.OrganizationTypeId = 2\n                AND a.ID NOT IN (23382)\n                AND sub.SubscriptionStatusID <> 1\n                AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n            )\n        )\n\n    UNION\n\n    SELECT t.id\n    FROM dbo.Lesson t\n    JOIN dbo.LessonCustomCategory cc ON cc.LessonId = t.id\n    JOIN dbo.ChildProfile cp ON cp.id = cc.ClientId\n    JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\n    JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\n    JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    WHERE \n        (\n            sub.OrganizationTypeId <> 2\n            OR (\n                sub.OrganizationTypeId = 2\n                AND a.ID NOT IN (23382)\n                AND sub.SubscriptionStatusID <> 1\n                AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n            )\n        )\n\n    UNION\n\n    SELECT t.id\n    FROM dbo.Lesson t\n    JOIN dbo.LessonNote n ON n.lessonId = t.id\n    JOIN dbo.ChildProfile cp ON cp.id = n.childProfileId\n    JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\n    JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\n    JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n    WHERE \n        (\n            sub.OrganizationTypeId <> 2\n            OR (\n                sub.OrganizationTypeId = 2\n                AND a.ID NOT IN (23382)\n                AND sub.SubscriptionStatusID <> 1\n                AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n            )\n        )\n)\n\nDELETE t\nFROM dbo.LessonResources t\nJOIN cteLessons l ON l.id = t.LessonId;\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:30Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_LessonStep')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.LessonStep t\nINNER JOIN dbo.Lesson l ON t.LessonId = l.id\nINNER JOIN dbo.Subscription s ON s.id = l.SubscriptionId\nINNER JOIN dbo.AccountInfo a ON s.accountInfoId = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\nWHERE \n    (\n        s.OrganizationTypeId <> 2\n        OR (\n            s.OrganizationTypeId = 2\n            AND a.ID NOT IN (23382)\n            AND s.SubscriptionStatusID <> 1\n            AND s.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n        )\n    );\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:14Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_LessonStrategy')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.LessonStrategy t\nINNER JOIN dbo.Lesson l ON t.LessonId = l.id\nINNER JOIN dbo.Subscription s ON s.id = l.SubscriptionId\nINNER JOIN dbo.AccountInfo a ON s.accountInfoId = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\nWHERE \n    (\n        s.OrganizationTypeId <> 2\n        OR (\n            s.OrganizationTypeId = 2\n            AND a.ID NOT IN (23382)\n            AND s.SubscriptionStatusID <> 1\n            AND s.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n        )\n    );\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:14Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_LessonTarget')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "/**\nDELETE t\nFROM dbo.LessonTarget t\nJOIN dbo.Lesson l ON t.LessonId = l.id\nLEFT JOIN dbo.Subscription s ON s.id = l.SubscriptionId\nLEFT JOIN dbo.AccountInfo a ON s.accountInfoId = a.ID\nLEFT JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\nWHERE \n    (\n        l.SubscriptionId IS NULL\n        OR (\n            atd.AccountId IS NOT NULL\n            AND (\n                s.OrganizationTypeId <> 2\n                OR (\n                    s.OrganizationTypeId = 2\n                    AND a.ID NOT IN (23382)\n                    AND s.SubscriptionStatusID <> 1\n                    AND s.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n                )\n            )\n        )\n    );\n\n*/\n\nDELETE t\nFROM dbo.LessonTarget t\nINNER JOIN dbo.Lesson l ON t.LessonId = l.id\nINNER JOIN dbo.Subscription s ON s.id = l.SubscriptionId\nINNER JOIN dbo.AccountInfo a ON s.accountInfoId = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\nINNER JOIN dbo.Targets trg on trg.id=t.TargetId\nWHERE \n    (\n        l.SubscriptionId IS NULL\n        OR (\n            atd.AccountId IS NOT NULL\n            AND (\n                s.OrganizationTypeId <> 2\n                OR (\n                    s.OrganizationTypeId = 2\n                    AND a.ID NOT IN (23382)\n                    AND s.SubscriptionStatusID <> 1\n                    AND s.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n                )\n            )\n        )\n    );",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:13Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_Lookups')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": "select TABLE_SCHEMA,TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE table_type LIKE '%BASE TABLE%'\nAND table_name IN (\n'ABADosageAssessmentOptions',\n'ABADosageAssessmentQuestions',\n'ABADosageAssessmentSections',\n'ABADosageAssessmentTypes',\n'AccountSecuritySettings',\n'AccountTypeLU',\n'AcknowledgeableException',\n'Activity',\n'ActivityQuestions',\n'ActivityQuestionTargetMapping',\n'AgeGroupLU',\n'AnswerTypesLU',\n'AppAnnouncement',\n'ApplicationSettings',\n'AppointmentIntegrationOptions',\n'AppointmentIntegrationOptionTypes',\n'AreaOfConcernLU',\n'Assessment',\n'AssessmentAssessmentQuestion',\n'AssessmentQuestion',\n'AssessmentQuestionLesson',\n'AssessmentStatusLU',\n'BehaviorAfterLU',\n'BehaviorBeforeLU',\n'BehaviorCategoryLU',\n'BehaviorContextLU',\n'BehaviorFunctionsLU',\n'BehaviorLearning',\n'BehaviorLearningVideos',\n'BehaviorNonLessonSkillsLU',\n'BehaviorNotePriorityLU',\n'BehaviorPossibleReasonLU',\n'BehaviorSkillsStrategyLU',\n'BehaviorStrategyLessons',\n'BillingOptions',\n'CaregiverEmployeeBenefitLU',\n'CaregiverLU',\n'CaregiverOrgLU',\n'ChildRelationshipLU',\n'ClearingHouse',\n'ClearingHouseType',\n'CoachingTypeLU',\n'CommonStandardsCategories',\n'CommonStandardsRationals',\n'ConnectionTypeLU',\n'ConsecutiveUnitTypes',\n'CountryLU',\n'CreditCardTypeLU',\n'CurriculumTypeLU',\n'DefaultRoleTypeLU',\n'DiagnosisLUTypes',\n'DPHIntegrationReportStatuses',\n'DPHReportProcessingLogs',\n'Encounter',\n'EventStatusLU',\n'EventTypeLU',\n'evnews_Modification',\n'EVVActionTaken',\n'EVVReasonCode',\n'EVVStatus',\n'FAQ',\n'FAQCategories',\n'FileCabinetFolderTypesLU',\n'FormResponseStatus',\n'GenderLU',\n'Grades',\n'GroupMemberStatusLU',\n'hcAlertOptions',\n'hcAppointmentCancellationTypes',\n'hcAppointmentCustomTagTypes',\n'hcAppointmentDayTypes',\n'hcAppointmentMonthOccurrenceTypes',\n'hcAppointmentMonthTypes',\n'hcAppointmentOccurrenceTypes',\n'hcAppointmentReminderTimeFrame',\n'hcAppointmentReminderTypes',\n'hcAppointmentTransaction',\n'hcAppointmentTypes',\n'hcAppointmentUnarchivedDefaultReasons',\n'hcAppointmentUncancelDefaultReasons',\n'hcAssessedBehavior',\n'hcAssessmentPreferenceTypeLU',\n'hcAssessmentTypesLU',\n'hcAuthorizationDistributionTypes',\n'hcAuthorizationRenderingProviderType',\n'hcAuthorizationSubmissionTypes',\n'hcAuthorizationType',\n'hcBillingCode',\n'hcBillingCodeDuration',\n'hcBillingCodeTemplates',\n'hcBillingProviderOptions',\n'hcBillingSubmissionMethods',\n'hcChargePayment',\n'hcChildProfileBehaviorResponse',\n'hcClaims',\n'hcClaimStatus',\n'hcCombineChargeTypes',\n'hcCopaymentTypes',\n'hcCustomDiagnosis',\n'hcEncounterAttachmentTypes',\n'hcEncounterStatus',\n'hcEntityTypes',\n'hcFormGraphCalculationTypes',\n'hcFormGraphDurationTypes',\n'hcFormGraphFrequencyTypes',\n'hcFormGraphTypes',\n'hcFormGraphViewTypes',\n'hcFormResponseBehaviorTrackingExcluded',\n'hcFormTypes',\n'hcFrequencyType',\n'hcFunderCoverageTypes',\n'hcFunderTypeLU',\n'hcInsuranceConfirmationTypes',\n'hcInsuranceFunderPolicy',\n'hcLocationCodes',\n'hcMemberPermissions',\n'hcOvernightAppointments',\n'hcPaymentMethod',\n'hcPaymentTypeLU',\n'hcPayOverOption',\n'hcPermissions',\n'hcPermissionsAccessLevels',\n'hcPermissionsLevelType',\n'hcPropagatingAccountInfo',\n'hcPropagatingProviderServices',\n'hcPropagatingStaffMember',\n'hcProviderBillingCodeRateTypes',\n'hcProviderBillingCodeRoundingTypes',\n'hcReasonCode',\n'hcRelationshipToInsured',\n'hcScheduleTypes',\n'hcServiceNPIBillingTypes',\n'hcSettingTypes',\n'hcStaffCertificationLU',\n'hcStaffExperienceTypes',\n'hcStaffMemberPayrollTypes',\n'hcTaskAutomatedTypes',\n'hcTaskEntryTypes',\n'hcTaskTypes',\n'hcTaskWorkAreas',\n'hcTaxonomyCodes',\n'hcTimezones',\n'hcTransactionType',\n'hcUnitType',\n'hcWorkflowStatus',\n'hcWorkflowTypes',\n'HistoricalDailyUsersStats',\n'HistoricalGroups',\n'Holidays',\n'HomepageContactUsForm',\n'IntegrationEntityMap',\n'IntegrationEntityType',\n'IntegrationPartnerDetail',\n'IntegrationType',\n'IntervalLU',\n'Jurisdiction',\n'LanguageLU',\n'LessonCategory',\n'LessonCategoryType',\n'LessonElimination',\n'LessonNotePriorityLU',\n'LessonResourceTypeLU',\n'LessonStatus',\n'LessonStepStatus',\n'LevelOfImpairmentLU',\n'MailingListEmailAddresses',\n'MailingListTypeLU',\n'MaritalStatusLU',\n'MemberMultiAccountLink',\n'Messaging_Files',\n'MethodTypeLU',\n'NetsmartIntegrationType',\n'OrganizationSubscriberInterests',\n'OrganizationSubscribers',\n'OrganizationType',\n'OrganizationTypeLU',\n'OSTypeLU',\n'PaymentFrequencyLU',\n'PaymentMethodBilling',\n'PaymentMethodLU',\n'PeerSupportGroupMembers',\n'PeerSupportGroups',\n'PhaseChangeDataType',\n'PhaseChangeType',\n'Playlist',\n'PopoverOptionInfo',\n'PopoverOptionValue',\n'Product',\n'ProgramLU',\n'Promotion',\n'PromotionItem',\n'PromotionOption',\n'PromotionOptionProduct',\n'RecapProfiles',\n'RecordResultsLU',\n'RecordResultsPreferencesLU',\n'RecordResultsTemplate',\n'ReleaseLog',\n'Review',\n'RTAAccountListLU',\n'RTADateRangeLU',\n'RTADurationLU',\n'RTAExceptions',\n'RTAMetricTypeLU',\n'RTAResources',\n'RTAResources''Zips_USA',\n'RTASubMetricTypeLU',\n'RTATags',\n'SandataProcedureCodeMapping',\n'SandataResponseMessageHumanReadableMessagePairs',\n'SandataTimezones',\n'SavedBehaviorReportDetails',\n'ScheduledReportTypes',\n'ServiceCategoryLU',\n'ServiceIntensityTypes',\n'SignupNotification',\n'SSOMetadataType',\n'SSOProtocol',\n'SSOSettings',\n'StateLU',\n'StatusLU',\n'SubscriptionRecurrence',\n'SubscriptionStatusLU',\n'SubscriptionSubTypeLU',\n'SubscriptionTypeLU',\n'SupervisionRequest',\n'SupportTypeLU',\n'SyncResultStatus',\n'SyncResultType',\n'tblMemberFeatureLU',\n'tblRole',\n'TeachingMaterial',\n'TeachingMaterialPromoCode',\n'Test',\n'Testanswer',\n'TestQuestion',\n'TestSection',\n'Timezone',\n'TipOfTheWeek',\n'TrackIntensityStatuses',\n'TrainingLevelsLU',\n'TrainingModuleLU',\n'TrialTypeDefaultLU',\n'UserActionLU',\n'VbMappLessonMapping',\n'VerbalStatusLessonElimination',\n'VerbalStatusLU'\n)"
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:13Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_MFAUnsubscribedMembers')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.MFAUnsubscribedMembers t\nINNER JOIN dbo.tblMember tm ON tm.id = t.memberId\nINNER JOIN dbo.AccountInfo a ON tm.accountInfoId = a.ID\nINNER JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\nWHERE \n    (\n        sub.OrganizationTypeId <> 2\n        OR (\n            sub.OrganizationTypeId = 2\n            AND a.ID NOT IN (23382)\n            AND sub.SubscriptionStatusID <> 1\n            AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n        )\n    );\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:13Z"
+			},
+			"dependsOn": []
+		}
+	]
+}

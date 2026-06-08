@@ -1,0 +1,1002 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "db-data-archiving"
+		},
+		"Archive_Link_Service_Delete_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'Archive_Link_Service_Delete'"
+		},
+		"Archive_Link_Service_Restore_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'Archive_Link_Service_Restore'"
+		},
+		"BHDataArchiveDev_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'BHDataArchiveDev'"
+		},
+		"BHDataArchiveDev_New_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'BHDataArchiveDev_New'"
+		},
+		"BH_Consolidated_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'BH_Consolidated'"
+		},
+		"BH_Hopebridge_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'BH_Hopebridge'"
+		},
+		"BH_Prod_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'BH_Prod'"
+		},
+		"BH_Staging_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'BH_Staging'"
+		},
+		"Copy_From_Weekly_Refresh_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'Copy_From_Weekly_Refresh'"
+		},
+		"ADF_LS_SourceDB_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "@{linkedService().ServerName}"
+		},
+		"ADF_LS_SourceDB_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "@{linkedService().DatabaseName}"
+		},
+		"ADF_LS_SourceDB_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "@{linkedService().UserID}"
+		},
+		"ADF_LS_TargetDB_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "@{linkedService().ServerName}"
+		},
+		"ADF_LS_TargetDB_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "@{linkedService().DatabaseName}"
+		},
+		"ADF_LS_TargetDB_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "@{linkedService().UserID}"
+		},
+		"Archive_Link_Service_Delete_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "@{linkedService().ServerName}"
+		},
+		"Archive_Link_Service_Delete_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "@{linkedService().DatabaseName}"
+		},
+		"Archive_Link_Service_Delete_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "@{linkedService().UserID}"
+		},
+		"Archive_Link_Service_Restore_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "@{linkedService().ServerName}"
+		},
+		"Archive_Link_Service_Restore_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "@{linkedService().DatabaseName}"
+		},
+		"Archive_Link_Service_Restore_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "@{linkedService().UserID}"
+		},
+		"BHDataArchiveDev_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "rta-bh-east-sql1.database.windows.net,1433"
+		},
+		"BHDataArchiveDev_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "rta-bh-prd-db1-hs"
+		},
+		"BHDataArchiveDev_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "rtaadmin"
+		},
+		"BHDataArchiveDev_New_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "rta-bh-dev-internal-sql.database.windows.net"
+		},
+		"BHDataArchiveDev_New_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "rta-bh-data-archive-test"
+		},
+		"BHDataArchiveDev_New_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "rtaadmin"
+		},
+		"BH_Consolidated_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "@{linkedService().DbServer}"
+		},
+		"BH_Consolidated_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "@{linkedService().DbName}"
+		},
+		"BH_Consolidated_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "rtaadmin"
+		},
+		"BH_Hopebridge_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "@{linkedService().DbServer}"
+		},
+		"BH_Hopebridge_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "@{linkedService().DbName}"
+		},
+		"BH_Hopebridge_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "rtaadmin"
+		},
+		"BH_Prod_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "@{linkedService().DbServer}"
+		},
+		"BH_Prod_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "@{linkedService().DbName}"
+		},
+		"BH_Prod_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "rtaadmin"
+		},
+		"BH_Staging_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "@{linkedService().DbServer}"
+		},
+		"BH_Staging_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "@{linkedService().DbName}"
+		},
+		"BH_Staging_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "rtaadmin"
+		},
+		"Copy_From_Weekly_Refresh_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "rta-dev-sub-eastus2-sql1.database.windows.net"
+		},
+		"Copy_From_Weekly_Refresh_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "rta-bh-qa-sprint-weekly-refresh-hs1"
+		},
+		"Copy_From_Weekly_Refresh_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "rtaadmin"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/ADF_LS_SourceDB')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"parameters": {
+					"ServerName": {
+						"type": "string",
+						"defaultValue": "rta-bh-dev-internal-sql.database.windows.net"
+					},
+					"DatabaseName": {
+						"type": "string",
+						"defaultValue": "rta-bh-prd-db1-hs_2025-05-03T23-32Z_UnArchive_Dev"
+					},
+					"UserID": {
+						"type": "string",
+						"defaultValue": "rtaadmin"
+					},
+					"Password": {
+						"type": "string",
+						"defaultValue": "5uP3rUZ3R84wD"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('ADF_LS_SourceDB_properties_typeProperties_server')]",
+					"database": "[parameters('ADF_LS_SourceDB_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('ADF_LS_SourceDB_properties_typeProperties_userName')]",
+					"password": "@{linkedService().Password}"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ADF_LS_TargetDB')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"parameters": {
+					"ServerName": {
+						"type": "string",
+						"defaultValue": "rta-bh-east-sql1.database.windows.net"
+					},
+					"DatabaseName": {
+						"type": "string",
+						"defaultValue": "rta-bh-prd-db1-hs"
+					},
+					"UserID": {
+						"type": "string",
+						"defaultValue": "RTA_ETL_Automation_User"
+					},
+					"Password": {
+						"type": "string",
+						"defaultValue": "XeWtvhrbFggtY8WJafCt"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('ADF_LS_TargetDB_properties_typeProperties_server')]",
+					"database": "[parameters('ADF_LS_TargetDB_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('ADF_LS_TargetDB_properties_typeProperties_userName')]",
+					"password": "@{linkedService().Password}"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Archive_Link_Service_Delete')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"parameters": {
+					"ServerName": {
+						"type": "string",
+						"defaultValue": "rta-bh-east-sql1.database.windows.net"
+					},
+					"DatabaseName": {
+						"type": "string",
+						"defaultValue": "rta-bh-prd-db1-hs"
+					},
+					"UserID": {
+						"type": "string",
+						"defaultValue": "RTA_ETL_Automation_User"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('Archive_Link_Service_Delete_properties_typeProperties_server')]",
+					"database": "[parameters('Archive_Link_Service_Delete_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('Archive_Link_Service_Delete_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('Archive_Link_Service_Delete_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Archive_Link_Service_Restore')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"parameters": {
+					"ServerName": {
+						"type": "string",
+						"defaultValue": "rta-bh-dev-internal-sql.database.windows.net"
+					},
+					"DatabaseName": {
+						"type": "string",
+						"defaultValue": "rta-bh-prd-db1-hs_2025-05-03T23-32Z_UnArchive_Dev"
+					},
+					"UserID": {
+						"type": "string",
+						"defaultValue": "rtaadmin"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('Archive_Link_Service_Restore_properties_typeProperties_server')]",
+					"database": "[parameters('Archive_Link_Service_Restore_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('Archive_Link_Service_Restore_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('Archive_Link_Service_Restore_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BHDataArchiveDev')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('BHDataArchiveDev_properties_typeProperties_server')]",
+					"database": "[parameters('BHDataArchiveDev_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": true,
+					"authenticationType": "SQL",
+					"userName": "[parameters('BHDataArchiveDev_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('BHDataArchiveDev_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BHDataArchiveDev_New')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('BHDataArchiveDev_New_properties_typeProperties_server')]",
+					"database": "[parameters('BHDataArchiveDev_New_properties_typeProperties_database')]",
+					"encrypt": "optional",
+					"trustServerCertificate": true,
+					"authenticationType": "SQL",
+					"userName": "[parameters('BHDataArchiveDev_New_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('BHDataArchiveDev_New_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BH_Consolidated')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"parameters": {
+					"DbName": {
+						"type": "String",
+						"defaultValue": "rta-bh-RethinkConsolidated-prd-db"
+					},
+					"DbServer": {
+						"type": "string",
+						"defaultValue": "rta-bh-east-sql1.database.windows.net"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('BH_Consolidated_properties_typeProperties_server')]",
+					"database": "[parameters('BH_Consolidated_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('BH_Consolidated_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('BH_Consolidated_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BH_Hopebridge')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"parameters": {
+					"DbName": {
+						"type": "String",
+						"defaultValue": "rta-bh-Hopebridge-prd-db"
+					},
+					"DbServer": {
+						"type": "string",
+						"defaultValue": "rta-bh-east-sql1.database.windows.net"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('BH_Hopebridge_properties_typeProperties_server')]",
+					"database": "[parameters('BH_Hopebridge_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('BH_Hopebridge_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('BH_Hopebridge_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BH_Prod')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"parameters": {
+					"DbName": {
+						"type": "String",
+						"defaultValue": "rta-bh-Rethink-Consolidated-dev01-db"
+					},
+					"DbServer": {
+						"type": "string",
+						"defaultValue": "rta-bh-dev-internal-sql.database.windows.net"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('BH_Prod_properties_typeProperties_server')]",
+					"database": "[parameters('BH_Prod_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('BH_Prod_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('BH_Prod_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BH_Staging')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"parameters": {
+					"DbName": {
+						"type": "String",
+						"defaultValue": "rta-bh-Rethink-Consolidated-dev02-db"
+					},
+					"DbServer": {
+						"type": "string",
+						"defaultValue": "rta-bh-dev-internal-sql.database.windows.net"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('BH_Staging_properties_typeProperties_server')]",
+					"database": "[parameters('BH_Staging_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": false,
+					"authenticationType": "SQL",
+					"userName": "[parameters('BH_Staging_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('BH_Staging_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Copy_From_Weekly_Refresh')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('Copy_From_Weekly_Refresh_properties_typeProperties_server')]",
+					"database": "[parameters('Copy_From_Weekly_Refresh_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": true,
+					"authenticationType": "SQL",
+					"userName": "[parameters('Copy_From_Weekly_Refresh_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('Copy_From_Weekly_Refresh_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/FileAccessHistory_Trigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Trigger to initiate the copy of data > 90 days from the FileAcessHistory Table from Prod to Dev, then delete the data after copying.",
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 7,
+						"startTime": "2023-07-01T16:00:00Z",
+						"timeZone": "UTC"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/FileCabinetLog_Trigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 7,
+						"startTime": "2023-07-01T16:00:00",
+						"timeZone": "Eastern Standard Time"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/rta-bh-prod-loggingdb-arch-idy')]",
+			"type": "Microsoft.DataFactory/factories/credentials",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "ManagedIdentity",
+				"typeProperties": {
+					"resourceId": "/subscriptions/45fd92c0-b657-4b35-99cb-06f52800331d/resourcegroups/Default-Data-EastUS2/providers/Microsoft.ManagedIdentity/userAssignedIdentities/rta-bh-prod-loggingdb-arch-idy"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Create_And_Populate_AccountsToDelete')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Create AccountsToDelete Table",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "Create_DeletedAccountsHistory_Table",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": "IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[AccountsToDelete]') AND type in (N'U'))\nBEGIN\n    CREATE TABLE dbo.AccountsToDelete (\n        AccountId INT NOT NULL,\n        Source VARCHAR(50) NULL,  \n        DateInserted DATETIME DEFAULT GETDATE(),\n        CONSTRAINT PK_AccountsToDelete PRIMARY KEY (AccountId)\n    );\nEND"
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Create_DeletedAccountsHistory_Table",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": "IF NOT EXISTS (\n    SELECT 1 FROM sys.tables WHERE name = 'DeletedAccountsHistory'\n)\nBEGIN\n    CREATE TABLE dbo.DeletedAccountsHistory (\n        AccountId INT,\n        DateDeleted DATETIME DEFAULT GETDATE(),\n        CONSTRAINT PK_DeletedAccountsHistory PRIMARY KEY (AccountId)\n    );\nEND\n"
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Top_10_Accounts_Populate AccountsToDelete Table_copy1",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "Create AccountsToDelete Table",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": "-- Step 1: Truncate the staging table\nTRUNCATE TABLE dbo.AccountsToDelete;\n\n/**IF NOT EXISTS (SELECT 1 FROM dbo.AccountsToDelete)\nBEGIN\n    INSERT INTO dbo.AccountsToDelete (AccountId, Source)\n    SELECT TOP (4) AccountId, Source\n    FROM dbo.AllAccountsToDelete\n    WHERE IsDeleted = 0 AND Source = 'Large'\n    ORDER BY ACV;\nEND;**/\n\nIF NOT EXISTS (SELECT 1 FROM dbo.AccountsToDelete)\nBEGIN\n    INSERT INTO dbo.AccountsToDelete (AccountId, Source)\n    SELECT TOP (50) AccountId, Source\n    FROM dbo.AllAccountsToDelete\n    WHERE IsDeleted = 0 AND Source = 'Medium'\n    ORDER BY ACV;\nEND;\n\n"
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Top_10_Accounts_Populate AccountsToDelete Table",
+						"type": "Script",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": "-- Step 1: Truncate the table\nTRUNCATE TABLE dbo.AccountsToDelete;\n\n-- Step 2: Define the list of Account IDs and the Source\n\nINSERT INTO dbo.AccountsToDelete (AccountId, Source)\nSELECT v.AccountId, 'Medium Accounts' AS Source  -- Change Source to 'Small', 'Medium' or 'Large' if needed\nFROM (\n    VALUES \n (23698),\n(22660),\n(22521)\n) AS v(AccountId);"
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:23Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/BHDataArchiveDev')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Create_And_Populate_AccountsToDelete_Table')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Create AccountsToDelete Table",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": "IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[AccountsToDelete]') AND type in (N'U'))\nBEGIN\n    CREATE TABLE dbo.AccountsToDelete (\n        AccountId INT NOT NULL,\n        Source VARCHAR(50) NULL,  \n        DateInserted DATETIME DEFAULT GETDATE(),\n        CONSTRAINT PK_AccountsToDelete PRIMARY KEY (AccountId)\n    );\nEND"
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Populate AccountsToDelete Table",
+						"type": "Script",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": "TRUNCATE TABLE dbo.AccountsToDelete;\nINSERT INTO dbo.AccountsToDelete (AccountId, Source)\nSELECT DISTINCT ai.id,\n       CASE \n           WHEN sub.OrganizationTypeId <> 2 THEN 'Non-BH'\n           ELSE 'Inactive BH'\n       END AS Source\nFROM dbo.AccountInfo ai\nINNER JOIN dbo.Subscription sub ON sub.accountInfoID = ai.id\nWHERE \n    (\n        sub.OrganizationTypeId <> 2\n    )\n    OR\n    (\n        sub.OrganizationTypeId = 2\n        AND ai.id NOT IN (23382)\n        AND sub.SubscriptionStatusID <> 1\n        AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n    );\n"
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Manually Populate Table",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "Create AccountsToDelete Table",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": "TRUNCATE TABLE dbo.AccountsToDelete;\n\nINSERT INTO dbo.AccountsToDelete (AccountId, Source)\nVALUES (21061, 'Test');\n"
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:19Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/BHDataArchiveDev')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_ABADosageAssessment')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE ad\nFROM dbo.ABADosageAssessment ad\nJOIN dbo.childprofile cp ON ad.ChildProfileId = cp.id\nJOIN dbo.accountinfo ai ON cp.accountInfoId = ai.id\nJOIN dbo.subscription sub ON sub.accountInfoID = ai.id\nJOIN dbo.AccountsToDelete atd ON ai.id = atd.AccountId\n\n/*WHERE\n    (\n        sub.OrganizationTypeId <> 2\n    )\n    OR\n    (\n        sub.OrganizationTypeId = 2\n        AND ai.id NOT IN (23382) -- Exclude known test account\n        AND sub.SubscriptionStatusID <> 1\n        AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n    );\n*/\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:19Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/BHDataArchiveDev')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_ABADosageAssessmentAgreement')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.ABADosageAssessmentAgreement t\nINNER JOIN dbo.ABADosageAssessment aa ON t.AssessmentId = aa.id\nINNER JOIN dbo.ChildProfile cp ON aa.childProfileId = cp.id\nINNER JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\nINNER JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n/**WHERE\n    (\n        sub.OrganizationTypeId <> 2\n    )\n    OR\n    (\n        sub.OrganizationTypeId = 2\n        AND a.ID NOT IN (23382)\n        AND sub.SubscriptionStatusID <> 1\n        AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n    );\n**/",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:15Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/BHDataArchiveDev')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_ABADosageAssessmentResponses')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.ABADosageAssessmentResponses t\nINNER JOIN dbo.ABADosageAssessmentAgreement ag ON t.AssessmentId = ag.id\nINNER JOIN dbo.ABADosageAssessment aa ON t.AssessmentId = aa.id\nINNER JOIN dbo.ChildProfile cp ON aa.childProfileId = cp.id\nINNER JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\nINNER JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n/**WHERE\n    (\n        sub.OrganizationTypeId <> 2\n    )\n    OR\n    (\n        sub.OrganizationTypeId = 2\n        AND a.ID NOT IN (23382)\n        AND sub.SubscriptionStatusID <> 1\n        AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n    );\n**/",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:15Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/BHDataArchiveDev')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_AbcOptions')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.AbcOptions t\nJOIN dbo.AccountInfo a ON t.accountInfoId = a.ID\nJOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nJOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\nWHERE\n    (\n        sub.OrganizationTypeId <> 2\n    )\n    OR\n    (\n        sub.OrganizationTypeId = 2\n        AND a.ID NOT IN (23382)\n        AND sub.SubscriptionStatusID <> 1\n        AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n    );\n\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:14Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/BHDataArchiveDev')]"
+			]
+		}
+	]
+}

@@ -1,0 +1,917 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "db-data-archiving"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_hollowAccountMasteryCriteria')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.hollowAccountMasteryCriteria t\nINNER JOIN dbo.hollowAccountInfoSubscriber hs ON t.hollowsubscriberid = hs.subscriberId\nINNER JOIN dbo.AccountInfo a ON hs.accountInfoId = a.ID\nINNER JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\nWHERE \n    sub.OrganizationTypeId <> 2\n    OR (\n        sub.OrganizationTypeId = 2\n        AND a.ID NOT IN (23382) -- exclude test account\n        AND sub.SubscriptionStatusID <> 1\n        AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n    );\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:14Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_hollowCaregiver')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.hollowCaregiver t\nINNER JOIN dbo.tblMember tm ON tm.id = t.memberId\nINNER JOIN dbo.AccountInfo a ON tm.accountInfoId = a.ID\nINNER JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\nWHERE \n    sub.OrganizationTypeId <> 2\n    OR (\n        sub.OrganizationTypeId = 2\n        AND a.ID NOT IN (23382)\n        AND sub.SubscriptionStatusID <> 1\n        AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n    );\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:16Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_hollowChildProfileLessonMasteryCriteria')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.hollowChildProfileLessonMasteryCriteria t\nINNER JOIN dbo.ChildProfile cp ON t.childProfileId = cp.id\nINNER JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\nINNER JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\nWHERE \n    sub.OrganizationTypeId <> 2\n    OR (\n        sub.OrganizationTypeId = 2\n        AND a.ID NOT IN (23382)\n        AND sub.SubscriptionStatusID <> 1\n        AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n    );\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:27Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_hollowChildProfileLessonStatus')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.hollowChildProfileLessonStatus t\nINNER JOIN dbo.ChildProfile cp ON t.childProfileId = cp.id\nINNER JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\nINNER JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\nWHERE \n    sub.OrganizationTypeId <> 2\n    OR (\n        sub.OrganizationTypeId = 2\n        AND a.ID NOT IN (23382)\n        AND sub.SubscriptionStatusID <> 1\n        AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n    );\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:18Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_hollowSubscriberCaregiver')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t \nFROM dbo.hollowSubscriberCaregiver t\nINNER JOIN dbo.hollowCaregiver hc ON t.caregiverid = hc.id\nINNER JOIN dbo.tblMember tm ON tm.id = hc.memberId\nINNER JOIN dbo.AccountInfo a ON tm.accountInfoId = a.ID\nINNER JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\nWHERE \n    sub.OrganizationTypeId <> 2\n    OR (\n        sub.OrganizationTypeId = 2\n        AND a.ID NOT IN (23382)  -- exclude test account\n        AND sub.SubscriptionStatusID <> 1\n        AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n    );\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:17Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_rptObjectives')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.rptObjectives t\nINNER JOIN dbo.ChildProfile cp ON t.childProfileId = cp.id\nINNER JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\nINNER JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n/**WHERE \n    (\n        sub.OrganizationTypeId <> 2\n        OR (\n            sub.OrganizationTypeId = 2\n            AND a.ID NOT IN (23382)\n            AND sub.SubscriptionStatusID <> 1\n            AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n        )\n    );\n**/",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:13Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_rptTargets')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.rptTargets t\nINNER JOIN dbo.ChildProfile cp ON t.childProfileId = cp.id\nINNER JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\nINNER JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n/**WHERE \n    (\n        sub.OrganizationTypeId <> 2\n        OR (\n            sub.OrganizationTypeId = 2\n            AND a.ID NOT IN (23382)\n            AND sub.SubscriptionStatusID <> 1\n            AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n        )\n    );\n**/",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:17Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_rptUserActivityLog')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.rptUserActivityLog t\nINNER JOIN dbo.ChildProfile cp ON t.childProfileId = cp.id\nINNER JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\nINNER JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n/**WHERE \n    (\n        sub.OrganizationTypeId <> 2\n        OR (\n            sub.OrganizationTypeId = 2\n            AND a.ID NOT IN (23382)\n            AND sub.SubscriptionStatusID <> 1\n            AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n        )\n    );\n    **/\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:30Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_tblChangeTracking')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.tblChangeTracking t\nINNER JOIN dbo.tblMember tm ON tm.id = t.Userid\nINNER JOIN dbo.AccountInfo a ON tm.accountInfoId = a.ID\nINNER JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n/**WHERE\n    (\n        sub.OrganizationTypeId <> 2\n        OR (\n            sub.OrganizationTypeId = 2\n            AND a.ID NOT IN (23382)\n            AND sub.SubscriptionStatusID <> 1\n            AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n        )\n    );\n***/",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:13Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_tblMember')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.tblMember t\nINNER JOIN dbo.AccountInfo a ON t.accountInfoId = a.ID\nINNER JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n/**WHERE\n    (\n        sub.OrganizationTypeId <> 2\n        OR (\n            sub.OrganizationTypeId = 2\n            AND a.ID NOT IN (23382)\n            AND sub.SubscriptionStatusID <> 1\n            AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n        )\n    );\n**/",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:14Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_tblMemberAccountRole')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.tblMemberAccountRole t\nINNER JOIN dbo.tblMember tm ON tm.id = t.memberId\nINNER JOIN dbo.AccountInfo a ON tm.accountInfoId = a.ID\nINNER JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n/**WHERE\n    (\n        sub.OrganizationTypeId <> 2\n        OR (\n            sub.OrganizationTypeId = 2\n            AND a.ID NOT IN (23382)\n            AND sub.SubscriptionStatusID <> 1\n            AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n        )\n    );\n    ***/\n",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:15Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_tblMemberFeatureHistory')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.tblMemberFeatureHistory t\nINNER JOIN dbo.tblMember tm ON tm.id = t.memberId\nINNER JOIN dbo.AccountInfo a ON tm.accountInfoId = a.ID\nINNER JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n/**WHERE \n    (\n        sub.OrganizationTypeId <> 2\n        OR (\n            sub.OrganizationTypeId = 2\n            AND a.ID NOT IN (23382)\n            AND sub.SubscriptionStatusID <> 1\n            AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n        )\n    );\n***/",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:14Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Delete_tblMemberRole')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "DELETE t\nFROM dbo.tblMemberRole t\nINNER JOIN dbo.tblMember tm ON tm.id = t.memberId\nINNER JOIN dbo.AccountInfo a ON tm.accountInfoId = a.ID\nINNER JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n/**WHERE \n    (\n        sub.OrganizationTypeId <> 2\n        OR (\n            sub.OrganizationTypeId = 2\n            AND a.ID NOT IN (23382)\n            AND sub.SubscriptionStatusID <> 1\n            AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n        )\n    );\n**/",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:23Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/MASTER_PIPELINE_12_Populate_DeletedAccountsHistory')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Populate_DeletedAccountsHistory",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": "-- Create the history table if it doesn't already exist\nIF NOT EXISTS (\n    SELECT 1 FROM sys.tables WHERE name = 'DeletedAccountsHistory'\n)\nBEGIN\n    CREATE TABLE dbo.DeletedAccountsHistory (\n        AccountId INT,\n        DateDeleted DATETIME DEFAULT GETDATE(),\n        CONSTRAINT PK_DeletedAccountsHistory PRIMARY KEY (AccountId)\n    );\nEND\n\n-- Insert new account deletions that haven't been logged yet\nINSERT INTO dbo.DeletedAccountsHistory (AccountId, DateDeleted)\nSELECT AccountId, GETDATE()\nFROM dbo.AccountsToDelete atd\nWHERE NOT EXISTS (\n    SELECT 1\n    FROM dbo.DeletedAccountsHistory h\n    WHERE h.AccountId = atd.AccountId\n);\n"
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					},
+					{
+						"name": "Update_IsDeleted_on_AllAccountsToDelete",
+						"type": "Script",
+						"dependsOn": [
+							{
+								"activity": "Populate_DeletedAccountsHistory",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "BHDataArchiveDev",
+							"type": "LinkedServiceReference"
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": "UPDATE a\nSET a.IsDeleted = 1,\n    a.DateDeleted = GETDATE()\nFROM dbo.AllAccountsToDelete a\nINNER JOIN dbo.AccountsToDelete atd ON a.AccountId = atd.AccountId;\n"
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:14Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Update_Subscription_Status_Restore_pipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "ADF_LS_TargetDB",
+							"type": "LinkedServiceReference",
+							"parameters": {
+								"ServerName": "rta-bh-east-sql1.database.windows.net",
+								"DatabaseName": "rta-bh-prd-db1-hs",
+								"UserID": "RTA_ETL_Automation_User",
+								"Password": "XeWtvhrbFggtY8WJafCt"
+							}
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": {
+										"value": "update Subscription \nset SubscriptionStatusID = 1 \nwhere AccountInfoID in (@{join(pipeline().globalParameters.AccountID, ',')})\nand SubscriptionStatusID = 3 --Active",
+										"type": "Expression"
+									}
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:11Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "ADF_LS_TargetDB",
+							"type": "LinkedServiceReference",
+							"parameters": {
+								"ServerName": "rta-bh-east-sql1.database.windows.net",
+								"DatabaseName": "rta-bh-prd-db1-hs",
+								"UserID": "RTA_ETL_Automation_User",
+								"Password": "XeWtvhrbFggtY8WJafCt"
+							}
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": "\r\n\r\nALTER   PROCEDURE [dbo].[Usp_getsource_Count_Tables](\r\n @SourceDB       VARCHAR(100),\r\n @AccountInfoIDs VARCHAR(500))\r\nAS\r\nBEGIN\r\n\r\n--CREATE TABLE TotalRecordCounts(ID INT IDENTITY(1,1),TableName Varchar(100),NoRows INT,SourceDB Varchar(100),AccountId INT,CreatedDate  DATETIME default GETDATE());\r\n\r\n\r\nDROP TABLE IF EXISTS #TotalRecordCounts\r\nCREATE TABLE #TotalRecordCounts(ID INT IDENTITY(1,1),TableName VARCHAR(100),NoRows INT,SourceDB VARCHAR(100),AccountId INT,CreatedDate  DATETIME DEFAULT GETDATE());\r\n\r\n--1.Subscription\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'Subscription' TableName,COUNT(1) RecordsCount,a.id      \r\nfrom Subscription S\r\ninner join accountinfo a on (s.accountinfoid=a.id)\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,',')) \r\nGROUP BY a.id   \r\n\r\n\r\n--2.tblMember\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'tblMember' TableName,COUNT(1) RecordsCount,a.id \r\nfrom tblMember t\r\ninner join accountinfo a on (t.accountinfoid=a.id)\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,',')) \r\nGROUP BY a.id   \r\n\r\n--3.hcStaffMember\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcStaffMember' TableName,COUNT(1) RecordsCount,a.id \r\nfrom hcStaffMember h \r\ninner join dbo.tblMember t on (h.tblmemberid=t.id)\r\ninner join accountinfo a on (t.accountinfoid=a.id)\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,',')) \r\nGROUP BY a.id  \r\n\r\n--4.ChildProfile\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'ChildProfile' TableName,COUNT(1) RecordsCount,a.id \r\nfrom ChildProfile ap\r\ninner join accountinfo a on (ap.accountinfoid=a.id)\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,',')) \r\nGROUP BY a.id  \r\n\r\n--5.hcAppointments\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcAppointments' TableName,COUNT(1) RecordsCount,a.id \r\nfrom hcAppointments ap \r\ninner join dbo.ChildProfile p on (ap.clientId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,',')) \r\nGROUP BY a.id  \r\n\r\n\r\n--6.SSOMetadata\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'SSOMetadata' TableName,COUNT(1) RecordsCount,a.id \r\nfrom auth.SSOMetadata aaa \r\ninner join dbo.AccountInfo a on  (aaa.accountId=a.ID ) \r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,',')) \r\nGROUP BY a.id  \r\n\r\n--7.ActionTracking\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'ActionTracking' TableName,COUNT(1) RecordsCount,a.id \r\nfrom ActionTracking aaa \r\ninner join dbo.AccountInfo a on (aaa.AccountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--8.hcAvailabilities\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcAvailabilities' TableName,COUNT(1) RecordsCount,a.id \r\nfrom hcAvailabilities ap  \r\ninner join dbo.hcStaffMember hs on ( ap.entityid=hs.id  )  \r\ninner join dbo.tblMember tm on (tm.id =hs.tblmemberId    )\r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere entitytypeid=1\r\nand a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n\r\n--9.hcElementField\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcElementField' TableName,COUNT(1) RecordsCount,a.id \r\nfrom ActionTracking aaa \r\ninner join dbo.AccountInfo a on (aaa.AccountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n--10.hcElementFieldValues\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcElementFieldValues' TableName,COUNT(1) RecordsCount,a.id \r\nfrom hcElementFieldValues efv\r\ninner join hcElementField ef on efv.hcElementFieldId = ef.ID\r\ninner join AccountInfo A on ef.AccountInfoID = A.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--11.hcElementType\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcElementType' TableName,COUNT(1) RecordsCount,a.id \r\nfrom hcElementType ap \r\ninner join AccountInfo a on (a.ID=ap.accountInfoId  )\r\nwhere ap.accountinfoid is not null\r\nand a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--12.hcForm\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcForm' TableName,COUNT(1) RecordsCount,a.id \r\nfrom hcForm ap \t\r\ninner join  AccountInfo a on (a.ID=ap.AccountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--13.hcFormField\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcFormField' TableName,COUNT(1) RecordsCount,a.id \r\nfrom hcFormField ap \r\ninner join dbo.hcForm hf on (ap.hcFormId=hf.id)\r\ninner join AccountInfo a on (a.ID=hf.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--14.EmployeeBenefitEmailVerification\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'EmployeeBenefitEmailVerification' TableName,COUNT(1) RecordsCount,a.id \r\nfrom EmployeeBenefitEmailVerification ap \r\n inner join AccountInfo a on (a.ID=ap.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--15.ABADosageAssessment\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'ABADosageAssessment' TableName,COUNT(1) RecordsCount,a.id \r\nfrom ABADosageAssessment ap  \r\ninner join dbo.ChildProfile p on (ap.childProfileId=p.id ) \t\t\t\r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--16.ABADosageAssessmentResponses\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'ABADosageAssessmentResponses' TableName,COUNT(1) RecordsCount,a.id \r\nfrom ABADosageAssessmentResponses ap \r\ninner join  dbo.ABADosageAssessmentAgreement ag on (ap.AssessmentId=ag.id  )\r\ninner join dbo.ABADosageAssessment aa on ( ap.AssessmentId=aa.id) \r\ninner join dbo.ChildProfile p on (aa.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--17.AccountCoachingSessions\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'AccountCoachingSessions' TableName,COUNT(1) RecordsCount,a.id \r\nfrom AccountCoachingSessions ab \r\ninner join dbo.AccountInfo a on (ab.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n--18.AccountFileTag\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'AccountFileTag' TableName,COUNT(1) RecordsCount,a.id \r\nfrom AccountFileTag ap \r\ninner join dbo.AccountInfo a on (ap.accountId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--19.AccountRole\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'AccountRole' TableName,COUNT(1) RecordsCount,a.id \r\nfrom AccountRole ap  \r\ninner join dbo.AccountInfo a on (a.ID=ap.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--20.ActivityTests\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'ActivityTests' TableName,COUNT(1) RecordsCount,a.id \r\nfrom ActivityTests ap \r\ninner join  dbo.CurrentActivity ac   on (ap.Currentactivityid=ac.id   )\r\ninner join dbo.ChildProfile p on (ac.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--21.ActivityTestSessionResponses\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'ActivityTestSessionResponses' TableName,COUNT(1) RecordsCount,a.id \r\nfrom ActivityTestSessionResponses  ap \r\ninner join  dbo.ActivityTestSessions ats on (ap.ActivityTestsessionid=ats.id    )\r\ninner join dbo.ActivityTests ah on (Activitytestid=ah.id)  \r\ninner join dbo.CurrentActivity ac  on (ah.Currentactivityid=ac.id   )\r\ninner join dbo.ChildProfile p on (ac.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--print 'Test'\r\n--22.ActivityTestSessions\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'ActivityTestSessions' TableName,COUNT(1) RecordsCount,a.id \r\nfrom ActivityTestSessions ap \r\ninner join dbo.ActivityTests ah on (Activitytestid=ah.id)  \r\ninner join dbo.CurrentActivity ac  on (ah.Currentactivityid=ac.id   )\r\ninner join dbo.ChildProfile p on (ac.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--23.Affiliate\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'Affiliate' TableName,COUNT(1) RecordsCount,a.id \r\nfrom Affiliate ap\r\n inner join dbo.tblMember t on (ap.memberid=t.id)\r\ninner join accountinfo a on (t.accountinfoid=a.id)\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--24.Answer\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'Answer' TableName,COUNT(1) RecordsCount,a.id \r\nfrom Answer an  \r\ninner join dbo.tblMember t on (an.memberid=t.id   )\r\ninner join accountinfo a on (t.accountinfoid=a.id)\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--25.ApplicationLog\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'ApplicationLog' TableName,COUNT(1) RecordsCount,a.id \r\nfrom ApplicationLog an  \r\ninner join dbo.tblMember t on (an.memberid=t.id   )\r\ninner join accountinfo a on (t.accountinfoid=a.id)\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--26.AppointmentNonPropagationUpdates\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'AppointmentNonPropagationUpdates' TableName,COUNT(1) RecordsCount,a.id \r\nfrom AppointmentNonPropagationUpdates ap\r\ninner join dbo.hcAppointments ha on (ap.AppointmentId=ha.AppointmentId )\r\ninner join dbo.ChildProfile p on (ha.clientid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--27.AppointmentSandataInfo\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'AppointmentSandataInfo' TableName,COUNT(1) RecordsCount,a.id \r\nfrom AppointmentSandataInfo ap \r\ninner join dbo.hcAppointments ha on (ap.AppointmentId=ha.AppointmentId )\r\ninner join dbo.ChildProfile p on (ha.clientid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n--28.BehaviorPlan\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'BehaviorPlan' TableName,COUNT(1) RecordsCount,a.id \r\nfrom BehaviorPlan ap \t\r\ninner join dbo.ChildProfile p on (ap.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n--29.BehaviorPlanFunction\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'BehaviorPlanFunction' TableName,COUNT(1) RecordsCount,a.id \r\nfrom BehaviorPlanFunction ap \r\ninner join dbo.BehaviorPlan bp on (ap.Behaviorplanid=bp.id   )\r\ninner join dbo.ChildProfile p on (bp.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--30.BehaviorTracking\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'BehaviorTracking' TableName,COUNT(1) RecordsCount,a.id \r\nfrom BehaviorTracking  ap \t\r\ninner join dbo.ChildProfile p on (ap.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n--31.BehaviorAssessment\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'BehaviorAssessment' TableName,COUNT(1) RecordsCount,a.id \r\nfrom BehaviorAssessment ap \r\ninner join\t dbo.BehaviorPlan bp on (ap.BehaviorPlanId= bp.Id  ) \t\r\ninner join dbo.ChildProfile p on (bp.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--32.BehaviorAssessmentLog\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'BehaviorAssessmentLog' TableName,COUNT(1) RecordsCount,a.id \r\nfrom BehaviorAssessmentLog ap \r\ninner join\tdbo.BehaviorTracking bp on (ap.BehaviorTrackingid= bp.Id  ) \r\ninner join dbo.ChildProfile p on (bp.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n--33.BehaviorAssessmentLogAbcOptions\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'BehaviorAssessmentLogAbcOptions' TableName,COUNT(1) RecordsCount,a.id \r\nfrom BehaviorAssessmentLogAbcOptions ba \r\ninner join dbo.BehaviorAssessmentLog ap on(ba.BehaviorAssessmentLogId=ap.id )\t\r\ninner join\tdbo.BehaviorTracking bp on (ap.BehaviorTrackingid= bp.Id  )\r\ninner join dbo.ChildProfile p on (bp.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--34.BehaviorFormPlanFunction\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'BehaviorFormPlanFunction' TableName,COUNT(1) RecordsCount,a.id \r\nfrom BehaviorFormPlanFunction  ap \r\ninner join\tdbo.BehaviorPlan bp on (ap.BehaviorPlanId= bp.Id  ) \r\ninner join dbo.ChildProfile p on (bp.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--35.BehaviorFunctionSkills\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'BehaviorFunctionSkills' TableName,COUNT(1) RecordsCount,a.id \r\nfrom BehaviorFunctionSkills  ap \r\ninner join dbo.BehaviorPlanFunction bf on (ap.Behaviorplanfunctionid=bf.id  )\r\ninner join dbo.BehaviorPlan bp on (bf.Behaviorplanid=bp.id  )\r\ninner join dbo.ChildProfile p on (bp.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--36.BehaviorNote\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'BehaviorNote' TableName,COUNT(1) RecordsCount,a.id \r\nfrom BehaviorNote  ap \t\r\ninner join dbo.ChildProfile p on (ap.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--37.BehaviorPlanDataRecording\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'BehaviorPlanDataRecording' TableName,COUNT(1) RecordsCount,a.id \r\nfrom BehaviorPlanDataRecording  ap \t\r\ninner join behaviorTracking bt on (bt.Id=ap.behaviorTrackingId)\r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\t\t\r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--38.BehaviorPlanDataRecordingDetails\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'BehaviorPlanDataRecordingDetails' TableName,COUNT(1) RecordsCount,a.id \r\nfrom BehaviorPlanDataRecordingDetails ap\r\ninner join dbo.BehaviorPlanDataRecording bp on (ap.behaviorPlanDataId=bp.id   ) \t\r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\t\t\t\r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--39.BehaviorPlanMembers\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'BehaviorPlanMembers' TableName,COUNT(1) RecordsCount,a.id \r\nfrom BehaviorPlanMembers ap \r\ninner join dbo.BehaviorPlan bp on (ap.BehaviorPlanid=bp.id   ) \t\r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\r\ninner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--40.BehaviorPlanNotes\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'BehaviorPlanNotes' TableName,COUNT(1) RecordsCount,a.id \r\nfrom BehaviorPlanNotes ap\r\ninner join dbo.BehaviorPlan bp on (ap.BehaviorPlanid=bp.id   ) \t\r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\r\ninner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n--41.BehaviorPlanReviews\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'BehaviorPlanReviews' TableName,COUNT(1) RecordsCount,a.id \r\nfrom BehaviorPlanReviews ap \r\ninner join dbo.BehaviorPlan bp on (ap.BehaviorPlanid=bp.id   ) \t\r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\r\ninner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--42.BillingHistory\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'BillingHistory' TableName,COUNT(1) RecordsCount,a.id \r\nfrom BillingHistory  ap\r\ninner join Subscription s on (ap.SubscriptionID=s.id)\r\ninner join AccountInfo a on (a.id=s.accountinfoId   )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--43.hcAppointmentUnarchivedReasons\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcAppointmentUnarchivedReasons' TableName,COUNT(1) RecordsCount,a.id \r\nfrom hcAppointmentUnarchivedReasons ap \r\ninner join dbo.AccountInfo a on (ap.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--44.BillingItem\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'BillingItem' TableName,COUNT(1) RecordsCount,a.id \r\nfrom BillingItem ap \r\ninner join dbo.BillingHistory bh on (ap.BillingHistoryid=bh.id   )\r\ninner join Subscription s on (bh.SubscriptionID=s.id)\r\ninner join AccountInfo a on (a.id=s.accountinfoId   )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--45.ChildProfileAssessmentResponse\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'ChildProfileAssessmentResponse' TableName,COUNT(1) RecordsCount,a.id \r\nfrom ChildProfileAssessmentResponse ap \t\t\t \r\ninner join dbo.ChildProfile p on (ap.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--46.ChildProfileDiagnosis\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'ChildProfileDiagnosis' TableName,COUNT(1) RecordsCount,a.id \r\nfrom ChildProfileDiagnosis ap \t\t\t \r\ninner join dbo.ChildProfile p on (ap.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--47.ChildProfileEncrypt\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'ChildProfileEncrypt' TableName,COUNT(1) RecordsCount,a.id \r\nfrom ChildProfileEncrypt ap \t \r\ninner join dbo.ChildProfile p on (ap.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--48.ChildProfileExternalMembers\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'ChildProfileExternalMembers' TableName,COUNT(1) RecordsCount,a.id \r\nfrom ChildProfileExternalMembers  ap \t\t\t \r\ninner join dbo.ChildProfile p on (ap.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--49.ChildProfileHistory\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'ChildProfileHistory' TableName,COUNT(1) RecordsCount,a.id \r\nfrom ChildProfileHistory  cp \r\n inner join dbo.ChildProfile c  on (cp.childprofileid=c.id)\r\n inner join accountinfo a on (c.accountinfoid=a.id)\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--50.IepGoal\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'IepGoal' TableName,COUNT(1) RecordsCount,a.id \r\nfrom IepGoal ap \r\ninner join dbo.ChildProfile p on (ap.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n--51.IepObjective\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'IepObjective' TableName,COUNT(1) RecordsCount,a.id \r\nfrom IepObjective ap \r\n inner join dbo.IepGoal ieg  on (Iepgoalid=ieg.id ) \r\ninner join dbo.ChildProfile p on (ieg.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--52.Curriculum\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'Curriculum' TableName,COUNT(1) RecordsCount,a.id \r\nfrom  Curriculum ap        \r\ninner join dbo.ChildProfile p on (ap.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--53.ChildProfileLessonTarget\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'ChildProfileLessonTarget' TableName,COUNT(1) RecordsCount,a.id \r\nfrom ChildProfileLessonTarget  ap \r\ninner join  dbo.IepObjective ij on (ap.iepobjectiveid=ij.id   )\r\ninner join  dbo.Iepgoal ig on (ij.Iepgoalid=ig.id   )\r\ninner join dbo.ChildProfile p on (ig.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--54.ChildProfileLessonSubTargets\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'ChildProfileLessonSubTargets' TableName,COUNT(1) RecordsCount,a.id \r\nfrom ChildProfileLessonSubTargets  ap \r\ninner join dbo.ChildProfileLessonTarget cpl on (ap.ChildProfileLessonTargetid=cpl.id   )\r\ninner join  dbo.IepObjective ij on (cpl.iepobjectiveid=ij.id   )\r\ninner join  dbo.Iepgoal ig on (ij.Iepgoalid=ig.id   )\r\ninner join dbo.ChildProfile p on (ig.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--55.ChildProfileRecommendations\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'ChildProfileRecommendations' TableName,COUNT(1) RecordsCount,a.id \r\nfrom ChildProfileRecommendations  ap \r\ninner join  dbo.Curriculum cc on (ap.curriculumId=cc.id   )\r\ninner join dbo.ChildProfile p on (cc.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--56.ChildProfileSandataInfo\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'ChildProfileSandataInfo' TableName,COUNT(1) RecordsCount,a.id \r\nfrom ChildProfileSandataInfo ap \t\t\t \r\ninner join ChildProfile p on (ap.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--57.ChildProfileTargetMasteryCriteria\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'ChildProfileTargetMasteryCriteria' TableName,COUNT(1) RecordsCount,a.id \r\nfrom ChildProfileTargetMasteryCriteria ap \r\ninner join dbo.ChildProfileLessonTarget cpl on (ap.ChildProfileLessonTargetid=cpl.id   )\r\ninner join  dbo.IepObjective ij on (cpl.iepobjectiveid=ij.id   )\r\ninner join  dbo.Iepgoal ig on (ij.Iepgoalid=ig.id   )\r\ninner join dbo.ChildProfile p on (ig.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--58.ChildProfileTeamMember\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'ChildProfileTeamMember' TableName,COUNT(1) RecordsCount,a.id \r\nfrom ChildProfileTeamMember ap \t\t\t \r\ninner join ChildProfile p on (ap.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--59.ChildProfileTeamMemberOrg\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'ChildProfileTeamMemberOrg' TableName,COUNT(1) RecordsCount,a.id \r\nfrom ChildProfileTeamMemberOrg ap \t\t\t \r\ninner join ChildProfile p on (ap.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--60.ChildProfileTeamMemberPreferences\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'ChildProfileTeamMemberPreferences' TableName,COUNT(1) RecordsCount,a.id \r\nfrom ChildProfileTeamMemberPreferences ap \t\t\t \r\ninner join ChildProfile p on (ap.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n\r\n--61.CurrentActivity\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'CurrentActivity' TableName,COUNT(1) RecordsCount,a.id \r\nfrom CurrentActivity ap   \r\ninner join dbo.ChildProfile p on (ap.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--62.CurrentCurriculum\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'CurrentCurriculum' TableName,COUNT(1) RecordsCount,a.id \r\nfrom CurrentCurriculum ap  \r\ninner join dbo.ChildProfile p on (ap.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--63.CurrentCurriculumStrategy\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'CurrentCurriculumStrategy' TableName,COUNT(1) RecordsCount,a.id \r\nfrom CurrentCurriculumStrategy ap    \r\ninner join dbo.ChildProfile p on (ap.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--64.CurriculumLog\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'CurriculumLog' TableName,COUNT(1) RecordsCount,a.id \r\nfrom CurriculumLog ap   \r\ninner join dbo.ChildProfile p on (ap.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--65.ChildProfileCoachingSessions\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'ChildProfileCoachingSessions' TableName,COUNT(1) RecordsCount,a.id \r\nfrom ChildProfileCoachingSessions  ap \t\t\t \r\ninner join dbo.ChildProfile p on (ap.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--66.DataWarehouseSettings\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'DataWarehouseSettings' TableName,COUNT(1) RecordsCount,a.id \r\nfrom DataWarehouseSettings ap\r\ninner join dbo.AccountInfo a on (ap.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--67.DataPhase\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'DataPhase' TableName,COUNT(1) RecordsCount,a.id \r\nfrom DataPhase ap \r\ninner join dbo.ChildProfileLessonTarget clt on (targetid=clt.id  )\r\ninner join dbo.IepObjective ij on (clt.iepobjectiveid=ij.id   )\r\ninner join dbo.Iepgoal ig on (ij.Iepgoalid=ig.id   )\r\ninner join dbo.ChildProfile p on (ig.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--68.DPHReports\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'DPHReports' TableName,COUNT(1) RecordsCount,a.id \r\nfrom DPHReports ap\r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\r\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--69.DurationData\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'DurationData' TableName,COUNT(1) RecordsCount,a.id \r\nfrom DurationData ap \r\ninner join  dbo.BehaviorTracking bt on (ap.BehaviorTrackingid=bt.id  )\r\ninner join dbo.ChildProfile p on (bt.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--70.ExternalMembers\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'ExternalMembers' TableName,COUNT(1) RecordsCount,a.id \r\nfrom ExternalMembers ap  \r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\r\ninner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n\r\n--71.FileCabinetEmailView\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'FileCabinetEmailView' TableName,COUNT(1) RecordsCount,a.id \r\nfrom FileCabinetEmailView  ap \r\ninner join dbo.FileCabinetFiles  cf on (ap.FileCabinetFileId=cf.id   )\r\ninner join dbo.FileCabinet  fc on (cf.Filecabinetid=fc.id  )\r\ninner join dbo.ChildProfile p on (fc.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--72.FileCabinetFolders\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'FileCabinetFolders' TableName,COUNT(1) RecordsCount,a.id \r\nfrom FileCabinetFolders ap \r\ninner join dbo.FileCabinet  fc on (ap.Filecabinetid=fc.id  )\r\ninner join dbo.ChildProfile p on (fc.childProfileId=p.id )\r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--73.FrequencyData\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'FrequencyData' TableName,COUNT(1) RecordsCount,a.id \r\nfrom FrequencyData ap \r\n--inner join dbo.tblMember tm on (tm.id =ap.memberId    )\r\ninner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--74.hcAppointmentAcknowledgeableException\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcAppointmentAcknowledgeableException' TableName,COUNT(1) RecordsCount,a.id \r\nfrom hcAppointmentAcknowledgeableException ap \r\ninner join dbo.hcAppointments ha on (ap.AppointmentId=ha.AppointmentId )\r\ninner join dbo.ChildProfile p on (ha.clientid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--75.hcChildProfileAuthorization\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcChildProfileAuthorization' TableName,COUNT(1) RecordsCount,a.id \r\nfrom hcChildProfileAuthorization ap \t\t\t \r\ninner join ChildProfile p on (ap.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--76.hcClientCustomFields\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcClientCustomFields' TableName,COUNT(1) RecordsCount,a.id \r\nfrom hcClientCustomFields ap \r\ninner join AccountInfo a on (a.ID=ap.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--77.MedicaidIdNumbers\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'MedicaidIdNumbers' TableName,COUNT(1) RecordsCount,a.id \r\nfrom MedicaidIdNumbers ap \t\t\r\ninner join AccountInfo a on (a.ID=ap.accountId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--78.hcFunderSessionNoteExceptions\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcFunderSessionNoteExceptions' TableName,COUNT(1) RecordsCount,a.id \r\nfrom hcFunderSessionNoteExceptions ap \t\r\ninner join hcfunder hf on (hf.id=ap.FunderId   )\r\ninner join AccountInfo a on (a.ID=hf.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--79.hcClientCustomFieldsOptions\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcClientCustomFieldsOptions' TableName,COUNT(1) RecordsCount,a.id \r\nfrom hcClientCustomFieldsOptions ap \r\ninner join hcClientCustomFields cf on (ap.ClientCustomFieldId=cf.id ) \r\ninner join dbo.AccountInfo a on (cf.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--80.hcClientCustomFieldOptionValues\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcClientCustomFieldOptionValues' TableName,COUNT(1) RecordsCount,a.id \r\nfrom hcClientCustomFieldOptionValues ap \r\ninner join ChildProfile p on (ap.clientid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--81.hcChildProfileAuthorizationBillingCode\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcChildProfileAuthorizationBillingCode' TableName,COUNT(1) RecordsCount,a.id \r\nfrom hcChildProfileAuthorizationBillingCode ap \t\t\r\ninner join  dbo.hcProviderBillingCode bc on ( ap.hcProviderBillingCodeId=bc.id   )\r\ninner join hcChildProfileAuthorization aa on (aa.id=ap.hcChildProfileAuthorizationId)\r\ninner join ChildProfile p on (aa.childprofileid=p.id ) \r\ninner join AccountInfo a on (a.ID=bc.accountinfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--82.hcChildProfileContacts\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcChildProfileContacts' TableName,COUNT(1) RecordsCount,a.id \r\nfrom hcChildProfileContacts ap \t\t\t \r\ninner join ChildProfile p on (ap.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--83.hcChildProfileContactsEncrypt\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcChildProfileContactsEncrypt' TableName,COUNT(1) RecordsCount,a.id \r\nfrom hcChildProfileContactsEncrypt ap \r\ninner join dbo.hcChildProfileContacts cc on (ap.hcChildProfileContactsId= cc.id)\r\ninner join ChildProfile p on (cc.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--84.hcChildProfileFunderMapping\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcChildProfileFunderMapping' TableName,COUNT(1) RecordsCount,a.id \r\nfrom hcChildProfileFunderMapping ap \t\t\t \r\ninner join ChildProfile p on (ap.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--85.hcChildProfileFunderServiceLineMapping\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcChildProfileFunderServiceLineMapping' TableName,COUNT(1) RecordsCount,a.id \r\nfrom hcChildProfileFunderServiceLineMapping ap   \r\ninner join dbo.hcChildProfileFunderMapping cf on (ap.hcChildProfileFunderMappingId=cf.id )\t\t\t \r\ninner join ChildProfile p on (cf.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--86.hcChildProfileHealthCondition\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcChildProfileHealthCondition' TableName,COUNT(1) RecordsCount,a.id \r\nfrom hcChildProfileHealthCondition ap \t \r\ninner join ChildProfile p on (ap.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--87.hcChildProfileMedication\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcChildProfileMedication' TableName,COUNT(1) RecordsCount,a.id \r\nfrom hcChildProfileMedication ap \t\t \r\ninner join ChildProfile p on (ap.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--88.hcChildProfileMedicationEncryption\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcChildProfileMedicationEncryption' TableName,COUNT(1) RecordsCount,a.id \r\nfrom hcChildProfileMedicationEncryption ap \t\r\ninner join dbo.hcChildProfileMedication cm on ( ap.hcChildProfileMedicationId=cm.id) \t\t\t \r\ninner join ChildProfile p on (cm.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n --101.hcChildProfileMedicationEncryption\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcChildProfileMedicationEncryption' TableName,COUNT(1) RecordsCount,a.id   \r\nfrom hcChildProfileMedicationEncryption ap \t\r\ninner join dbo.hcChildProfileMedication cm on ( ap.hcChildProfileMedicationId=cm.id) \t\t\t \r\ninner join ChildProfile p on (cm.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n--102.hcChildProfilePreference\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcChildProfilePreference' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcChildProfilePreference ap \t\t \r\ninner join ChildProfile p on (ap.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--103.hcReferringProvider\t\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcReferringProvider' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcReferringProvider ap \r\ninner join dbo.AccountInfo a on (ap.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--104.hcChildProfileReferringProvider\t\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcChildProfileReferringProvider' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcChildProfileReferringProvider ap \t\t\t \r\ninner join ChildProfile p on (ap.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--105.hcChildProfileScheduleAssessment\t\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcChildProfileScheduleAssessment' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcChildProfileScheduleAssessment ap\t\r\ninner join ChildProfile p on (ap.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID ) \r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--106.hcChildProfileStaffAgePreference\t\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcChildProfileStaffAgePreference' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcChildProfileStaffAgePreference ap  \r\ninner join ChildProfile p on (ap.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--107.hcChildProfileStaffGenderPreference\t\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcChildProfileStaffGenderPreference' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcChildProfileStaffGenderPreference ap \t\t\r\ninner join ChildProfile p on (ap.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--108.hcChildProfileStaffLanguagePreference\t\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcChildProfileStaffLanguagePreference' TableName,COUNT(1) RecordsCount,a.id \r\nfrom hcChildProfileStaffLanguagePreference ap \t\t\r\ninner join ChildProfile p on (ap.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--109.hcChildProfileStaffMember\t\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcChildProfileStaffMember' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcChildProfileStaffMember hc\r\ninner join dbo.ChildProfile c  on (hc.childprofileid=c.id)\r\ninner join accountinfo a on (c.accountinfoid=a.id)\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--110.hcClientCustomFieldValues\t\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcClientCustomFieldValues' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcClientCustomFieldValues ap \r\ninner join ChildProfile p on (ap.clientid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcClientStatus\t111\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcClientStatus' TableName,COUNT(1) RecordsCount,a.id\r\nfrom hcClientStatus h\r\ninner join accountinfo a on (h.accountinfoid=a.id)\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcemployeetype\t112\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcemployeetype' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcemployeetype ap \r\ninner join dbo.AccountInfo a on (ap.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcEncounterAppointmentLink\t113\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcEncounterAppointmentLink' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcEncounterAppointmentLink ap  \r\ninner join dbo.hcAppointments ha on (ap.hcAppointmentId=ha.AppointmentId )\r\ninner join dbo.ChildProfile p on (ha.clientId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcEncounterAttachments\t114\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcEncounterAttachments' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcEncounterAttachments ap \r\ninner join dbo.hcEncounters he on  (ap.hcEncounterId=he.id  ) \r\ninner join ChildProfile p on (he.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcEncounters\t115\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcEncounters' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcEncounters ap \r\ninner join ChildProfile p on (ap.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n\r\n--hcFormFunders\t116\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcFormFunders' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcFormFunders ap \r\ninner join  dbo.hcForm hf on (hcFormid=hf.id)\r\ninner join AccountInfo a on (a.ID=hf.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcFormResponseLessonNotes\t117\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcFormResponseLessonNotes' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcFormResponseLessonNotes ap \r\ninner join dbo.hcFormResponse fr on (hcFormResponseId=fr.id)\r\ninner join  dbo.hcForm hf on (hcFormid=hf.id)\r\ninner join AccountInfo a on (a.ID=hf.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcFormResponseLessonNotesTargets\t118\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcFormResponseLessonNotesTargets' TableName,COUNT(1) RecordsCount,a.id \r\nfrom hcFormResponseLessonNotesTargets ap \r\ninner join dbo.hcFormResponse fr on (hcFormResponseId=fr.id)\r\ninner join  dbo.hcForm hf on (hcFormid=hf.id)\r\ninner join AccountInfo a on (a.ID=hf.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n--hcFormResponseLessonsExcluded\t119\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcFormResponseLessonsExcluded' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcFormResponseLessonsExcluded ap \r\ninner join dbo.hcFormResponse fr on (hcFormResponseId=fr.id)\r\ninner join  dbo.hcForm hf on (hcFormid=hf.id)\r\ninner join AccountInfo a on (a.ID=hf.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcFormResponseRemoteSignatureRequest\t120\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcFormResponseRemoteSignatureRequest' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcFormResponseRemoteSignatureRequest ap \r\ninner join dbo.tblMember tm on (tm.id =ap.AssignedmemberId    )\r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcFunderCaseManager\t121\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcFunderCaseManager' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcFunderCaseManager ap \r\ninner join dbo.hcFunder hf on ( ap.hcFunderid =hf.id) \t\r\ninner join AccountInfo a on (a.ID=hf.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcFunderInsurancePlans\t122\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcFunderInsurancePlans' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcFunderInsurancePlans ap \r\ninner join dbo.hcFunder hf on ( ap.hcFunderid =hf.id) \t\r\ninner join AccountInfo a on (a.ID=hf.accountInfoId)\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcFunderPreventableDates\t123\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcFunderPreventableDates' TableName,COUNT(1) RecordsCount,a.id \r\nfrom hcFunderPreventableDates ap \r\ninner join dbo.hcFunder hf on ( ap.hcFunderid =hf.id) \t\r\ninner join AccountInfo a on (a.ID=hf.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcPayOver\t124\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcPayOver' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcPayOver ap \r\ninner join AccountInfo a on (a.ID=ap.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcPlaceOfService\t125\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcPlaceOfService' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcPlaceOfService ap \t \r\ninner join AccountInfo a on (a.ID=ap.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcPropagatingChildProfile\t126\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcPropagatingChildProfile' TableName,COUNT(1) RecordsCount,a.id \r\nfrom hcPropagatingChildProfile ap \r\n\t\t\t\t\t\tinner join dbo.tblMember tm on (tm.id =ap.CreatedBy    )\r\n\t\t\t\t\t\t--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\n\t\t\t\t\t\tinner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcPropagatingChildProfileAuthorization\t127\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcPropagatingChildProfileAuthorization' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcPropagatingChildProfileAuthorization ap \r\n\t    inner join  dbo.hcChildProfileAuthorization cp  on (ap.hcChildProfileAuthorizationId=cp.id )\r\n\t\tinner join ChildProfile p on (cp.childprofileid=p.id ) \r\n        inner join AccountInfo a on (a.ID=p.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcProviderBillingCode\t129\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcProviderBillingCode' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcProviderBillingCode ap inner join AccountInfo a on (a.ID=ap.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcProviderBillingCodeCredentials\t132\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcProviderBillingCodeCredentials' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcProviderBillingCodeCredentials ap\r\ninner join  dbo.hcProviderBillingCode bc on ( ap.hcProviderBillingCodeId=bc.id   )\r\ninner join AccountInfo a on (a.ID=bc.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n--hcProviderServiceLine\t133\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcProviderServiceLine' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcProviderServiceLine ap \r\ninner join AccountInfo a on (a.ID=ap.accountInfoId  )\r\ninner join Subscription s on (a.ID=s.accountInfoID)\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcProviderServices\t134\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcProviderServices' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcProviderServices ap \r\ninner join AccountInfo a on (a.ID=ap.accountInfoId  )\r\ninner join Subscription s on (a.ID=s.accountInfoID)\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcReportHistory\t135\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcReportHistory' TableName,COUNT(1) RecordsCount,a.id \r\nfrom hcReportHistory ap \r\ninner join AccountInfo a on (a.ID=ap.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n--hcPropagatingChildProfileFunder\t137\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcPropagatingChildProfileFunder' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcPropagatingChildProfileFunder ap \r\n\t\t\t\t\t\tinner join dbo.tblMember tm on (tm.id =ap.CreatedBy    )\r\n\t\t\t\t\t\t--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\n\t\t\t\t\t\tinner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n----hcRolePermissions\t138\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\n--select 'hcRolePermissions' TableName,COUNT(1) RecordsCount,a.id  \r\n--from hcRolePermissions ap\r\n--WHERE ap.roleid IN (SELECT roletypeid \r\n--FROM hcstafftitle s inner join dbo.AccountInfo a on (s.accountInfoId=a.ID )\r\n--and a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,',')) )\r\n--GROUP BY a.id  \r\nselect 'hcRolePermissions' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcRolePermissions ap INNER join hcstafftitle s ON (ap.roleid =s.roletypeid  )\r\ninner join dbo.AccountInfo a on (s.accountInfoId=a.ID )\r\nand a.Id in (SELECT value FROM STRING_SPLIT('23986',',')) \r\nGROUP BY a.id  \r\n\r\n\r\n--hcServiceFunder\t139\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcServiceFunder' TableName,COUNT(1) RecordsCount,a.id \r\nfrom hcServiceFunder ap \r\ninner join dbo.hcFunder hf on ( ap.hcFunderid =hf.id) \t\r\ninner join AccountInfo a on (a.ID=hf.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcSettings\t140\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcSettings' TableName,COUNT(1) RecordsCount,a.id \r\nfrom hcSettings ap \t\r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\r\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcStaffCredential\t141\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcStaffCredential' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcStaffCredential h \r\ninner join accountinfo a on (h.accountinfoid=a.id)\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n--dbo.hcStaffCredentialType\t142\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcStaffCredentialType' TableName,COUNT(1) RecordsCount,a.id \r\nfrom hcStaffCredentialType ap \t\t\t\r\ninner join AccountInfo a on (a.ID=ap.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcStaffCustomFields\t143\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcStaffCustomFields' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcStaffCustomFields ap \t\t\t\r\ninner join AccountInfo a on (a.ID=ap.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcStaffCustomFieldsOptions\t144\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcStaffCustomFieldsOptions' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcStaffCustomFieldsOptions ap \t\t\t\r\ninner join dbo.hcStaffCustomFields cf on ( ap.StaffCustomFieldId=cf.id   ) \t\t\t\r\ninner join AccountInfo a on (a.ID=cf.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcStaffMemberAgeGroup\t145\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcStaffMemberAgeGroup' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcStaffMemberAgeGroup h \r\ninner join dbo.tblMember t on (h.tblmemberid=t.id)\r\ninner join accountinfo a on (t.accountinfoid=a.id)\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n--hcStaffMemberCredential\t146\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcStaffMemberCredential' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcStaffMemberCredential ap \t\r\ninner join dbo.tblMember tm on (tm.id =ap.tblmemberId    )\r\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcStaffMemberLanguage\t147\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcStaffMemberLanguage' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcStaffMemberLanguage ap \t\r\ninner join dbo.tblMember tm on (tm.id =ap.tblmemberId    )\r\n--inner join dbo.ChildProfile p on (p.memberId=tm.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n--hcStaffMemberLocation\t148\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcStaffMemberLocation' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcStaffMemberPayroll ap \t\r\ninner join dbo.tblMember tm on (tm.id =ap.tblmemberId    )\r\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcStaffMemberPayroll\t149\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcStaffMemberPayroll' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcStaffMemberPayroll ap \t\r\ninner join dbo.tblMember tm on (tm.id =ap.tblmemberId    )\r\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcStaffMileage\t150\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcStaffMileage' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcStaffMileage ap \t\t\t\r\ninner join AccountInfo a on (a.ID=ap.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcStaffPaycodes\t151\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcStaffPaycodes' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcStaffPaycodes ap\t\t\t\r\ninner join AccountInfo a on (a.ID=ap.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcStaffService\t152\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcStaffService' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcStaffService ap \r\ninner join dbo.tblMember tm on (tm.id =ap.staffmemberId    )\r\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcStaffServiceFunder\t153\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcStaffServiceFunder' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcStaffServiceFunder ap \r\ninner join dbo.hcStaffService hs on ( ap.hcstaffserviceid=hs.id  ) \t\t\t\r\ninner join dbo.tblMember tm on (tm.id =hs.staffmemberId    )\r\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcStaffStatus\t154\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcStaffStatus' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcStaffStatus h\r\ninner join accountinfo a on (h.accountinfoid=a.id)\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n--hcStaffTitle\t155\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcStaffTitle' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcStaffTitle ap\t\t\r\ninner join AccountInfo a on (a.ID=ap.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcStaffCustomFieldOptionValues\t156\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcStaffCustomFieldOptionValues' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcStaffCustomFieldOptionValues ap \t\t\r\ninner join hcstaffmember m on m.id = ap.staffmemberid\r\ninner join dbo.tblMember tm on (tm.id =m.tblmemberId    )\r\ninner join dbo.ChildProfile p on (p.memberId=ap.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcWorkflowHistory\t157\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcWorkflowHistory' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcWorkflowHistory ap \r\ninner join dbo.hcAppointments ha on (ap.referenceId=ha.appointmentid ) \r\n            \t\t\t        inner join dbo.ChildProfile p on (ha.clientId=p.id ) \r\n\t\t\t\t\t\t\t\tinner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hollowAccountInfoSubscriber\t158\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hollowAccountInfoSubscriber' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hollowAccountInfoSubscriber ap \t\t\t\r\ninner join AccountInfo a on (a.ID=ap.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hollowAccountLeaderRole6\t159\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hollowAccountLeaderRole6' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hollowAccountLeaderRole6 ap \t\t\t\r\ninner join AccountInfo a on (a.ID=ap.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n--hollowAccountMasteryCriteria\t160\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hollowAccountMasteryCriteria' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hollowAccountMasteryCriteria ap \r\ninner join\tdbo.hollowAccountInfoSubscriber hs on (ap.hollowsubscriberid=hs.subscriberId) \t\t\t\r\ninner join AccountInfo a on (a.ID=hs.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n--hollowCaregiver\t161\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hollowCaregiver' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hollowCaregiver ap \t\t\t\r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\r\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n--hollowChildProfileLessonMasteryCriteria\t162\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hollowChildProfileLessonMasteryCriteria' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hollowChildProfileLessonMasteryCriteria ap \t\t\t\t\t\t\t\r\ninner join dbo.ChildProfile p on (ap.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n--hollowChildProfileLessonStatus\t163\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hollowChildProfileLessonStatus' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hollowChildProfileLessonStatus ap \t\t\t\t\t\t\t\r\ninner join dbo.ChildProfile p on (ap.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n--IepGoal\t164\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'IepGoal' TableName,COUNT(1) RecordsCount,a.id \r\nfrom IepGoal ap \r\ninner join dbo.ChildProfile p on (ap.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n--IepObjective\t165\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'IepObjective' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom IepObjective ap \r\ninner join dbo.IepGoal ieg  on (Iepgoalid=ieg.id ) \r\ninner join dbo.ChildProfile p on (ieg.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n\r\n--IntervalData\t166\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'IntervalData' TableName,COUNT(1) RecordsCount,a.id \r\nfrom IntervalData ap \r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\r\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n--KareoInsuranceCompanies\t167\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'KareoInsuranceCompanies' TableName,COUNT(1) RecordsCount,a.id \r\nfrom KareoInsuranceCompanies ap \t\t\t\r\ninner join AccountInfo a on (a.ID=ap.accountInfoId  )\r\ninner join Subscription s on (a.ID=s.accountInfoID)\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n--KareoSettings\t168\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'KareoSettings' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom KareoSettings ap \t\t\t\r\ninner join AccountInfo a on (a.ID=ap.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--LearningPrompt\t169\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'LearningPrompt' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom LearningPrompt ap  \r\ninner join dbo.LearningProcessAttributes lp on (ap.LearningProcessAttributesId=lp.id)\r\n --inner join dbo.CurrentCurriculum cc   on (ap.LearningProcessAttributesid=cc.id)\r\n --inner join dbo.ChildProfile p on (cc.childprofileid=p.id ) \r\n --from LearningProcessAttributes LPA\r\ninner join AccountInfo A on A.LearningProcessAttributesId = LP.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--hcTasks\t170\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcTasks' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom hcTasks ap \r\ninner join dbo.ChildProfile p on (ap.Referenceid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nand ReferenceId is not null\r\nGROUP BY a.id  \r\n--IepPlanDates\t171\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'IepPlanDates' TableName,COUNT(1) RecordsCount,a.id \r\nfrom IepPlanDates ap   \r\ninner join dbo.ChildProfile p on (ap.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n----LearningProcessAttributes\t172\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nSELECT  TableName,SUM(RecordsCount),a.id AccountId\r\nFROM (\r\nselect 'LearningProcessAttributes' TableName,COUNT(1) RecordsCount,a.id\r\nfrom LearningProcessAttributes LPA\r\nInner Join dbo.BehaviorTracking b on (b.LearningProcessAttributesId=LPA.ID )\r\nInner Join ChildProfile C ON C.ID = B.ChildProfileID\r\ninner join AccountInfo A on C.AccountInfoID = A.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGroup by A.ID\r\nunion\r\nselect 'LearningProcessAttributes' TableName,COUNT(1) RecordsCount,a.id\r\n from LearningProcessAttributes LPA\r\ninner join AccountInfo A on A.LearningProcessAttributesId = LPA.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGroup by A.ID\r\nunion\r\nselect 'LearningProcessAttributes' TableName,COUNT(1) RecordsCount,a.id\r\n from LearningProcessAttributes LPA\r\nInner join CurrentCurriculum CC ON LPA.ID = CC.LearningProcessAttributesId\r\ninner join dbo.ChildProfile p on (CC.childprofileid=p.id ) \r\ninner join AccountInfo A on p.AccountInfoID = A.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGroup by A.ID)A\r\nGroup by TableName,a.id\r\n\r\n\r\n--LessonNote\t173\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'LessonNote' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom LessonNote ap       \r\ninner join dbo.ChildProfile p on (ap.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n--LessonStep\t174\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'LessonStep' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom LessonStep ap  \r\ninner join  dbo.Lesson l on ( ap.Lessonid=l.id  )\r\ninner join dbo.subscription s on (s.id=l.SubscriptionId   )\r\ninner join dbo.AccountInfo a on (s.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n--dbo.LessonStrategy\t175\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'LessonStrategy' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom LessonStrategy ap  \r\ninner join  dbo.Lesson l on ( ap.Lessonid=l.id  )\r\ninner join dbo.subscription s on (s.id=l.SubscriptionId   )\r\ninner join dbo.AccountInfo a on (s.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n--dbo.LessonTarget\t176\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'LessonTarget' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom LessonTarget ap inner join  dbo.Lesson l on ( ap.Lessonid=l.id  )\r\ninner join dbo.subscription s on (s.id=l.SubscriptionId   )\r\ninner join dbo.AccountInfo a on (s.accountInfoId=a.ID )\r\ninner join dbo.Targets t on (t.id=ap.TargetId )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n----MasteryCriteria\t177\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nSELECT  TableName,SUM(RecordsCount),a.id AccountId\r\nFROM (\r\nselect 'MasteryCriteria' TableName,COUNT(1) RecordsCount,a.id\r\nfrom MasteryCriteria MC \r\ninner join LearningProcessAttributes LPA on (LPA.Id= MC.LearningProcessAttributesId)\r\nInner Join dbo.BehaviorTracking b on (b.LearningProcessAttributesId=LPA.ID )\r\nInner Join ChildProfile C ON C.ID = B.ChildProfileID\r\ninner join AccountInfo A on C.AccountInfoID = A.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP by A.ID\r\nunion\r\nselect 'MasteryCriteria' TableName,COUNT(1) RecordsCount,a.id\r\nfrom MasteryCriteria MC \r\ninner join LearningProcessAttributes LPA on (LPA.Id= MC.LearningProcessAttributesId)\r\ninner join AccountInfo A on A.LearningProcessAttributesId = LPA.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP by A.ID\r\n--and mc.Ismigrated=0\r\nunion\r\nselect 'MasteryCriteria' TableName,COUNT(1) RecordsCount,a.id \r\nfrom MasteryCriteria MC \r\ninner join LearningProcessAttributes LPA on (LPA.Id= MC.LearningProcessAttributesId)\r\nInner join CurrentCurriculum CC ON LPA.ID = CC.LearningProcessAttributesId\r\ninner join dbo.ChildProfile p on (CC.childprofileid=p.id ) \r\ninner join AccountInfo A on p.AccountInfoID = A.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))GROUP by A.ID\r\n)A\r\nGroup by TableName,a.id\r\n\r\n--MemberAccountHistory\t178\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'MemberAccountHistory' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom MemberAccountHistory ap \r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\r\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--MFAUnsubscribedMembers\t179\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'MFAUnsubscribedMembers' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom MFAUnsubscribedMembers ap \t\r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\r\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n--OccurrenceLateEntries\t180\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'OccurrenceLateEntries' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom OccurrenceLateEntries ap \r\ninner join dbo.hcAppointments ha on (ap.AppointmentId=ha.AppointmentId )\r\ninner join dbo.ChildProfile p on (ha.clientId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n--PasswordHistory\t181\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'PasswordHistory' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom PasswordHistory ap  \t\r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\r\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--PeerSupportTopics\t182\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'PeerSupportTopics' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom PeerSupportTopics ap \r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\r\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--PeerSupportTopicPosts\t183\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'PeerSupportTopicPosts' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom PeerSupportTopicPosts ap \r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\r\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n--PhaseChange\t184\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'PhaseChange' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom PhaseChange ap \r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\r\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n--PhaseChangeForBehavior\t185\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'PhaseChangeForBehavior' TableName,COUNT(1) RecordsCount,a.id \r\nfrom PhaseChangeForBehavior ap \r\ninner join dbo.BehaviorTrackingAudit bt on (ap.BehaviorTrackingid=bt.id  )\r\ninner join ChildProfile p on (bt.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n--PhaseChangeForLesson\t186\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'PhaseChangeForLesson' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom PhaseChangeForLesson ap \r\ninner join dbo.CurrentCurriculum cc on (ap.CurrentCurriculumid=cc.id   )\r\ninner join dbo.ChildProfile p on (cc.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n--PrincipalSignatures\t187\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'PrincipalSignatures' TableName,COUNT(1) RecordsCount,a.id \r\nfrom PrincipalSignatures ap  \r\ninner join dbo.AccountInfo a on (ap.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--PublishContent\t188\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'PublishContent' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom PublishContent ap \r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\r\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--QuestionCategory\t189\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'QuestionCategory' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom QuestionCategory ap \r\ninner join dbo.Question q on (ap.id=q.QuestionCategoryID )\r\ninner join dbo.tblMember tm on (tm.id =q.memberId    )\r\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--PhaseChangeForBehavior\t190\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'PhaseChangeForBehavior' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom PhaseChangeForBehavior ap \r\ninner join dbo.BehaviorTrackingAudit bt on (ap.BehaviorTrackingid=bt.id  )\r\ninner join ChildProfile p on (bt.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--RecordResultLessonMethodType\t191\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'RecordResultLessonMethodType' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom RecordResultLessonMethodType ap \r\ninner join dbo.ChildProfile p on (ap.childprofileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountinfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--rptUserActivityLog\t192\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'rptUserActivityLog' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom rptUserActivityLog ap \r\ninner join dbo.ChildProfile p on (ap.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--RTAReports\t193\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'RTAReports' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom RTAReports ap \t\t\t\r\ninner join AccountInfo a on (a.ID=ap.accountId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--SavedBehaviorReports\t194\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'SavedBehaviorReports' TableName,COUNT(1) RecordsCount,a.id \r\nfrom SavedBehaviorReports ap \r\ninner join dbo.ChildProfile p on (ap.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--SavedBehaviorReportDetails\t195\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'SavedBehaviorReportDetails' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom SavedBehaviorReportDetails ap  \r\ninner join SavedReports sr on (ap.Reportid=sr.id   )\r\ninner join dbo.ChildProfile p on (sr.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n--SavedReportData\t196\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'SavedReportData' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom SavedReportData ap \r\ninner join SavedReports sr on (ap.Reportid=sr.id   )\r\ninner join dbo.ChildProfile p on (sr.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n--SavedReportDetails\t197\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'SavedReportDetails' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom dbo.SavedReportDetails ap \r\ninner join dbo.SavedReports sr on ( ap.Reportid=sr.id    )  \r\ninner join dbo.ChildProfile p on (sr.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n--SavedReports\t198\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'SavedReports' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom SavedReports ap \r\ninner join dbo.ChildProfile p on (ap.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n--SessionSchedule\t199\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'SessionSchedule' TableName,COUNT(1) RecordsCount,a.id \r\nfrom SessionSchedule ap \r\ninner join dbo.ChildProfile p on (ap.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n--SessionScheduleLesson\t200\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'SessionScheduleLesson' TableName,COUNT(1) RecordsCount,a.id \r\nfrom SessionScheduleLesson ap \r\ninner join  dbo.SessionSchedule  sse on (ap.sessionscheduleid=sse.id   )\r\ninner join dbo.ChildProfile p on (sse.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n--SetssInvoices\t201\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'SetssInvoices' TableName,COUNT(1) RecordsCount,a.id \r\nfrom SetssInvoices ap \r\ninner join AccountInfo a on (a.ID=ap.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n--SharedFolderAccess\t202\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'SharedFolderAccess' TableName,COUNT(1) RecordsCount,a.id  \r\nfrom SharedFolderAccess ap \r\ninner join  dbo.FileCabinetFolders  fc  on (ap.FilecabinetFolderid=fc.id  )\r\ninner join  dbo.FileCabinet f on (fc.Filecabinetid=f.id   )\r\ninner join dbo.ChildProfile p on (f.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--203.StaffMemberSandataInfo\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'StaffMemberSandataInfo' TableName,COUNT(1) RecordsCount,a.id\r\nfrom StaffMemberSandataInfo ap \r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\r\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--204.StaffSignatures\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'StaffSignatures' TableName,COUNT(1) RecordsCount,a.id\r\nfrom StaffSignatures ap \r\n--inner join hcstaffmember m on (m.id = ap.Staffmemberid )\r\ninner join tblMember tm on (tm.id =ap.Staffmemberid   )\r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n------206.SubscriptionProduct\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'SubscriptionProduct' TableName,COUNT(1) RecordsCount,a.id\r\nfrom SubscriptionProduct ap \r\ninner join Subscription s on (ap.SubscriptionId=s.ID)\r\ninner join dbo.AccountInfo a on (s.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n--207.SubscriptionPromotion\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'SubscriptionPromotion' TableName,COUNT(1) RecordsCount,a.id\r\nfrom SubscriptionPromotion ap \t\r\ninner join Subscription s on (ap.SubscriptionId=s.ID)\r\ninner join dbo.AccountInfo a on (s.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n----208.tblChangeTracking\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'tblChangeTracking' TableName,COUNT(1) RecordsCount,a.id\r\nfrom tblChangeTracking ap \r\ninner join dbo.tblMember tm on (tm.id =ap.Userid    )\r\n\t\t\t\t\t\t--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n----209.TargetTeachingSteps\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'TargetTeachingSteps' TableName,COUNT(1) RecordsCount,a.id\r\nfrom TargetTeachingSteps ap\r\ninner join dbo.TeachingStep ts on (ap.teachingStepId=ts.id  )\r\n inner join dbo.LearningProcessAttributes lp on (ts.LearningProcessAttributesId=lp.id)\r\n inner join dbo.CurrentCurriculum cc   on (ts.LearningProcessAttributesid=cc.id)\r\n inner join dbo.ChildProfile p on (cc.childprofileid=p.id )\r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n----211.ExportSubscription\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'ExportSubscription' TableName,COUNT(1) RecordsCount,a.id\r\nfrom ExportSubscription ap \r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\r\ninner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n----212.ScheduledReports\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'ScheduledReports' TableName,COUNT(1) RecordsCount,a.id\r\nfrom ScheduledReports ap \r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\r\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n----213.ScheduledReportAdditionalParameters\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'ScheduledReportAdditionalParameters' TableName,COUNT(1) RecordsCount,a.id\r\nfrom ScheduledReportAdditionalParameters ap \r\ninner join dbo.ScheduledReports sr on (ap.scheduledreportid=sr.id  )\r\ninner join dbo.tblMember tm on (tm.id =sr.memberId    )\r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n----214.tblMemberAccountRole\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'tblMemberAccountRole' TableName,COUNT(1) RecordsCount,a.id\r\nfrom tblMemberAccountRole ap \t\r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\r\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountinfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n----215.tblMemberFeatureHistory\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'tblMemberFeatureHistory' TableName,COUNT(1) RecordsCount,a.id\r\nfrom tblMemberFeatureHistory ap \t\r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\r\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountinfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--216.tblMemberRole\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'tblMemberRole' TableName,COUNT(1) RecordsCount,a.id\r\nfrom tblMemberRole ap \r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\r\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountinfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n----217.TeachingStep\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nSELECT  TableName,SUM(RecordsCount),a.id AccountId\r\nFROM (\r\n select 'TeachingStep' TableName,COUNT(1) RecordsCount,a.id\r\nfrom TeachingStep ap \r\ninner join LearningProcessAttributes LPA on ( ap.LearningProcessAttributesid=lpa.id  )\r\ninner join AccountInfo A on A.LearningProcessAttributesId = LPA.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGroup by A.ID\r\nunion \r\nselect 'TeachingStep' TableName,COUNT(1) RecordsCount,a.id\r\nfrom TeachingStep ap \r\ninner join  LearningProcessAttributes LPA on ( ap.LearningProcessAttributesid=lpa.id  )\r\nInner join CurrentCurriculum CC ON LPA.ID = CC.LearningProcessAttributesId\r\ninner join dbo.ChildProfile p on (CC.childprofileid=p.id ) \r\ninner join AccountInfo A on p.AccountInfoID = A.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGroup by A.ID\r\n\r\nunion \r\nselect 'TeachingStep' TableName,COUNT(1) RecordsCount,a.id\r\nfrom TeachingStep ap \r\ninner join  LearningProcessAttributes LPA on ( ap.LearningProcessAttributesid=lpa.id  )Inner Join dbo.BehaviorTracking b on (b.LearningProcessAttributesId=LPA.ID )\r\nInner Join ChildProfile C ON C.ID = B.ChildProfileID\r\ninner join AccountInfo A on C.AccountInfoID = A.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGroup by A.ID\r\n)A\r\nGroup by TableName,a.id\r\n\r\n----GROUP BY a.id  \r\n--218.TestResultHistory\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'TestResultHistory' TableName,COUNT(1) RecordsCount,a.id\r\nfrom TestResultHistory ap \r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\r\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n----219.TestVideoHistory\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'TestVideoHistory' TableName,COUNT(1) RecordsCount,a.id\r\nfrom TestVideoHistory ap \r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\r\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\n\r\nGROUP BY a.id  \r\n\r\n----220.TrialSetSession\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'TrialSetSession' TableName,COUNT(1) RecordsCount,a.id\r\nfrom TrialSetSession ap \r\ninner join dbo.tblMember tm on (tm.id =ap.CreatedBy    )\r\n\t\t\t\t\t\t--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\n\t\t\t\t\t\tinner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n----221.UserActivityLog\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'UserActivityLog' TableName,COUNT(1) RecordsCount,a.id\r\nfrom UserActivityLog ap \r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\r\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n--222.VbMappAssessment\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'VbMappAssessment' TableName,COUNT(1) RecordsCount,a.id\r\nfrom VbMappAssessment ap  \r\ninner join dbo.ChildProfile p on (ap.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n--223.VbMappPurchaseHistory\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'VbMappPurchaseHistory' TableName,COUNT(1) RecordsCount,a.id\r\nfrom VbMappPurchaseHistory ap \r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\r\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n----224.VbMappSelection\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'VbMappSelection' TableName,COUNT(1) RecordsCount,a.id\r\nfrom VbMappSelection ap \r\ninner join dbo.VbMappAssessment  va on (va.id=ap.VbMappAssessmentId  )\r\ninner join dbo.ChildProfile p on (va.childprofileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n--226.VideoServerInfo\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'VideoServerInfo' TableName,COUNT(1) RecordsCount,a.id\r\nfrom VideoServerInfo ap \t\r\ninner join AccountInfo a on (a.ID=ap.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n----232.TrialSet\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'TrialSet' TableName,COUNT(1) RecordsCount,a.id\r\nfrom TrialSet a\r\ninner join dbo.childprofile b on (a.hollowchildprofileid=b.id  )\r\ninner join  [dbo].[ChildProfileLessonTarget] c on (a.childProfileLessonTargetId=c.id  )\r\ninner join accountinfo af on (b.accountinfoid=af.id)\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--233.TrialSetDetails\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'TrialSetDetails' TableName,COUNT(1) RecordsCount,a.id\r\nfrom TrialSetDetails ap \r\ninner join dbo.tblMember t on (ap.memberid=t.id)\r\ninner join accountinfo a on (t.accountinfoid=a.id)\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--234.TrialSetSelections\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect DISTINCT 'TrialSetSelections' TableName,COUNT(1) RecordsCount,af.Id\r\nfrom TrialSetSelections ap \r\ninner join dbo.TrialSet ap1 on ( ap1.id=ap.trialSetId   )\r\ninner join dbo.childprofile b on (ap1.hollowchildprofileid=b.id  )\r\ninner join  [dbo].[ChildProfileLessonTarget] c on (ap1.childProfileLessonTargetId=c.id  )\r\ninner join accountinfo af on (b.accountinfoid=af.id)\r\nwhere af.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY af.Id  \r\n\r\n--235.UserSessionLog\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'UserSessionLog' TableName,COUNT(1) RecordsCount,a.id\r\nfrom UserSessionLog ap \r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\r\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n--238.AccountFileTagToFile\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'AccountFileTagToFile' TableName,COUNT(1) RecordsCount,a.id\r\nfrom AccountFileTagToFile ap inner join dbo.AccountFileTag\taf on ( ap.AccountFileTagId=af.id)\r\ninner join dbo.AccountInfo a on (a.ID=af.accountID  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n----239.FileCabinetFiles\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nSELECT  TableName,SUM(RecordsCount),a.id AccountId\r\nFROM (\r\nselect 'FileCabinetFiles' TableName,COUNT(1) RecordsCount,a.id\r\nfrom FileCabinetFiles ap \r\ninner join dbo.FileCabinet  fc on (ap.Filecabinetid=fc.id  )\r\ninner join dbo.ChildProfile p on (fc.childProfileId=p.id )\r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nand fc.childProfileId is not NULL\r\nGroup by A.ID\r\nunion \r\nselect 'FileCabinetFiles' TableName,COUNT(1) RecordsCount,a.id\r\nfrom FileCabinetFiles ap \r\ninner join dbo.FileCabinet  fc on (ap.Filecabinetid=fc.id  )\r\ninner join dbo.tblmember p on (fc.MemberId=p.id )\r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nand fc.MemberId is not null\r\nGroup by A.ID\r\n)A\r\nGroup by TableName,a.id\r\n\r\n--240.hcAppointmentCustomTags\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'hcAppointmentCustomTags' TableName,COUNT(1) RecordsCount,a.id\r\nfrom hcAppointmentCustomTags ap \r\ninner join AccountInfo a on (a.ID=ap.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n--251.hcNote\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nSELECT  TableName,SUM(RecordsCount),a.id AccountId\r\nFROM (\r\nselect 'hcNote' TableName,COUNT(1) RecordsCount,a.id\r\nfrom hcNote ap \r\n\t\t\t inner join childprofile b on (b.id=ap.clientid)\r\n\t\t\t inner join dbo.AccountInfo a on (b.accountInfoId=a.ID )\r\nwhere ap.clientid is not null\r\nand a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGroup by A.ID\r\nunion \r\nselect 'hcNote' TableName,COUNT(1) RecordsCount,a.id\r\nfrom hcNote ap \r\n  inner join hcstaffmember b on (b.id=ap.staffid)\r\n  inner join dbo.tblmember tm on  (tm.id =b.tblmemberId    )  \r\n  inner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere ap.staffid  is not null\r\nand  a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGroup by A.ID\r\n)A\r\nGroup by TableName,a.id\r\n\r\n\r\n--252.AppointmentPropagation\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'AppointmentPropagation' TableName,COUNT(1) RecordsCount,a.id\r\nfrom AppointmentPropagation  ap \r\ninner join dbo.hcAppointments ha on (ap.AppointmentId=ha.AppointmentId )\r\ninner join dbo.ChildProfile p on (ha.clientid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n--254.hcAppointmentClockingDetails\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'hcAppointmentClockingDetails' TableName,COUNT(1) RecordsCount,a.id\r\nfrom hcAppointmentClockingDetails ap \r\ninner join dbo.hcAppointments ha on (ap.AppointmentId=ha.AppointmentId )\r\ninner join dbo.ChildProfile p on (ha.clientId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--255.BillingSyncResults\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'BillingSyncResults' TableName,COUNT(1) RecordsCount,a.id\r\nfrom BillingSyncResults ap \r\ninner join AccountInfo a on (a.ID=ap.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n----256.hcTransaction\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'hcTransaction' TableName,COUNT(1) RecordsCount,a.id\r\nfrom hcTransaction ap \t    \r\ninner join dbo.tblmember tm on(tm.id= transactionBy  )\r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere referenceTypeId in (3,5,6,7)\r\nand a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n----257.hcPropagatingStaffMember\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'hcPropagatingStaffMember' TableName,COUNT(1) RecordsCount,a.id\r\nfrom hcPropagatingStaffMember ap\t\t\r\ninner join hcstafftitle hs on (hs.id=hcStaffTitleId )\r\ninner join AccountInfo a on (a.ID=hs.accountInfoId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--ChildProfileClinicalSettings\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'ChildProfileClinicalSettings' TableName,COUNT(1) RecordsCount,a.id\r\nfrom ChildProfileClinicalSettings ap\t\t\r\nJOIN dbo.ChildProfile cp ON ap.ChildProfileId = cp.id\r\nJOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--RETURN\r\n\r\n--hcStaffCustomFieldValues\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'hcStaffCustomFieldValues' TableName,COUNT(1) RecordsCount,a.id\r\nfrom hcStaffCustomFieldValues ap\t\t\r\n inner join hcstaffmember m on m.id = ap.staffmemberid\r\ninner join dbo.tblMember tm on (tm.id =m.tblmemberId    )\r\ninner join dbo.ChildProfile p on (p.memberId=tm.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n----LessonBehaviorGraphLink\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'LessonBehaviorGraphLink' TableName,COUNT(1) RecordsCount,a.id\r\nfrom LessonBehaviorGraphLink ap\t\r\nINNER JOIN dbo.hcFormResponse fr ON ap.hcFormResponseId = fr.id\r\nINNER JOIN dbo.ChildProfile cp ON fr.childProfileId = cp.id\r\nINNER JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--LessonAccountCustomCategory\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'LessonAccountCustomCategory' TableName,COUNT(1) RecordsCount,a.id\r\nfrom LessonAccountCustomCategory ap\t\t\r\ninner join AccountInfo a on (a.ID=ap.AccountId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n----LessonCustomCategory\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'LessonCustomCategory' TableName,COUNT(1) RecordsCount,a.id\r\nfrom LessonCustomCategory ap\t\t\r\ninner join ChildProfile p on (ap.clientid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n----CurrentCurriculumHistory\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'CurrentCurriculumHistory' TableName,COUNT(1) RecordsCount,a.id\r\nfrom CurrentCurriculumHistory ap\t\t\r\ninner join dbo.ChildProfile p on (ap.childprofileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n----SystemTeachingSteps\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'SystemTeachingSteps' TableName,COUNT(1) RecordsCount,a.id\r\nfrom SystemTeachingSteps ap\t\t\r\nINNER JOIN dbo.TeachingStep ts ON ap.TeachingStepId = ts.id\r\nINNER JOIN dbo.LearningProcessAttributes lp ON ts.LearningProcessAttributesId = lp.id\r\nINNER JOIN dbo.CurrentCurriculum cc ON lp.id = cc.LearningProcessAttributesId\r\nINNER JOIN dbo.ChildProfile cp ON cc.childprofileid = cp.id\r\nINNER JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n----ABADosageAssessmentAgreement\r\n\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'ABADosageAssessmentAgreement' TableName,COUNT(1) RecordsCount,a.id\r\nfrom ABADosageAssessmentAgreement ap\t\t\r\nINNER JOIN ABADosageAssessment aa ON ap.AssessmentId = aa.id\r\nINNER JOIN dbo.ChildProfile cp ON aa.childProfileId = cp.id\r\nINNER JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n----BehaviorPlanNotesAudit\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'BehaviorPlanNotesAudit' TableName,COUNT(1) RecordsCount,a.id\r\nfrom BehaviorPlanNotesAudit ap\t\t\r\ninner join dbo.BehaviorPlan bp on (ap.BehaviorPlanid=bp.id   ) \t\r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\r\ninner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n----BehaviorPlanMembersAudit\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'BehaviorPlanMembersAudit' TableName,COUNT(1) RecordsCount,a.id\r\nfrom BehaviorPlanMembersAudit ap\t\t\r\nINNER JOIN dbo.BehaviorPlan bp ON ap.BehaviorPlanId = bp.id\r\nINNER JOIN dbo.ChildProfile cp ON bp.childProfileId = cp.id\r\nINNER JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n----BehaviorPlanCustomCategory\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'BehaviorPlanCustomCategory' TableName,COUNT(1) RecordsCount,a.id\r\nfrom BehaviorPlanCustomCategory ap\t\t\r\ninner join dbo.BehaviorPlan bp on (ap.BehaviorPlanId=  bp.id )\t\r\ninner join dbo.ChildProfile p on (bp.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--BehaviorPlanFunctionAudit\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'BehaviorPlanFunctionAudit' TableName,COUNT(1) RecordsCount,a.id\r\nfrom BehaviorPlanFunctionAudit ap\t\t\r\ninner join dbo.BehaviorPlan bp on (ap.Behaviorplanid=bp.id   )\r\ninner join dbo.ChildProfile p on (bp.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--BehaviorPlanHistoryAudit\r\n\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'BehaviorPlanHistoryAudit' TableName,COUNT(1) RecordsCount,a.id\r\nfrom BehaviorPlanHistoryAudit ap\t\t\r\ninner join dbo.BehaviorPlan bp on (ap.BehaviorPlanid=bp.id   )\r\ninner join dbo.ChildProfile p on (bp.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n--BehaviorPlanHistory\r\n\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'BehaviorPlanHistory' TableName,COUNT(1) RecordsCount,a.id\r\nfrom BehaviorPlanHistory ap\t\t\r\ninner join dbo.BehaviorPlan bp on (ap.BehaviorPlanid=bp.id   )\r\ninner join dbo.ChildProfile p on (bp.childProfileId=p.id )  \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n----BehaviorAssessmentAudit\r\n\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'BehaviorAssessmentAudit' TableName,COUNT(1) RecordsCount,a.id\r\nfrom BehaviorAssessmentAudit ap\t\t\r\nINNER JOIN\tdbo.BehaviorPlan bp on (ap.BehaviorPlanId= bp.Id  ) \r\nINNER JOIN dbo.ChildProfile p on (bp.childProfileId=p.id ) \r\nINNER JOIN dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n----BehaviorFunctionSkillsAudit\r\n\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'BehaviorFunctionSkillsAudit' TableName,COUNT(1) RecordsCount,a.id\r\nfrom BehaviorFunctionSkillsAudit ap\t\t\r\ninner join dbo.BehaviorPlanFunction bf on (ap.Behaviorplanfunctionid=bf.id  )\r\ninner join dbo.BehaviorPlan bp on (bf.Behaviorplanid=bp.id  )\r\ninner join dbo.ChildProfile p on (bp.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--BehaviorTrackingAudit\r\n\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'BehaviorTrackingAudit' TableName,COUNT(1) RecordsCount,a.id\r\nfrom BehaviorTrackingAudit ap\t\t\r\ninner join dbo.ChildProfile p on (ap.childProfileId=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n----BehaviorTrackingIntensityLevels\r\n\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'BehaviorTrackingIntensityLevels' TableName,COUNT(1) RecordsCount,a.id\r\nfrom BehaviorTrackingIntensityLevels t\t\t\r\nJOIN dbo.BehaviorTracking bt ON bt.id = t.BehaviorTrackingId\r\nJOIN dbo.ChildProfile cp ON bt.childProfileId = cp.id\r\nJOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n----RTAExceptions\r\n\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'RTAExceptions' TableName,COUNT(1) RecordsCount,a.id\r\nfrom RTAExceptions ap\t\t\r\ninner join AccountInfo a on (a.ID=ap.accountId  )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id \r\n\r\n\r\n----rptTargets\r\n\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'rptTargets' TableName,COUNT(1) RecordsCount,a.id\r\nfrom rptTargets t\t\t\r\nINNER JOIN dbo.ChildProfile cp ON t.childProfileId = cp.id\r\nINNER JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n----rptObjectives\r\n\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'rptObjectives' TableName,COUNT(1) RecordsCount,a.id\r\nfrom rptObjectives ap\t\t\r\n inner join dbo.ChildProfile c  on (ap.childprofileid=c.id)\r\n inner join accountinfo a on (c.accountinfoid=a.id)\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n----RecapProfiles\r\n\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'RecapProfiles' TableName,COUNT(1) RecordsCount,a.id\r\nfrom RecapProfiles ap\t\t\r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\r\ninner join dbo.AccountInfo a on (tm.accountinfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n----Question\r\n\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'Question' TableName,COUNT(1) RecordsCount,a.id\r\nfrom Question ap\t\t\r\ninner join dbo.tblMember tm on (tm.id =ap.memberId    )\r\ninner join dbo.ChildProfile p on (ap.memberId=p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n----RecapMembers\r\n\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'RecapMembers' TableName,COUNT(1) RecordsCount,a.id\r\nfrom RecapMembers ap\t\t\r\ninner join dbo.tblMember tm on (tm.id =ap.memberId)\r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id \r\n\r\n----AnswerRating\r\n\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'AnswerRating' TableName,COUNT(1) RecordsCount,a.id\r\nfrom AnswerRating ap\t\t\r\ninner join dbo.tblMember t on (ap.memberid=t.id   )\r\ninner join accountinfo a on (t.accountinfoid=a.id)\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n----EmployeeBenefitUsers\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'EmployeeBenefitUsers' TableName,COUNT(1) RecordsCount,a.id\r\nfrom EmployeeBenefitUsers ap  INNER JOIN dbo.AccountInfo a ON (ap.parentaccountInfoId = a.ID)\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n----hcGlobalLockStaffException\r\n\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'hcGlobalLockStaffException' TableName,COUNT(1) RecordsCount,a.id\r\nfrom hcGlobalLockStaffException ap\t\t\r\ninner join dbo.tblMember tm on (tm.id =ap.staffmemberId    )\r\ninner join dbo.ChildProfile p on (ap.staffmemberId  =p.id ) \r\ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n----hcGlobalLock\r\n\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'hcGlobalLock' TableName,COUNT(1) RecordsCount,a.id\r\nFROM dbo.hcGlobalLock t\r\nINNER JOIN dbo.AccountInfo a ON t.CompanyaccountId = a.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n----hcNoteType\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'hcNoteType' TableName,COUNT(1) RecordsCount,a.id\r\nFROM dbo.hcNoteType t\r\nINNER JOIN dbo.AccountInfo a ON t.companyAccountId = a.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n----hcAddress\r\n--INSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\n-- SELECT 'hcAddress' TableName,COUNT(1) RecordsCount,a.id\r\n--from hcAddress t\r\n--WHERE EXISTS (\r\n--    SELECT 1\r\n--    FROM hcStaffMember s\r\n--    JOIN tblMember m ON m.ID = s.tblMemberId\r\n--    JOIN AccountInfo a ON a.ID = m.accountInfoId\r\n--    WHERE s.AddressId = t.id\r\n----and a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\n--    and a.Id in (23409,24190,20870) \r\n--)\r\n--OR EXISTS (\r\n--    SELECT 1\r\n--    FROM hcFunder f\r\n--    JOIN AccountInfo a ON a.ID = f.accountInfoId\r\n--     WHERE f.AddressId = t.id\r\n--and a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\n--     AND a.Id in (23409,24190,20870) \r\n--)\r\n--OR EXISTS (\r\n--    SELECT 1\r\n--    FROM hcChildProfileContacts cpc\r\n--    JOIN ChildProfile cp ON cp.id = cpc.childProfileId\r\n--    JOIN AccountInfo a ON a.ID = cp.accountInfoId\r\n--    WHERE cpc.AddressId = t.id\r\n--and a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\n--   AND  a.Id in (23409,24190,20870) )\r\n--OR EXISTS (\r\n--    SELECT 1\r\n--    FROM hcChildProfileScheduleAssessment cpsa\r\n--    JOIN ChildProfile cp ON cp.id = cpsa.childProfileId\r\n--    JOIN AccountInfo a ON a.ID = cp.accountInfoId\r\n--    WHERE cpsa.AddressId = t.id\r\n--and a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\n--    AND  a.Id in (23409,24190,20870) )\r\n--OR EXISTS (\r\n--    SELECT 1\r\n--    FROM hcProviderLocation pl\r\n--    JOIN AccountInfo a ON pl.accountInfoId = a.ID\r\n--    WHERE pl.AddressId = t.id\r\n--and a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\n--    AND  a.Id in (23409,24190,20870) \r\n--) ap\t\t\r\n---\r\n\r\n--GROUP BY a.id  \r\n\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nSELECT 'hcAddress'TableName,sum(RecordsCount) as RecordsCount,id FROM (\r\nSELECT COUNT(1) RecordsCount,a.id\r\nfrom hcAddress t\r\nINNER JOIN (\r\n    SELECT a.ID,s.AddressId\r\n    FROM hcStaffMember s\r\n    JOIN tblMember m ON m.ID = s.tblMemberId\r\n    JOIN AccountInfo a ON a.ID = m.accountInfoId\r\n    WHERE a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\n) A ON t.id = a.AddressId\r\nGROUP BY a.id\r\nUNION ALL\r\nSELECT COUNT(1) RecordsCount,a.id\r\nfrom hcAddress t\r\nINNER JOIN (\r\n    SELECT a.ID,F.AddressId\r\n    FROM hcFunder f\r\n    JOIN AccountInfo a ON a.ID = f.accountInfoId\r\n    WHERE a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\n) A ON t.id = a.AddressId\r\nGROUP BY a.id\r\nUNION ALL\r\nSELECT COUNT(1) RecordsCount,a.id\r\nfrom hcAddress t\r\nINNER JOIN (\r\n    SELECT a.ID,cpc.AddressId\r\n    FROM hcChildProfileContacts cpc\r\n    JOIN ChildProfile cp ON cp.id = cpc.childProfileId\r\n    JOIN AccountInfo a ON a.ID = cp.accountInfoId\r\n    WHERE a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\n   ) A ON t.id = a.AddressId\r\nGROUP BY a.id\r\nUNION ALL\r\nSELECT COUNT(1) RecordsCount,a.id\r\nfrom hcAddress t\r\nINNER JOIN (\r\n    SELECT a.ID,cpsa.AddressId\r\n    FROM hcChildProfileScheduleAssessment cpsa\r\n    JOIN ChildProfile cp ON cp.id = cpsa.childProfileId\r\n    JOIN AccountInfo a ON a.ID = cp.accountInfoId\r\n    WHERE a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\n    ) A ON t.id = a.AddressId\r\nGROUP BY a.id\r\nUNION ALL\r\nSELECT COUNT(1) RecordsCount,a.id\r\nfrom hcAddress t\r\nINNER JOIN (\r\n    SELECT a.ID,pl.AddressId\r\n    FROM hcProviderLocation pl\r\n    JOIN AccountInfo a ON pl.accountInfoId = a.ID\r\n    WHERE a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\n    ) A ON t.id = a.AddressId\r\nGROUP BY a.id\r\n) v GROUP BY --v.TableName,\r\nv.id\r\n\r\n-------------------------------------------------------------\r\n--dbo.hcPerson\r\n\r\n--INSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\n--select 'hcPerson' TableName,COUNT(1) RecordsCount,a.id\r\n--FROM dbo.hcPerson t\r\n--WHERE EXISTS (\r\n--    SELECT 1\r\n--    FROM dbo.hcChildProfileContacts tm\r\n--    INNER JOIN dbo.ChildProfile cp ON tm.ChildProfileid = cp.id\r\n--    INNER JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\r\n--\twhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\n--GROUP BY a.id  \r\n\r\nINSERT INTO #TotalRecordCounts (TableName, NoRows,AccountId)\r\nselect 'hcPerson' TableName,COUNT(1) RecordsCount,a.id\r\nfrom dbo.hcPerson ap \r\ninner join dbo.hcChildProfileContacts tm on (tm.personid =ap.id    )\r\ninner join dbo.ChildProfile p on (tm.ChildProfileid=p.id ) \r\ninner join dbo.AccountInfo a on (p.accountInfoId=a.ID )\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n    \r\n\r\n--dbo.FileCabinet\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'FileCabinet' TableName,COUNT(1) RecordsCount,a.id  \r\nFROM dbo.FileCabinet t\r\nINNER JOIN dbo.ChildProfile cp ON t.childProfileId = cp.id\r\nINNER JOIN dbo.tblMember m ON t.MemberId = m.ID\r\nINNER JOIN dbo.AccountInfo a ON t.accountInfoId = a.ID OR cp.accountInfoId = a.ID OR m.accountInfoId = a.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--dbo.hcFunder\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcFunder' TableName,COUNT(1) RecordsCount,a.id  \r\nFROM dbo.hcFunder t\r\nINNER JOIN dbo.AccountInfo a ON t.accountInfoId = a.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n--dbo.hcChildProfileDiagnosis\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcChildProfileDiagnosis' TableName,COUNT(1) RecordsCount,a.id  \r\nFROM dbo.hcChildProfileDiagnosis t\r\nINNER JOIN dbo.ChildProfile cp ON t.childprofileid = cp.id\r\nINNER JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--dbo.hcChildProfileHealthConditionEncryption\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcChildProfileHealthConditionEncryption' TableName,COUNT(1) RecordsCount,a.id  \r\nFROM dbo.hcChildProfileHealthConditionEncryption t\r\nINNER JOIN dbo.hcChildProfileHealthCondition ch ON t.hcChildProfileHealthConditionId = ch.id\r\nINNER JOIN dbo.ChildProfile cp ON ch.childprofileid = cp.id\r\nINNER JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--dbo.hcAppointmentEVVReasons\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcAppointmentEVVReasons' TableName,COUNT(1) RecordsCount,a.id  \r\nFROM dbo.hcAppointmentEVVReasons t\r\nINNER JOIN dbo.hcAppointments ha ON t.AppointmentId = ha.AppointmentId\r\nINNER JOIN dbo.ChildProfile cp ON ha.clientId = cp.id\r\nINNER JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n----dbo.hcAppointmentEvvTellusLog\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcAppointmentEvvTellusLog' TableName,COUNT(1) RecordsCount,a.id  \r\nFROM dbo.hcAppointmentEvvTellusLog t\r\nINNER JOIN dbo.hcAppointments ha ON t.AppointmentId = ha.AppointmentId\r\nINNER JOIN dbo.ChildProfile cp ON ha.clientId = cp.id\r\nINNER JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--dbo.hcAppointmentReminderActual\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcAppointmentReminderActual' TableName,COUNT(1) RecordsCount,a.id  \r\nFROM dbo.hcAppointmentReminderActual t\r\nINNER JOIN dbo.hcAppointments ha ON t.AppointmentId = ha.AppointmentId\r\nINNER JOIN dbo.ChildProfile cp ON ha.clientId = cp.id\r\nINNER JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n--dbo.hcAppointmentReminderSettings\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcAppointmentReminderSettings' TableName,COUNT(1) RecordsCount,a.id  \r\nFROM dbo.hcAppointmentReminderSettings t\r\nINNER JOIN dbo.hcAppointments ha ON t.AppointmentId = ha.AppointmentId\r\nINNER JOIN dbo.ChildProfile cp ON ha.clientId = cp.id\r\nINNER JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n--dbo.hcAppointmentReminderTemplate\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcAppointmentReminderTemplate' TableName,COUNT(1) RecordsCount,a.id  \r\nFROM dbo.hcAppointmentReminderTemplate t\r\nINNER JOIN dbo.AccountInfo a ON t.accountInfoId = a.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--dbo.hcAppointmentSessionComments\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcAppointmentSessionComments' TableName,COUNT(1) RecordsCount,a.id  \r\nFROM dbo.hcAppointmentSessionComments t\r\nINNER JOIN dbo.hcAppointments ha ON t.AppointmentId = ha.AppointmentId\r\nINNER JOIN dbo.ChildProfile cp ON ha.clientId = cp.id\r\nINNER JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--dbo.hcAppointmentUncancelReasons\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcAppointmentUncancelReasons' TableName,COUNT(1) RecordsCount,a.id  \r\nFROM dbo.hcAppointmentUncancelReasons t\r\nINNER JOIN dbo.AccountInfo a ON t.accountInfoId = a.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--dbo.hcChargeEntries\r\n\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcChargeEntries' TableName,COUNT(1) RecordsCount,a.id  \r\nFROM dbo.hcChargeEntries t\r\nINNER JOIN dbo.hcEncounters hc ON t.hcEncounterId = hc.id\r\nINNER JOIN dbo.ChildProfile cp ON hc.childprofileid = cp.id\r\nINNER JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--dbo.hcChildProfileAssessment\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcChildProfileAssessment' TableName,COUNT(1) RecordsCount,a.id  \r\nFROM dbo.hcChildProfileAssessment t\r\nINNER JOIN dbo.ChildProfile cp ON t.childprofileid = cp.id\r\nINNER JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n--dbo.hcChildProfileAssessmentShare\r\nINSERT INTO #TotalRecordCounts (TableName,NoRows,AccountId)\r\nselect 'hcChildProfileAssessmentShare' TableName,COUNT(1) RecordsCount,a.id  \r\nFROM dbo.hcChildProfileAssessmentShare t\r\nINNER JOIN dbo.hcChildProfileAssessment ca ON t.hcChildProfileAssessmentId = ca.id\r\nINNER JOIN dbo.ChildProfile cp ON ca.childprofileid = cp.id\r\nINNER JOIN dbo.AccountInfo a ON cp.accountInfoId = a.ID\r\nwhere a.Id in (SELECT value FROM STRING_SPLIT(@AccountInfoIDs,','))\r\nGROUP BY a.id  \r\n\r\n\r\n--SELECT * FROM #TotalRecordCounts\r\n\r\nINSERT INTO TotalRecordCounts (TableName,NoRows,AccountId,SourceDB)\r\nSELECT DISTINCT TableName,NoRows,AccountId,@SourceDB FROM #TotalRecordCounts\r\n\r\n\r\n\r\nEND"
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:51:29Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline2')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Script1",
+						"type": "Script",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"linkedServiceName": {
+							"referenceName": "ADF_LS_TargetDB",
+							"type": "LinkedServiceReference",
+							"parameters": {
+								"ServerName": "rta-bh-east-sql1.database.windows.net",
+								"DatabaseName": "rta-bh-prd-db1-hs",
+								"UserID": "RTA_ETL_Automation_User",
+								"Password": "XeWtvhrbFggtY8WJafCt"
+							}
+						},
+						"typeProperties": {
+							"scripts": [
+								{
+									"type": "Query",
+									"text": "EXEC\t[dbo].[Usp_getsource_Count_Tables]\r\n\t\t@SourceDB = N'rta-bh-prd-db1-hs',\r\n\t\t--@AccountInfoIDs = N'23409,24190'\r\n\t\t@AccountInfoIDs =N'23187'\r\n\r\n"
+								}
+							],
+							"scriptBlockExecutionTimeout": "02:00:00"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:51:29Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ABADosageAssessment')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "ABADosageAssessment"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ABADosageAssessmentAgreement')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "ABADosageAssessmentAgreement"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ABADosageAssessmentResponses')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "ABADosageAssessmentResponses"
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}

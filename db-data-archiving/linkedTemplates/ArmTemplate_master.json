@@ -1,0 +1,1236 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "db-data-archiving"
+		},
+		"Archive_Link_Service_Delete_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'Archive_Link_Service_Delete'"
+		},
+		"Archive_Link_Service_Restore_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'Archive_Link_Service_Restore'"
+		},
+		"BHDataArchiveDev_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'BHDataArchiveDev'"
+		},
+		"BHDataArchiveDev_New_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'BHDataArchiveDev_New'"
+		},
+		"BH_Consolidated_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'BH_Consolidated'"
+		},
+		"BH_Hopebridge_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'BH_Hopebridge'"
+		},
+		"BH_Prod_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'BH_Prod'"
+		},
+		"BH_Staging_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'BH_Staging'"
+		},
+		"Copy_From_Weekly_Refresh_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'Copy_From_Weekly_Refresh'"
+		},
+		"ADF_LS_SourceDB_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "@{linkedService().ServerName}"
+		},
+		"ADF_LS_SourceDB_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "@{linkedService().DatabaseName}"
+		},
+		"ADF_LS_SourceDB_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "@{linkedService().UserID}"
+		},
+		"ADF_LS_TargetDB_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "@{linkedService().ServerName}"
+		},
+		"ADF_LS_TargetDB_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "@{linkedService().DatabaseName}"
+		},
+		"ADF_LS_TargetDB_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "@{linkedService().UserID}"
+		},
+		"Archive_Link_Service_Delete_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "@{linkedService().ServerName}"
+		},
+		"Archive_Link_Service_Delete_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "@{linkedService().DatabaseName}"
+		},
+		"Archive_Link_Service_Delete_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "@{linkedService().UserID}"
+		},
+		"Archive_Link_Service_Restore_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "@{linkedService().ServerName}"
+		},
+		"Archive_Link_Service_Restore_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "@{linkedService().DatabaseName}"
+		},
+		"Archive_Link_Service_Restore_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "@{linkedService().UserID}"
+		},
+		"BHDataArchiveDev_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "rta-bh-east-sql1.database.windows.net,1433"
+		},
+		"BHDataArchiveDev_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "rta-bh-prd-db1-hs"
+		},
+		"BHDataArchiveDev_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "rtaadmin"
+		},
+		"BHDataArchiveDev_New_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "rta-bh-dev-internal-sql.database.windows.net"
+		},
+		"BHDataArchiveDev_New_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "rta-bh-data-archive-test"
+		},
+		"BHDataArchiveDev_New_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "rtaadmin"
+		},
+		"BH_Consolidated_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "@{linkedService().DbServer}"
+		},
+		"BH_Consolidated_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "@{linkedService().DbName}"
+		},
+		"BH_Consolidated_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "rtaadmin"
+		},
+		"BH_Hopebridge_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "@{linkedService().DbServer}"
+		},
+		"BH_Hopebridge_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "@{linkedService().DbName}"
+		},
+		"BH_Hopebridge_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "rtaadmin"
+		},
+		"BH_Prod_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "@{linkedService().DbServer}"
+		},
+		"BH_Prod_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "@{linkedService().DbName}"
+		},
+		"BH_Prod_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "rtaadmin"
+		},
+		"BH_Staging_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "@{linkedService().DbServer}"
+		},
+		"BH_Staging_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "@{linkedService().DbName}"
+		},
+		"BH_Staging_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "rtaadmin"
+		},
+		"Copy_From_Weekly_Refresh_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "rta-dev-sub-eastus2-sql1.database.windows.net"
+		},
+		"Copy_From_Weekly_Refresh_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "rta-bh-qa-sprint-weekly-refresh-hs1"
+		},
+		"Copy_From_Weekly_Refresh_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "rtaadmin"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "db-data-archiving_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"Archive_Link_Service_Delete_password": {
+						"value": "[parameters('Archive_Link_Service_Delete_password')]"
+					},
+					"Archive_Link_Service_Restore_password": {
+						"value": "[parameters('Archive_Link_Service_Restore_password')]"
+					},
+					"BHDataArchiveDev_password": {
+						"value": "[parameters('BHDataArchiveDev_password')]"
+					},
+					"BHDataArchiveDev_New_password": {
+						"value": "[parameters('BHDataArchiveDev_New_password')]"
+					},
+					"BH_Consolidated_password": {
+						"value": "[parameters('BH_Consolidated_password')]"
+					},
+					"BH_Hopebridge_password": {
+						"value": "[parameters('BH_Hopebridge_password')]"
+					},
+					"BH_Prod_password": {
+						"value": "[parameters('BH_Prod_password')]"
+					},
+					"BH_Staging_password": {
+						"value": "[parameters('BH_Staging_password')]"
+					},
+					"Copy_From_Weekly_Refresh_password": {
+						"value": "[parameters('Copy_From_Weekly_Refresh_password')]"
+					},
+					"ADF_LS_SourceDB_properties_typeProperties_server": {
+						"value": "[parameters('ADF_LS_SourceDB_properties_typeProperties_server')]"
+					},
+					"ADF_LS_SourceDB_properties_typeProperties_database": {
+						"value": "[parameters('ADF_LS_SourceDB_properties_typeProperties_database')]"
+					},
+					"ADF_LS_SourceDB_properties_typeProperties_userName": {
+						"value": "[parameters('ADF_LS_SourceDB_properties_typeProperties_userName')]"
+					},
+					"ADF_LS_TargetDB_properties_typeProperties_server": {
+						"value": "[parameters('ADF_LS_TargetDB_properties_typeProperties_server')]"
+					},
+					"ADF_LS_TargetDB_properties_typeProperties_database": {
+						"value": "[parameters('ADF_LS_TargetDB_properties_typeProperties_database')]"
+					},
+					"ADF_LS_TargetDB_properties_typeProperties_userName": {
+						"value": "[parameters('ADF_LS_TargetDB_properties_typeProperties_userName')]"
+					},
+					"Archive_Link_Service_Delete_properties_typeProperties_server": {
+						"value": "[parameters('Archive_Link_Service_Delete_properties_typeProperties_server')]"
+					},
+					"Archive_Link_Service_Delete_properties_typeProperties_database": {
+						"value": "[parameters('Archive_Link_Service_Delete_properties_typeProperties_database')]"
+					},
+					"Archive_Link_Service_Delete_properties_typeProperties_userName": {
+						"value": "[parameters('Archive_Link_Service_Delete_properties_typeProperties_userName')]"
+					},
+					"Archive_Link_Service_Restore_properties_typeProperties_server": {
+						"value": "[parameters('Archive_Link_Service_Restore_properties_typeProperties_server')]"
+					},
+					"Archive_Link_Service_Restore_properties_typeProperties_database": {
+						"value": "[parameters('Archive_Link_Service_Restore_properties_typeProperties_database')]"
+					},
+					"Archive_Link_Service_Restore_properties_typeProperties_userName": {
+						"value": "[parameters('Archive_Link_Service_Restore_properties_typeProperties_userName')]"
+					},
+					"BHDataArchiveDev_properties_typeProperties_server": {
+						"value": "[parameters('BHDataArchiveDev_properties_typeProperties_server')]"
+					},
+					"BHDataArchiveDev_properties_typeProperties_database": {
+						"value": "[parameters('BHDataArchiveDev_properties_typeProperties_database')]"
+					},
+					"BHDataArchiveDev_properties_typeProperties_userName": {
+						"value": "[parameters('BHDataArchiveDev_properties_typeProperties_userName')]"
+					},
+					"BHDataArchiveDev_New_properties_typeProperties_server": {
+						"value": "[parameters('BHDataArchiveDev_New_properties_typeProperties_server')]"
+					},
+					"BHDataArchiveDev_New_properties_typeProperties_database": {
+						"value": "[parameters('BHDataArchiveDev_New_properties_typeProperties_database')]"
+					},
+					"BHDataArchiveDev_New_properties_typeProperties_userName": {
+						"value": "[parameters('BHDataArchiveDev_New_properties_typeProperties_userName')]"
+					},
+					"BH_Consolidated_properties_typeProperties_server": {
+						"value": "[parameters('BH_Consolidated_properties_typeProperties_server')]"
+					},
+					"BH_Consolidated_properties_typeProperties_database": {
+						"value": "[parameters('BH_Consolidated_properties_typeProperties_database')]"
+					},
+					"BH_Consolidated_properties_typeProperties_userName": {
+						"value": "[parameters('BH_Consolidated_properties_typeProperties_userName')]"
+					},
+					"BH_Hopebridge_properties_typeProperties_server": {
+						"value": "[parameters('BH_Hopebridge_properties_typeProperties_server')]"
+					},
+					"BH_Hopebridge_properties_typeProperties_database": {
+						"value": "[parameters('BH_Hopebridge_properties_typeProperties_database')]"
+					},
+					"BH_Hopebridge_properties_typeProperties_userName": {
+						"value": "[parameters('BH_Hopebridge_properties_typeProperties_userName')]"
+					},
+					"BH_Prod_properties_typeProperties_server": {
+						"value": "[parameters('BH_Prod_properties_typeProperties_server')]"
+					},
+					"BH_Prod_properties_typeProperties_database": {
+						"value": "[parameters('BH_Prod_properties_typeProperties_database')]"
+					},
+					"BH_Prod_properties_typeProperties_userName": {
+						"value": "[parameters('BH_Prod_properties_typeProperties_userName')]"
+					},
+					"BH_Staging_properties_typeProperties_server": {
+						"value": "[parameters('BH_Staging_properties_typeProperties_server')]"
+					},
+					"BH_Staging_properties_typeProperties_database": {
+						"value": "[parameters('BH_Staging_properties_typeProperties_database')]"
+					},
+					"BH_Staging_properties_typeProperties_userName": {
+						"value": "[parameters('BH_Staging_properties_typeProperties_userName')]"
+					},
+					"Copy_From_Weekly_Refresh_properties_typeProperties_server": {
+						"value": "[parameters('Copy_From_Weekly_Refresh_properties_typeProperties_server')]"
+					},
+					"Copy_From_Weekly_Refresh_properties_typeProperties_database": {
+						"value": "[parameters('Copy_From_Weekly_Refresh_properties_typeProperties_database')]"
+					},
+					"Copy_From_Weekly_Refresh_properties_typeProperties_userName": {
+						"value": "[parameters('Copy_From_Weekly_Refresh_properties_typeProperties_userName')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_0')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_2",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_2.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_1')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_3",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_3.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_2')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_4",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_4.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_3')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_5",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_5.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_4')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_6",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_6.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_5')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_7",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_7.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_6')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_8",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_8.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_7')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_9",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_9.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_8')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_10",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_10.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_9')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_11",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_11.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_10')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_12",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_12.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_11')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_13",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_13.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_12')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_14",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_14.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_13')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_15",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_15.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_14')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_16",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_16.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_15')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_17",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_17.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_16')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_18",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_18.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_17')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_19",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_19.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_18')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_20",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_20.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_19')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_21",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_21.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_20')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_22",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_22.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_21')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_23",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_23.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_22')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_24",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_24.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_23')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_25",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_25.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_24')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_26",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_26.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_25')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_27",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_27.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_26')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_28",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_28.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_27')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_29",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_29.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_28')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_30",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_30.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_29')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_31",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_31.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_30')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_32",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_32.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_31')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_33",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_33.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_32')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_34",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_34.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_33')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_35",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_35.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_34')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_36",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_36.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_35')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_37",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_37.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_36')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_38",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_38.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_37')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_39",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_39.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_38')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_40",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_40.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_39')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_41",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_41.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_40')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_42",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_42.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_41')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_43",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_43.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_42')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_44",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_44.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_43')]"
+			]
+		},
+		{
+			"name": "db-data-archiving_ArmTemplate_45",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_45.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'db-data-archiving_ArmTemplate_44')]"
+			]
+		}
+	]
+}

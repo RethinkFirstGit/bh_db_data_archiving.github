@@ -1,0 +1,135 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "db-data-archiving"
+		},
+		"Archive_Link_Service_Delete_password": {
+			"value": ""
+		},
+		"Archive_Link_Service_Restore_password": {
+			"value": ""
+		},
+		"BHDataArchiveDev_password": {
+			"value": ""
+		},
+		"BHDataArchiveDev_New_password": {
+			"value": ""
+		},
+		"BH_Consolidated_password": {
+			"value": ""
+		},
+		"BH_Hopebridge_password": {
+			"value": ""
+		},
+		"BH_Prod_password": {
+			"value": ""
+		},
+		"BH_Staging_password": {
+			"value": ""
+		},
+		"Copy_From_Weekly_Refresh_password": {
+			"value": ""
+		},
+		"ADF_LS_SourceDB_properties_typeProperties_server": {
+			"value": "@{linkedService().ServerName}"
+		},
+		"ADF_LS_SourceDB_properties_typeProperties_database": {
+			"value": "@{linkedService().DatabaseName}"
+		},
+		"ADF_LS_SourceDB_properties_typeProperties_userName": {
+			"value": "@{linkedService().UserID}"
+		},
+		"ADF_LS_TargetDB_properties_typeProperties_server": {
+			"value": "@{linkedService().ServerName}"
+		},
+		"ADF_LS_TargetDB_properties_typeProperties_database": {
+			"value": "@{linkedService().DatabaseName}"
+		},
+		"ADF_LS_TargetDB_properties_typeProperties_userName": {
+			"value": "@{linkedService().UserID}"
+		},
+		"Archive_Link_Service_Delete_properties_typeProperties_server": {
+			"value": "@{linkedService().ServerName}"
+		},
+		"Archive_Link_Service_Delete_properties_typeProperties_database": {
+			"value": "@{linkedService().DatabaseName}"
+		},
+		"Archive_Link_Service_Delete_properties_typeProperties_userName": {
+			"value": "@{linkedService().UserID}"
+		},
+		"Archive_Link_Service_Restore_properties_typeProperties_server": {
+			"value": "@{linkedService().ServerName}"
+		},
+		"Archive_Link_Service_Restore_properties_typeProperties_database": {
+			"value": "@{linkedService().DatabaseName}"
+		},
+		"Archive_Link_Service_Restore_properties_typeProperties_userName": {
+			"value": "@{linkedService().UserID}"
+		},
+		"BHDataArchiveDev_properties_typeProperties_server": {
+			"value": "rta-bh-east-sql1.database.windows.net,1433"
+		},
+		"BHDataArchiveDev_properties_typeProperties_database": {
+			"value": "rta-bh-prd-db1-hs"
+		},
+		"BHDataArchiveDev_properties_typeProperties_userName": {
+			"value": "rtaadmin"
+		},
+		"BHDataArchiveDev_New_properties_typeProperties_server": {
+			"value": "rta-bh-dev-internal-sql.database.windows.net"
+		},
+		"BHDataArchiveDev_New_properties_typeProperties_database": {
+			"value": "rta-bh-data-archive-test"
+		},
+		"BHDataArchiveDev_New_properties_typeProperties_userName": {
+			"value": "rtaadmin"
+		},
+		"BH_Consolidated_properties_typeProperties_server": {
+			"value": "@{linkedService().DbServer}"
+		},
+		"BH_Consolidated_properties_typeProperties_database": {
+			"value": "@{linkedService().DbName}"
+		},
+		"BH_Consolidated_properties_typeProperties_userName": {
+			"value": "rtaadmin"
+		},
+		"BH_Hopebridge_properties_typeProperties_server": {
+			"value": "@{linkedService().DbServer}"
+		},
+		"BH_Hopebridge_properties_typeProperties_database": {
+			"value": "@{linkedService().DbName}"
+		},
+		"BH_Hopebridge_properties_typeProperties_userName": {
+			"value": "rtaadmin"
+		},
+		"BH_Prod_properties_typeProperties_server": {
+			"value": "@{linkedService().DbServer}"
+		},
+		"BH_Prod_properties_typeProperties_database": {
+			"value": "@{linkedService().DbName}"
+		},
+		"BH_Prod_properties_typeProperties_userName": {
+			"value": "rtaadmin"
+		},
+		"BH_Staging_properties_typeProperties_server": {
+			"value": "@{linkedService().DbServer}"
+		},
+		"BH_Staging_properties_typeProperties_database": {
+			"value": "@{linkedService().DbName}"
+		},
+		"BH_Staging_properties_typeProperties_userName": {
+			"value": "rtaadmin"
+		},
+		"Copy_From_Weekly_Refresh_properties_typeProperties_server": {
+			"value": "rta-dev-sub-eastus2-sql1.database.windows.net"
+		},
+		"Copy_From_Weekly_Refresh_properties_typeProperties_database": {
+			"value": "rta-bh-qa-sprint-weekly-refresh-hs1"
+		},
+		"Copy_From_Weekly_Refresh_properties_typeProperties_userName": {
+			"value": "rtaadmin"
+		}
+	}
+}
