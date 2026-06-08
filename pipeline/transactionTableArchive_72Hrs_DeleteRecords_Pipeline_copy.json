@@ -1,0 +1,51 @@
+{
+	"name": "transactionTableArchive_72Hrs_DeleteRecords_Pipeline_copy",
+	"properties": {
+		"activities": [
+			{
+				"name": "TransactionArchiveDelete72HrsScript",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.0:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "ADF_LS_TargetDB",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"ServerName": "rta-bh-east-sql1.database.windows.net",
+						"DatabaseName": "rta-bh-prd-db1-hs",
+						"UserID": "RTA_ETL_Automation_User",
+						"Password": "XeWtvhrbFggtY8WJafCt"
+					}
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": " /*Remove data older than 72 Hrs*/\n\nDELETE \nFROM [change_log].[transactions]  \nWHERE Datecreated < DATEADD(HOUR, -72, GETDATE());\n\n\n"
+						}
+					],
+					"scriptBlockExecutionTimeout": "24:00:00"
+				}
+			}
+		],
+		"parameters": {
+			"Table_Name": {
+				"type": "string",
+				"defaultValue": "transactions"
+			},
+			"Schema_Name": {
+				"type": "string",
+				"defaultValue": "change_log"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-05-26T13:02:30Z"
+	}
+}
