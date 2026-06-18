@@ -2,7 +2,7 @@
 	"name": "Trg_transaction_Delete_72hrs",
 	"properties": {
 		"annotations": [],
-		"runtimeState": "Stopped",
+		"runtimeState": "Started",
 		"pipelines": [
 			{
 				"pipelineReference": {
