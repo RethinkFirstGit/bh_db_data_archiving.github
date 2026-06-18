@@ -131,6 +131,12 @@
 		"Copy_From_Weekly_Refresh_properties_typeProperties_userName": {
 			"value": "rtaadmin"
 		},
+		"Trg_transaction_Delete_72hrs_properties_transactionTableArchive_72Hrs_DeleteRecords_Pipeline_copy_parameters_Table_Name": {
+			"value": "transactions"
+		},
+		"Trg_transaction_Delete_72hrs_properties_transactionTableArchive_72Hrs_DeleteRecords_Pipeline_copy_parameters_Schema_Name": {
+			"value": "change_log"
+		},
 		"containerUri": {
 			"value": ""
 		},

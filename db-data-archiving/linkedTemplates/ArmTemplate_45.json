@@ -6,12 +6,260 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "db-data-archiving"
+		},
+		"Trg_transaction_Delete_72hrs_properties_transactionTableArchive_72Hrs_DeleteRecords_Pipeline_copy_parameters_Table_Name": {
+			"type": "string",
+			"defaultValue": "transactions"
+		},
+		"Trg_transaction_Delete_72hrs_properties_transactionTableArchive_72Hrs_DeleteRecords_Pipeline_copy_parameters_Schema_Name": {
+			"type": "string",
+			"defaultValue": "change_log"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/rptObjectives_Restore_DB_Insert')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "rptObjectivesCopyDynamic",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "\nselect t1.* from (select \nap.rptId\n,ap.ChildProfileId\n,ap.LessonId\n,ap.inCurrentPlan\n,ap.IepGoalId\n,ap.Iepgoal_DateDeleted\n,ap.IepObjectiveId\n,ap.Seq\n,ap.ObjectiveText\n,ap.DateCreated\n,ap.DateLastModified\n,ap.DateDeleted\n,ap.DateMastered\n,ap.masteryValue\n,ap.ObjectiveType\n,ap.ChildAccountInfoId\n,ap.ChildAccountType\n,ap.ChildL3AccountId\n,ap.ChildL2AccountId\n,ap.ChildL1AccountId\n,ap.MonthYear\n,ap.Year\n,ap.WeekYear\n,ap.WeekFirstDay\n,ap.DateMasteredMonthYear\n,ap.DateMasteredYear\n,ap.DateMasteredWeekYear\n,ap.DateMasteredWeekFirstDay\n,ap.DateMasteredChildAccountInfoId\n,ap.DateMasteredChildAccountType\n,ap.DateMasteredChildL3AccountId\n,ap.DateMasteredChildL2AccountId\n,ap.DateMasteredChildL1AccountId\n,ap.consecutiveDays\n,ap.ModifiedBy\n,ap.DeletedBy\n,ap.CreatedBy\nfrom @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name} ap\n inner join dbo.ChildProfile c  on (ap.childprofileid=c.id)\n inner join accountinfo a on (c.accountinfoid=a.id)\nwhere a.Id in (@{join(pipeline().globalParameters.AccountID, ',')})\n)t1\nleft join Temp_rptObjectives t2 on t1.rptId = t2.rptId\nWHERE t2.rptId IS NULL",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADF_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.SourceServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.SourceDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.SourceUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.SourcePassword",
+										"type": "Expression"
+									},
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADF_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.TargetServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.TargetDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.TargetUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.TargetPassword",
+										"type": "Expression"
+									},
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select rptId from @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name}",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "insert",
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "rptId",
+											"type": "Int32",
+											"physicalType": "int"
+										},
+										"sink": {
+											"name": "rptId",
+											"type": "Int32",
+											"physicalType": "int"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ADF_DS_TargetDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": "@pipeline().globalParameters.TargetServerName",
+									"DatabaseName": "@pipeline().globalParameters.TargetDatabaseName",
+									"UserID": {
+										"value": "@pipeline().globalParameters.TargetUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.TargetPassword",
+										"type": "Expression"
+									},
+									"Schema_Name": {
+										"value": "@pipeline().parameters.Schema_Name",
+										"type": "Expression"
+									},
+									"Table_Name": {
+										"value": "@pipeline().parameters.Table_Name",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADF_DS_SourceDB",
+								"type": "DatasetReference",
+								"parameters": {
+									"ServerName": {
+										"value": "@pipeline().globalParameters.SourceServerName",
+										"type": "Expression"
+									},
+									"DatabaseName": {
+										"value": "@pipeline().globalParameters.SourceDatabaseName",
+										"type": "Expression"
+									},
+									"UserID": {
+										"value": "@pipeline().globalParameters.SourceUserID",
+										"type": "Expression"
+									},
+									"Password": {
+										"value": "@pipeline().globalParameters.SourcePassword",
+										"type": "Expression"
+									},
+									"Schema_Name": "dbo",
+									"Table_Name": "Temp_rptObjectives"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"Schema_Name": {
+						"type": "string",
+						"defaultValue": "dbo"
+					},
+					"Table_Name": {
+						"type": "string",
+						"defaultValue": "rptObjectives"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-30T15:36:12Z"
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/rptTargets_Restore_DB_Insert')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
@@ -1587,6 +1835,45 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Trg_transaction_Delete_72hrs')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "transactionTableArchive_72Hrs_DeleteRecords_Pipeline_copy",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"Table_Name": "[parameters('Trg_transaction_Delete_72hrs_properties_transactionTableArchive_72Hrs_DeleteRecords_Pipeline_copy_parameters_Table_Name')]",
+							"Schema_Name": "[parameters('Trg_transaction_Delete_72hrs_properties_transactionTableArchive_72Hrs_DeleteRecords_Pipeline_copy_parameters_Schema_Name')]"
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2026-06-08T11:43:00",
+						"timeZone": "India Standard Time",
+						"schedule": {
+							"minutes": [
+								30
+							],
+							"hours": [
+								11
+							]
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Execute_pipeline_restore_missingTables')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -2265,7 +2552,8 @@
 				"lastPublishTime": "2026-02-06T05:28:23Z"
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/rptTargets_Restore_DB_Insert')]"
+				"[concat(variables('factoryId'), '/pipelines/rptTargets_Restore_DB_Insert')]",
+				"[concat(variables('factoryId'), '/pipelines/rptObjectives_Restore_DB_Insert')]"
 			]
 		},
 		{

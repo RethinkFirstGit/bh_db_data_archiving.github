@@ -13,6 +13,43 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/ABADosageAssessmentResponses')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "BH_Prod",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DbName": {
+							"value": "@dataset().DbName",
+							"type": "Expression"
+						},
+						"DbServer": {
+							"value": "@dataset().DbServer",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"DbName": {
+						"type": "string"
+					},
+					"DbServer": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "ABADosageAssessmentResponses"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ADF_DS_SourceDB')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -742,56 +779,6 @@
 						"ServerName": "rta-bh-dev-internal-sql.database.windows.net",
 						"DatabaseName": "rta-bh-prd-db1-hs_2025-05-03T23-32Z_UnArchive_Dev",
 						"UserID": "rtaadmin"
-					}
-				},
-				"parameters": {
-					"ServerName": {
-						"type": "string"
-					},
-					"DatabaseName": {
-						"type": "string"
-					},
-					"UserID": {
-						"type": "string"
-					},
-					"Password": {
-						"type": "string"
-					},
-					"Schema_Name": {
-						"type": "string"
-					},
-					"Table_Name": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": {
-						"value": "@dataset().Schema_Name",
-						"type": "Expression"
-					},
-					"table": {
-						"value": "@dataset().Table_Name",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Archive_DS_TargetDB')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "Archive_Link_Service_Delete",
-					"type": "LinkedServiceReference",
-					"parameters": {
-						"ServerName": "rta-bh-east-sql1.database.windows.net",
-						"DatabaseName": "rta-bh-prd-db1-hs",
-						"UserID": "RTA_ETL_Automation_User"
 					}
 				},
 				"parameters": {

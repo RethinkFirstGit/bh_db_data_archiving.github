@@ -175,6 +175,14 @@
 			"type": "string",
 			"defaultValue": "rtaadmin"
 		},
+		"Trg_transaction_Delete_72hrs_properties_transactionTableArchive_72Hrs_DeleteRecords_Pipeline_copy_parameters_Table_Name": {
+			"type": "string",
+			"defaultValue": "transactions"
+		},
+		"Trg_transaction_Delete_72hrs_properties_transactionTableArchive_72Hrs_DeleteRecords_Pipeline_copy_parameters_Schema_Name": {
+			"type": "string",
+			"defaultValue": "change_log"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -1225,6 +1233,12 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"Trg_transaction_Delete_72hrs_properties_transactionTableArchive_72Hrs_DeleteRecords_Pipeline_copy_parameters_Table_Name": {
+						"value": "[parameters('Trg_transaction_Delete_72hrs_properties_transactionTableArchive_72Hrs_DeleteRecords_Pipeline_copy_parameters_Table_Name')]"
+					},
+					"Trg_transaction_Delete_72hrs_properties_transactionTableArchive_72Hrs_DeleteRecords_Pipeline_copy_parameters_Schema_Name": {
+						"value": "[parameters('Trg_transaction_Delete_72hrs_properties_transactionTableArchive_72Hrs_DeleteRecords_Pipeline_copy_parameters_Schema_Name')]"
 					}
 				}
 			},
