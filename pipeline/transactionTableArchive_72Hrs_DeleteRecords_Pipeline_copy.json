@@ -28,7 +28,7 @@
 					"scripts": [
 						{
 							"type": "Query",
-							"text": " /*Remove data older than 72 Hrs*/\n\nDELETE \nFROM [change_log].[transactions]  \nWHERE Datecreated < DATEADD(HOUR, -72, GETDATE());\n\n\n"
+							"text": " /*Remove data older than 72 Hrs*/\n\n/**DELETE\nFROM [change_log].[transactions]  \nWHERE Datecreated < DATEADD(HOUR, -72, GETDATE());***/\n \nDECLARE @BatchSize INT = 10000;\nDECLARE @RowsAffected INT = 1;\n \nWHILE (@RowsAffected > 0)\nBEGIN\n    DELETE TOP (@BatchSize)\n    FROM [change_log].[transactions]\n    WHERE Datecreated < DATEADD(HOUR, -72,  GETUTCDATE());\n \n    SET @RowsAffected = @@ROWCOUNT;\n \n    -- Optional: slight pause to reduce pressure\n    WAITFOR DELAY '00:00:01';\nEND\n \n"
 						}
 					],
 					"scriptBlockExecutionTimeout": "24:00:00"
