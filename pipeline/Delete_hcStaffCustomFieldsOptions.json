@@ -23,7 +23,7 @@
 						{
 							"type": "Query",
 							"text": {
-								"value": "DELETE t\nFROM dbo.hcStaffCustomFieldsOptions t\nINNER JOIN dbo.hcStaffCustomFields cf ON t.StaffCustomFieldId = cf.id\nINNER JOIN dbo.AccountInfo a ON cf.accountInfoId = a.ID\nINNER JOIN dbo.Subscription sub ON sub.accountInfoID = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n\n-- OptionValue path\nINNER JOIN dbo.hcStaffCustomFieldOptionValues v ON v.OptionId = t.Id\nINNER JOIN dbo.tblMember tm ON tm.id = v.StaffMemberId\nINNER JOIN dbo.AccountsToDelete atd2 ON tm.accountInfoId = atd2.AccountId\n/**\nWHERE\n    (\n        atd.AccountId IS NOT NULL\n        OR atd2.AccountId IS NOT NULL\n    )\n    AND (\n        sub.OrganizationTypeId <> 2\n        OR (\n            sub.OrganizationTypeId = 2\n            AND a.ID NOT IN (23382)\n            AND sub.SubscriptionStatusID <> 1\n            AND sub.dateSubscriptionStatusChanged <= DATEADD(MONTH, -6, GETDATE())\n        )\n    );\n**/",
+								"value": "DELETE t\nFROM dbo.hcStaffCustomFieldsOptions t\nINNER JOIN dbo.hcStaffCustomFields cf ON t.StaffCustomFieldId = cf.id\nINNER JOIN dbo.AccountInfo a ON cf.accountInfoId = a.ID\nINNER JOIN dbo.AccountsToDelete atd ON a.ID = atd.AccountId\n",
 								"type": "Expression"
 							}
 						}
