@@ -7,6 +7,10 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "db-data-archiving"
 		},
+		"BHDataArchiveDev_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'BHDataArchiveDev'"
+		},
 		"Archive_Link_Service_Delete_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'Archive_Link_Service_Delete'"
@@ -14,10 +18,6 @@
 		"Archive_Link_Service_Restore_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'Archive_Link_Service_Restore'"
-		},
-		"BHDataArchiveDev_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'BHDataArchiveDev'"
 		},
 		"BHDataArchiveDev_New_password": {
 			"type": "secureString",
@@ -42,6 +42,18 @@
 		"Copy_From_Weekly_Refresh_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'Copy_From_Weekly_Refresh'"
+		},
+		"BHDataArchiveDev_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "rta-bh-east-sql1.database.windows.net,1433"
+		},
+		"BHDataArchiveDev_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "rta-bh-prd-db1-hs"
+		},
+		"BHDataArchiveDev_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "rtaadmin"
 		},
 		"ADF_LS_SourceDB_properties_typeProperties_server": {
 			"type": "string",
@@ -90,18 +102,6 @@
 		"Archive_Link_Service_Restore_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "@{linkedService().UserID}"
-		},
-		"BHDataArchiveDev_properties_typeProperties_server": {
-			"type": "string",
-			"defaultValue": "rta-bh-east-sql1.database.windows.net,1433"
-		},
-		"BHDataArchiveDev_properties_typeProperties_database": {
-			"type": "string",
-			"defaultValue": "rta-bh-prd-db1-hs"
-		},
-		"BHDataArchiveDev_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "rtaadmin"
 		},
 		"BHDataArchiveDev_New_properties_typeProperties_server": {
 			"type": "string",
@@ -210,14 +210,14 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
+					"BHDataArchiveDev_password": {
+						"value": "[parameters('BHDataArchiveDev_password')]"
+					},
 					"Archive_Link_Service_Delete_password": {
 						"value": "[parameters('Archive_Link_Service_Delete_password')]"
 					},
 					"Archive_Link_Service_Restore_password": {
 						"value": "[parameters('Archive_Link_Service_Restore_password')]"
-					},
-					"BHDataArchiveDev_password": {
-						"value": "[parameters('BHDataArchiveDev_password')]"
 					},
 					"BHDataArchiveDev_New_password": {
 						"value": "[parameters('BHDataArchiveDev_New_password')]"
@@ -236,6 +236,15 @@
 					},
 					"Copy_From_Weekly_Refresh_password": {
 						"value": "[parameters('Copy_From_Weekly_Refresh_password')]"
+					},
+					"BHDataArchiveDev_properties_typeProperties_server": {
+						"value": "[parameters('BHDataArchiveDev_properties_typeProperties_server')]"
+					},
+					"BHDataArchiveDev_properties_typeProperties_database": {
+						"value": "[parameters('BHDataArchiveDev_properties_typeProperties_database')]"
+					},
+					"BHDataArchiveDev_properties_typeProperties_userName": {
+						"value": "[parameters('BHDataArchiveDev_properties_typeProperties_userName')]"
 					},
 					"ADF_LS_SourceDB_properties_typeProperties_server": {
 						"value": "[parameters('ADF_LS_SourceDB_properties_typeProperties_server')]"
@@ -272,15 +281,6 @@
 					},
 					"Archive_Link_Service_Restore_properties_typeProperties_userName": {
 						"value": "[parameters('Archive_Link_Service_Restore_properties_typeProperties_userName')]"
-					},
-					"BHDataArchiveDev_properties_typeProperties_server": {
-						"value": "[parameters('BHDataArchiveDev_properties_typeProperties_server')]"
-					},
-					"BHDataArchiveDev_properties_typeProperties_database": {
-						"value": "[parameters('BHDataArchiveDev_properties_typeProperties_database')]"
-					},
-					"BHDataArchiveDev_properties_typeProperties_userName": {
-						"value": "[parameters('BHDataArchiveDev_properties_typeProperties_userName')]"
 					},
 					"BHDataArchiveDev_New_properties_typeProperties_server": {
 						"value": "[parameters('BHDataArchiveDev_New_properties_typeProperties_server')]"

@@ -7,6 +7,10 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "db-data-archiving"
 		},
+		"BHDataArchiveDev_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'BHDataArchiveDev'"
+		},
 		"Archive_Link_Service_Delete_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'Archive_Link_Service_Delete'"
@@ -14,10 +18,6 @@
 		"Archive_Link_Service_Restore_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'Archive_Link_Service_Restore'"
-		},
-		"BHDataArchiveDev_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'BHDataArchiveDev'"
 		},
 		"BHDataArchiveDev_New_password": {
 			"type": "secureString",
@@ -42,6 +42,18 @@
 		"Copy_From_Weekly_Refresh_password": {
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'Copy_From_Weekly_Refresh'"
+		},
+		"BHDataArchiveDev_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "rta-bh-east-sql1.database.windows.net,1433"
+		},
+		"BHDataArchiveDev_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "rta-bh-prd-db1-hs"
+		},
+		"BHDataArchiveDev_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "rtaadmin"
 		},
 		"ADF_LS_SourceDB_properties_typeProperties_server": {
 			"type": "string",
@@ -90,18 +102,6 @@
 		"Archive_Link_Service_Restore_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "@{linkedService().UserID}"
-		},
-		"BHDataArchiveDev_properties_typeProperties_server": {
-			"type": "string",
-			"defaultValue": "rta-bh-east-sql1.database.windows.net,1433"
-		},
-		"BHDataArchiveDev_properties_typeProperties_database": {
-			"type": "string",
-			"defaultValue": "rta-bh-prd-db1-hs"
-		},
-		"BHDataArchiveDev_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "rtaadmin"
 		},
 		"BHDataArchiveDev_New_properties_typeProperties_server": {
 			"type": "string",
@@ -180,6 +180,28 @@
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/BHDataArchiveDev')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('BHDataArchiveDev_properties_typeProperties_server')]",
+					"database": "[parameters('BHDataArchiveDev_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": true,
+					"authenticationType": "SQL",
+					"userName": "[parameters('BHDataArchiveDev_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('BHDataArchiveDev_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/ADF_LS_SourceDB')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
@@ -321,28 +343,6 @@
 					"password": {
 						"type": "SecureString",
 						"value": "[parameters('Archive_Link_Service_Restore_password')]"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/BHDataArchiveDev')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureSqlDatabase",
-				"typeProperties": {
-					"server": "[parameters('BHDataArchiveDev_properties_typeProperties_server')]",
-					"database": "[parameters('BHDataArchiveDev_properties_typeProperties_database')]",
-					"encrypt": "mandatory",
-					"trustServerCertificate": true,
-					"authenticationType": "SQL",
-					"userName": "[parameters('BHDataArchiveDev_properties_typeProperties_userName')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('BHDataArchiveDev_password')]"
 					}
 				}
 			},

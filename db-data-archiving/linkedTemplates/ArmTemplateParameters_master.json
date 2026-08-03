@@ -5,13 +5,13 @@
 		"factoryName": {
 			"value": "db-data-archiving"
 		},
+		"BHDataArchiveDev_password": {
+			"value": ""
+		},
 		"Archive_Link_Service_Delete_password": {
 			"value": ""
 		},
 		"Archive_Link_Service_Restore_password": {
-			"value": ""
-		},
-		"BHDataArchiveDev_password": {
 			"value": ""
 		},
 		"BHDataArchiveDev_New_password": {
@@ -31,6 +31,15 @@
 		},
 		"Copy_From_Weekly_Refresh_password": {
 			"value": ""
+		},
+		"BHDataArchiveDev_properties_typeProperties_server": {
+			"value": "rta-bh-east-sql1.database.windows.net,1433"
+		},
+		"BHDataArchiveDev_properties_typeProperties_database": {
+			"value": "rta-bh-prd-db1-hs"
+		},
+		"BHDataArchiveDev_properties_typeProperties_userName": {
+			"value": "rtaadmin"
 		},
 		"ADF_LS_SourceDB_properties_typeProperties_server": {
 			"value": "@{linkedService().ServerName}"
@@ -67,15 +76,6 @@
 		},
 		"Archive_Link_Service_Restore_properties_typeProperties_userName": {
 			"value": "@{linkedService().UserID}"
-		},
-		"BHDataArchiveDev_properties_typeProperties_server": {
-			"value": "rta-bh-east-sql1.database.windows.net,1433"
-		},
-		"BHDataArchiveDev_properties_typeProperties_database": {
-			"value": "rta-bh-prd-db1-hs"
-		},
-		"BHDataArchiveDev_properties_typeProperties_userName": {
-			"value": "rtaadmin"
 		},
 		"BHDataArchiveDev_New_properties_typeProperties_server": {
 			"value": "rta-bh-dev-internal-sql.database.windows.net"
