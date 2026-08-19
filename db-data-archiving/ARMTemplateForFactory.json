@@ -50282,6 +50282,8 @@
 					{
 						"name": "Execute Pipeline1",
 						"type": "ExecutePipeline",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
 						"dependsOn": [
 							{
 								"activity": "Execute Temp Table Script",
@@ -50306,6 +50308,8 @@
 					{
 						"name": "Execute Pipeline1_copy1",
 						"type": "ExecutePipeline",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
 						"dependsOn": [
 							{
 								"activity": "Execute Pipeline1",
@@ -50378,6 +50382,8 @@
 					{
 						"name": "Execute Temp Table Script",
 						"type": "Script",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
 						"dependsOn": [],
 						"policy": {
 							"timeout": "0.12:00:00",
@@ -80990,7 +80996,7 @@
 							"source": {
 								"type": "AzureSqlSource",
 								"sqlReaderQuery": {
-									"value": "select t1.* from (select  ap.id\n,ap.tblMemberId\n,ap.hcStaffCredentialId\n,ap.issueDate\n,ap.expiredDate\n,ap.certificationNumber\n,ap.notes\n,ap.attachment\n,ap.attachmentFileName\n,ap.hideWarning\n,ap.CreatedBy\n,ap.ModifiedBy\n,ap.DateCreated\n,ap.DateLastModified\n,ap.DateDeleted\n,ap.ExpiringTaskAddedOn\n,ap.ExpiredTaskAddedOn\n,ap.IsDefault\n,ap.DeletedBy \nfrom @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name} ap \t\ninner join dbo.tblMember tm on (tm.id =ap.tblmemberId    )\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\nwhere a.Id in (@{join(pipeline().globalParameters.AccountID, ',')}) \n)t1\nleft join Temp_hcStaffMemberCredential t2 on t1.Id = t2.ID\nWHERE t2.ID IS NULL",
+									"value": "select t1.* from (select  ap.id\n,ap.tblMemberId\n,ap.hcStaffCredentialId\n,ap.issueDate\n,ap.expiredDate\n,ap.certificationNumber\n,ap.notes\n--,ap.attachment\n,ap.attachmentFileName\n,ap.hideWarning\n,ap.CreatedBy\n,ap.ModifiedBy\n,ap.DateCreated\n,ap.DateLastModified\n,ap.DateDeleted\n,ap.ExpiringTaskAddedOn\n,ap.ExpiredTaskAddedOn\n,ap.IsDefault\n,ap.DeletedBy \nfrom @{pipeline().parameters.Schema_Name}.@{pipeline().parameters.Table_Name} ap \t\ninner join dbo.tblMember tm on (tm.id =ap.tblmemberId    )\n--inner join dbo.ChildProfile p on (ap.memberId=p.id ) \ninner join dbo.AccountInfo a on (tm.accountInfoId=a.ID )\nwhere a.Id in (@{join(pipeline().globalParameters.AccountID, ',')}) \n)t1\nleft join Temp_hcStaffMemberCredential t2 on t1.Id = t2.ID\nWHERE t2.ID IS NULL",
 									"type": "Expression"
 								},
 								"queryTimeout": "02:00:00",
